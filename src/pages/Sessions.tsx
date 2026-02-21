@@ -1,9 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/Layout";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Target, ChevronDown, Plus, CheckCircle2 } from "lucide-react";
+import { ChevronDown, Plus, CheckCircle2 } from "lucide-react";
 
 const activeJourneys = [
   {
@@ -13,8 +12,7 @@ const activeJourneys = [
     currentLevel: 2.2,
     targetLevel: 4.0,
     progress: 45,
-    lastActivity: "Scenario: Cross-Team Conflict Resolution",
-    lastDate: "2 hours ago",
+    focusArea: "Cross-team alignment",
   },
   {
     id: "2",
@@ -23,8 +21,7 @@ const activeJourneys = [
     currentLevel: 1.8,
     targetLevel: 3.5,
     progress: 22,
-    lastActivity: "Evidence Mapping Exercise",
-    lastDate: "Yesterday",
+    focusArea: "Evidence evaluation",
   },
   {
     id: "3",
@@ -33,8 +30,7 @@ const activeJourneys = [
     currentLevel: 2.5,
     targetLevel: 4.0,
     progress: 60,
-    lastActivity: "Reflection Journal Entry",
-    lastDate: "3 days ago",
+    focusArea: "Narrative structure",
   },
 ];
 
@@ -48,73 +44,80 @@ const completedJourneys = [
   },
 ];
 
+const CircularBadge = ({ progress }: { progress: number }) => {
+  const r = 18;
+  const circumference = 2 * Math.PI * r;
+  return (
+    <div className="relative h-10 w-10 flex-shrink-0">
+      <svg className="h-10 w-10 -rotate-90" viewBox="0 0 44 44">
+        <circle cx="22" cy="22" r={r} fill="none" stroke="hsl(var(--muted))" strokeWidth="3" />
+        <motion.circle
+          cx="22" cy="22" r={r} fill="none"
+          stroke="hsl(var(--primary))" strokeWidth="3" strokeLinecap="round"
+          strokeDasharray={circumference}
+          initial={{ strokeDashoffset: circumference }}
+          animate={{ strokeDashoffset: circumference * (1 - progress / 100) }}
+          transition={{ duration: 0.8 }}
+        />
+      </svg>
+      <span className="absolute inset-0 flex items-center justify-center text-[10px] font-display font-bold text-primary">{progress}%</span>
+    </div>
+  );
+};
+
 const Sessions = () => {
   const navigate = useNavigate();
 
   return (
     <Layout>
-      <div className="max-w-3xl mx-auto px-6 py-10">
+      <div className="max-w-5xl mx-auto px-6 py-6">
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
           <h1 className="text-2xl font-display font-bold text-foreground mb-1">Continue Your Mastery</h1>
-          <p className="text-sm text-muted-foreground mb-8">Pick up where you left off or start something new.</p>
+          <p className="text-sm text-muted-foreground mb-6">Pick up where you left off or start something new.</p>
 
-          {/* Active Journeys */}
-          <div className="space-y-4 mb-8">
+          {/* Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             {activeJourneys.map((journey, i) => (
               <motion.div
                 key={journey.id}
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: i * 0.08 }}
-                className="rounded-xl border border-border bg-card p-5"
+                transition={{ duration: 0.3, delay: i * 0.06 }}
+                onClick={() => navigate("/dashboard")}
+                className="rounded-xl border border-border bg-card p-5 cursor-pointer transition-colors hover:border-primary/40 hover:shadow-sm"
               >
                 <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h3 className="text-sm font-semibold text-card-foreground font-display leading-snug">
-                      {journey.objective}
-                    </h3>
+                  <div className="min-w-0 mr-3">
+                    <h3 className="text-sm font-semibold text-card-foreground font-display leading-snug truncate">{journey.objective}</h3>
                     <span className="text-xs text-muted-foreground">{journey.domain}</span>
                   </div>
-                  <span className="text-xs text-muted-foreground whitespace-nowrap ml-4">{journey.lastDate}</span>
+                  <CircularBadge progress={journey.progress} />
                 </div>
 
-                {/* Levels */}
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-lg font-display font-bold text-muted-foreground">{journey.currentLevel}</span>
-                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Current</span>
-                  </div>
-                  <div className="flex-1 h-1 rounded-full bg-muted relative">
-                    <motion.div
-                      className="absolute left-0 top-0 h-full rounded-full bg-primary"
-                      initial={{ width: 0 }}
-                      animate={{ width: `${journey.progress}%` }}
-                      transition={{ duration: 0.8, delay: 0.2 }}
-                    />
-                  </div>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-lg font-display font-bold text-primary">{journey.targetLevel}</span>
-                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Target</span>
-                  </div>
+                <div className="flex items-center gap-4 text-xs text-muted-foreground mb-2">
+                  <span>Current <strong className="text-card-foreground">{journey.currentLevel}</strong></span>
+                  <span>→</span>
+                  <span>Target <strong className="text-primary">{journey.targetLevel}</strong></span>
                 </div>
 
-                {/* Last Activity + CTA */}
-                <div className="flex items-center justify-between">
-                  <p className="text-xs text-muted-foreground truncate mr-4">
-                    Last: {journey.lastActivity}
-                  </p>
-                  <Button size="sm" onClick={() => navigate("/dashboard")} className="shrink-0">
-                    <Target className="mr-1.5 h-3.5 w-3.5" /> Continue Session
-                  </Button>
-                </div>
+                <p className="text-xs text-muted-foreground">
+                  Focus: <span className="text-card-foreground">{journey.focusArea}</span>
+                </p>
               </motion.div>
             ))}
-          </div>
 
-          {/* Start New */}
-          <Button variant="outline" className="w-full mb-8" onClick={() => navigate("/")}>
-            <Plus className="mr-2 h-4 w-4" /> Start New Mastery Journey
-          </Button>
+            {/* Start New Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: activeJourneys.length * 0.06 }}
+              onClick={() => navigate("/")}
+              className="rounded-xl border border-dashed border-border bg-card/50 p-5 cursor-pointer transition-colors hover:border-primary/40 hover:bg-card flex flex-col items-center justify-center min-h-[140px]"
+            >
+              <Plus className="h-6 w-6 text-muted-foreground mb-2" />
+              <span className="text-sm font-medium text-muted-foreground">Start New Mastery Journey</span>
+            </motion.div>
+          </div>
 
           {/* Completed Journeys */}
           <Collapsible>
