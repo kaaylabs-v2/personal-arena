@@ -11,22 +11,24 @@ interface PracticeTask {
   capability: string;
   journey: string;
   estimatedTime?: string;
+  currentLevel: number;
+  targetLevel: number;
 }
 
 const todayTasks: PracticeTask[] = [
-  { id: "1", name: "Navigate a stakeholder disagreement", capability: "Conflict Resolution", journey: "Team Leadership", estimatedTime: "15m" },
-  { id: "2", name: "Reframe a negative customer interaction", capability: "Empathetic Communication", journey: "Customer Experience", estimatedTime: "10m" },
-  { id: "3", name: "Prioritize competing sprint goals", capability: "Strategic Prioritization", journey: "Team Leadership" },
+  { id: "1", name: "Navigate a stakeholder disagreement", capability: "Conflict Resolution", journey: "Team Leadership", estimatedTime: "15m", currentLevel: 2.8, targetLevel: 4.5 },
+  { id: "2", name: "Reframe a negative customer interaction", capability: "Empathetic Communication", journey: "Customer Experience", estimatedTime: "10m", currentLevel: 3.1, targetLevel: 4.5 },
+  { id: "3", name: "Prioritize competing sprint goals", capability: "Strategic Prioritization", journey: "Team Leadership", currentLevel: 1.9, targetLevel: 4.0 },
 ];
 
 const upcomingTasks: PracticeTask[] = [
-  { id: "4", name: "Design an async standup format", capability: "Distributed Collaboration", journey: "Team Leadership", estimatedTime: "20m" },
-  { id: "5", name: "Identify upsell signals in conversation", capability: "Consultative Selling", journey: "Customer Experience", estimatedTime: "12m" },
+  { id: "4", name: "Design an async standup format", capability: "Distributed Collaboration", journey: "Team Leadership", estimatedTime: "20m", currentLevel: 2.0, targetLevel: 4.0 },
+  { id: "5", name: "Identify upsell signals in conversation", capability: "Consultative Selling", journey: "Customer Experience", estimatedTime: "12m", currentLevel: 1.5, targetLevel: 4.5 },
 ];
 
 const completedTasks: PracticeTask[] = [
-  { id: "6", name: "Give constructive feedback to a peer", capability: "Feedback Delivery", journey: "Team Leadership" },
-  { id: "7", name: "De-escalate an upset customer", capability: "Empathetic Communication", journey: "Customer Experience" },
+  { id: "6", name: "Give constructive feedback to a peer", capability: "Feedback Delivery", journey: "Team Leadership", currentLevel: 3.8, targetLevel: 4.5 },
+  { id: "7", name: "De-escalate an upset customer", capability: "Empathetic Communication", journey: "Customer Experience", currentLevel: 4.0, targetLevel: 4.5 },
 ];
 
 const TaskRow = ({ task, index }: { task: PracticeTask; index: number }) => {
@@ -53,6 +55,16 @@ const TaskRow = ({ task, index }: { task: PracticeTask; index: number }) => {
               {task.estimatedTime}
             </span>
           )}
+        </div>
+        <div className="flex items-center gap-1.5 mt-1">
+          <span className="text-[10px] text-muted-foreground shrink-0">{task.currentLevel}</span>
+          <div className="relative h-1 flex-1 max-w-[80px] rounded-full bg-secondary overflow-hidden">
+            <div
+              className="absolute inset-y-0 left-0 rounded-full bg-primary/60 transition-all"
+              style={{ width: `${(task.currentLevel / task.targetLevel) * 100}%` }}
+            />
+          </div>
+          <span className="text-[10px] text-muted-foreground shrink-0">{task.targetLevel}</span>
         </div>
       </div>
       <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
