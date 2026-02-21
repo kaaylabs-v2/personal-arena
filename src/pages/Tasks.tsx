@@ -11,6 +11,8 @@ interface PracticeTask {
   capability: string;
   journey: string;
   estimatedTime?: string;
+  currentLevel: number;
+  targetLevel: number;
 }
 
 const todayTasks: PracticeTask[] = [
