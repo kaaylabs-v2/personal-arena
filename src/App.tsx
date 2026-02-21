@@ -16,6 +16,7 @@ import Sessions from "./pages/Sessions";
 import Tasks from "./pages/Tasks";
 import NextMastery from "./pages/NextMastery";
 import Profile from "./pages/Profile";
+import Progress from "./pages/Progress";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
