@@ -148,27 +148,72 @@ const Progress = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Top Left — Capability Growth */}
             <div className="rounded-xl border border-border bg-card p-5">
-              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
-                <TrendingUp className="h-3.5 w-3.5 text-primary" /> Capability Growth
-              </h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                  <TrendingUp className="h-3.5 w-3.5 text-primary" /> Capability Growth
+                </h3>
+                {selectedJourney === "all" && (
+                  <div className="flex rounded-md bg-muted p-0.5">
+                    {(["overall", "byJourney"] as const).map((v) => (
+                      <button
+                        key={v}
+                        onClick={() => setGrowthView(v)}
+                        className={`px-2.5 py-1 rounded text-[10px] font-medium transition-all ${
+                          growthView === v
+                            ? "bg-background text-foreground shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        {v === "overall" ? "Overall" : "By Journey"}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
               <div className="h-[180px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={growthData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
-                    <XAxis dataKey="week" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
-                    <YAxis domain={[1, 5]} ticks={[1, 2, 3, 4, 5]} tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={24} />
-                    <Tooltip
-                      contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }}
-                      formatter={(value: number) => [`Level ${value}`, "Capability"]}
-                    />
-                    <Line type="monotone" dataKey="level" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 3, fill: "hsl(var(--primary))" }} activeDot={{ r: 5 }} />
-                  </LineChart>
+                  {selectedJourney === "all" && growthView === "byJourney" ? (
+                    <LineChart data={multiJourneyGrowthData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                      <XAxis dataKey="week" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+                      <YAxis domain={[1, 5]} ticks={[1, 2, 3, 4, 5]} tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={24} />
+                      <Tooltip
+                        contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }}
+                        formatter={(value: number, name: string) => [`Level ${value}`, name]}
+                      />
+                      {Object.entries(journeyLineColors).map(([name, color]) => (
+                        <Line key={name} type="monotone" dataKey={name} stroke={color} strokeWidth={2} dot={{ r: 2, fill: color }} activeDot={{ r: 4 }} />
+                      ))}
+                    </LineChart>
+                  ) : (
+                    <LineChart data={growthData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                      <XAxis dataKey="week" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+                      <YAxis domain={[1, 5]} ticks={[1, 2, 3, 4, 5]} tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={24} />
+                      <Tooltip
+                        contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }}
+                        formatter={(value: number) => [`Level ${value}`, "Capability"]}
+                      />
+                      <Line type="monotone" dataKey="level" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 3, fill: "hsl(var(--primary))" }} activeDot={{ r: 5 }} />
+                    </LineChart>
+                  )}
                 </ResponsiveContainer>
               </div>
-              <div className="flex items-center justify-between mt-2 text-[10px] text-muted-foreground uppercase tracking-wider">
-                <span>Baseline: <strong className="text-card-foreground">{growthData[0]?.level}</strong></span>
-                <span>Current: <strong className="text-primary">{growthData[growthData.length - 1]?.level}</strong></span>
-              </div>
+              {selectedJourney === "all" && growthView === "byJourney" ? (
+                <div className="flex items-center gap-4 mt-2">
+                  {Object.entries(journeyLineColors).map(([name, color]) => (
+                    <div key={name} className="flex items-center gap-1">
+                      <div className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: color }} />
+                      <span className="text-[10px] text-muted-foreground">{name}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex items-center justify-between mt-2 text-[10px] text-muted-foreground uppercase tracking-wider">
+                  <span>Baseline: <strong className="text-card-foreground">{growthData[0]?.level}</strong></span>
+                  <span>Current: <strong className="text-primary">{growthData[growthData.length - 1]?.level}</strong></span>
+                </div>
+              )}
             </div>
 
             {/* Top Right — Outcome Achievement */}
