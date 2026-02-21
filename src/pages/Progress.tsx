@@ -35,6 +35,21 @@ const allGrowthData = [
   { week: "W6", level: 3.1 },
 ];
 
+const multiJourneyGrowthData = [
+  { week: "W1", "Team Leadership": 2.4, "Customer Experience": 2.0, "Strategic Thinking": 1.4 },
+  { week: "W2", "Team Leadership": 2.6, "Customer Experience": 2.1, "Strategic Thinking": 1.5 },
+  { week: "W3", "Team Leadership": 2.7, "Customer Experience": 2.3, "Strategic Thinking": 1.5 },
+  { week: "W4", "Team Leadership": 2.9, "Customer Experience": 2.4, "Strategic Thinking": 1.6 },
+  { week: "W5", "Team Leadership": 3.0, "Customer Experience": 2.5, "Strategic Thinking": 1.7 },
+  { week: "W6", "Team Leadership": 3.1, "Customer Experience": 2.6, "Strategic Thinking": 1.8 },
+];
+
+const journeyLineColors: Record<string, string> = {
+  "Team Leadership": "hsl(174, 42%, 40%)",
+  "Customer Experience": "hsl(210, 70%, 55%)",
+  "Strategic Thinking": "hsl(38, 92%, 50%)",
+};
+
 const journeyGrowthData: Record<string, { week: string; level: number }[]> = {
   "team-leadership": [
     { week: "W1", level: 2.4 }, { week: "W2", level: 2.6 }, { week: "W3", level: 2.7 },
