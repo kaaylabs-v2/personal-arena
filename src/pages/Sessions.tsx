@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronDown, Plus, CheckCircle2 } from "lucide-react";
+import { ChevronDown, Plus, CheckCircle2, Lightbulb } from "lucide-react";
 
 const activeJourneys = [
   {

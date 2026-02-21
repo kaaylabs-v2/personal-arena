@@ -240,6 +240,12 @@ const Progress = () => {
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-0.5">Est. to Mastery</p>
                 </div>
               </div>
+              <button
+                onClick={() => setShowReadiness((v) => !v)}
+                className="mt-3 text-[10px] text-primary hover:text-primary/80 transition-colors font-medium"
+              >
+                {showReadiness ? "Hide" : "Show"} Readiness Prompt
+              </button>
             </div>
 
               {/* Readiness Prompt — hidden by default, toggle-able */}
