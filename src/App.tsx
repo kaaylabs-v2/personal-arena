@@ -34,7 +34,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/arena-session" element={<ArenaSession />} />
           <Route path="/session-summary" element={<SessionSummary />} />
-          <Route path="/sessions" element={<Dashboard />} />
+          <Route path="/sessions" element={<Sessions />} />
           <Route path="/tasks" element={<Dashboard />} />
           <Route path="/progress" element={<Dashboard />} />
           <Route path="/journal" element={<Dashboard />} />
