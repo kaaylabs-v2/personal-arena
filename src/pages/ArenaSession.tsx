@@ -37,9 +37,9 @@ const ArenaSession = () => {
   const [response, setResponse] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const [activeCategory, setActiveCategory] = useState("clarify");
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<{ role: "arena" | "learner"; category: string; text: string }[]>([
     {
-      role: "arena" as const,
+      role: "arena",
       category: "clarify",
       text: "You've stated that distributed teams need more structured communication. Can you clarify what 'structured' means to you in practice?",
     },
