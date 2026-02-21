@@ -13,6 +13,7 @@ import ArenaSession from "./pages/ArenaSession";
 import SessionSummary from "./pages/SessionSummary";
 import Completion from "./pages/Completion";
 import Sessions from "./pages/Sessions";
+import Tasks from "./pages/Tasks";
 import NextMastery from "./pages/NextMastery";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
