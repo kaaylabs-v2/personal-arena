@@ -1,8 +1,9 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronDown, Clock, Sparkles, ArrowRight } from "lucide-react";
+import { ChevronDown, Clock, ArrowRight } from "lucide-react";
 
 interface PracticeTask {
   id: string;
@@ -12,105 +13,101 @@ interface PracticeTask {
   estimatedTime?: string;
 }
 
-const needsAttention: PracticeTask[] = [
-  { id: "1", name: "Navigate a stakeholder disagreement", capability: "Conflict Resolution", journey: "Team Leadership Mastery", estimatedTime: "15 min" },
-  { id: "2", name: "Reframe a negative customer interaction", capability: "Empathetic Communication", journey: "Customer Experience Mastery", estimatedTime: "10 min" },
-  { id: "3", name: "Prioritize competing sprint goals", capability: "Strategic Prioritization", journey: "Team Leadership Mastery" },
+const todayTasks: PracticeTask[] = [
+  { id: "1", name: "Navigate a stakeholder disagreement", capability: "Conflict Resolution", journey: "Team Leadership", estimatedTime: "15m" },
+  { id: "2", name: "Reframe a negative customer interaction", capability: "Empathetic Communication", journey: "Customer Experience", estimatedTime: "10m" },
+  { id: "3", name: "Prioritize competing sprint goals", capability: "Strategic Prioritization", journey: "Team Leadership" },
 ];
 
-const upcoming: PracticeTask[] = [
-  { id: "4", name: "Design an async standup format", capability: "Distributed Collaboration", journey: "Team Leadership Mastery", estimatedTime: "20 min" },
-  { id: "5", name: "Identify upsell signals in conversation", capability: "Consultative Selling", journey: "Customer Experience Mastery", estimatedTime: "12 min" },
+const upcomingTasks: PracticeTask[] = [
+  { id: "4", name: "Design an async standup format", capability: "Distributed Collaboration", journey: "Team Leadership", estimatedTime: "20m" },
+  { id: "5", name: "Identify upsell signals in conversation", capability: "Consultative Selling", journey: "Customer Experience", estimatedTime: "12m" },
 ];
 
-const completed: PracticeTask[] = [
-  { id: "6", name: "Give constructive feedback to a peer", capability: "Feedback Delivery", journey: "Team Leadership Mastery" },
-  { id: "7", name: "De-escalate an upset customer", capability: "Empathetic Communication", journey: "Customer Experience Mastery" },
+const completedTasks: PracticeTask[] = [
+  { id: "6", name: "Give constructive feedback to a peer", capability: "Feedback Delivery", journey: "Team Leadership" },
+  { id: "7", name: "De-escalate an upset customer", capability: "Empathetic Communication", journey: "Customer Experience" },
 ];
 
-const TaskCard = ({ task, index }: { task: PracticeTask; index: number }) => {
+const TaskRow = ({ task, index }: { task: PracticeTask; index: number }) => {
   const navigate = useNavigate();
 
   return (
     <motion.button
-      initial={{ opacity: 0, y: 4 }}
+      initial={{ opacity: 0, y: 3 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.04 }}
+      transition={{ delay: index * 0.03 }}
       onClick={() => navigate("/arena-session")}
-      className="w-full text-left rounded-xl border border-border bg-card p-4 flex items-center gap-4 hover:border-primary/30 hover:shadow-sm transition-all group"
+      className="w-full text-left rounded-lg border border-border bg-card px-3.5 py-2.5 hover:border-primary/30 transition-all group flex items-center gap-3"
     >
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-card-foreground group-hover:text-primary transition-colors">
+        <p className="text-sm font-medium text-card-foreground truncate group-hover:text-primary transition-colors">
           {task.name}
         </p>
-        <div className="flex items-center gap-3 mt-1.5">
-          <span className="text-xs text-muted-foreground">{task.journey}</span>
-          <span className="text-xs text-primary/70 font-medium">{task.capability}</span>
+        <div className="flex items-center gap-2 mt-0.5">
+          <span className="text-[11px] text-muted-foreground truncate">{task.journey}</span>
+          <span className="text-[11px] text-primary/70 font-medium truncate">{task.capability}</span>
+          {task.estimatedTime && (
+            <span className="text-[11px] text-muted-foreground flex items-center gap-0.5 shrink-0">
+              <Clock className="h-2.5 w-2.5" />
+              {task.estimatedTime}
+            </span>
+          )}
         </div>
       </div>
-      <div className="flex items-center gap-3 shrink-0">
-        {task.estimatedTime && (
-          <span className="text-xs text-muted-foreground flex items-center gap-1">
-            <Clock className="h-3 w-3" />
-            {task.estimatedTime}
-          </span>
-        )}
-        <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-      </div>
+      <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
     </motion.button>
   );
 };
 
 const Tasks = () => {
+  const [tab, setTab] = useState<"today" | "upcoming">("today");
+  const tasks = tab === "today" ? todayTasks : upcomingTasks;
+
   return (
     <Layout>
-      <div className="max-w-3xl mx-auto px-6 py-8">
-        <div className="mb-8">
-          <h1 className="text-2xl font-display font-semibold text-foreground">
-            Your Practice Opportunities
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Scenarios drawn from your active mastery journeys
-          </p>
+      <div className="max-w-4xl mx-auto px-6 py-8">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-display font-semibold text-foreground">
+              Your Practice Opportunities
+            </h1>
+            <p className="text-sm text-muted-foreground mt-0.5">
+              Scenarios from your active mastery journeys
+            </p>
+          </div>
+          <div className="flex rounded-lg bg-muted p-0.5">
+            {(["today", "upcoming"] as const).map((t) => (
+              <button
+                key={t}
+                onClick={() => setTab(t)}
+                className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition-all ${
+                  tab === t
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {t === "today" ? "Today" : "Upcoming"}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Needs Attention Today */}
-        <section className="mb-8">
-          <div className="flex items-center gap-2 mb-3">
-            <Sparkles className="h-4 w-4 text-primary" />
-            <h2 className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
-              Needs Attention Today
-            </h2>
-          </div>
-          <div className="space-y-2">
-            {needsAttention.map((task, i) => (
-              <TaskCard key={task.id} task={task} index={i} />
-            ))}
-          </div>
-        </section>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-8">
+          {tasks.map((task, i) => (
+            <TaskRow key={task.id} task={task} index={i} />
+          ))}
+        </div>
 
-        {/* Upcoming Practice */}
-        <section className="mb-8">
-          <h2 className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-3">
-            Upcoming Practice
-          </h2>
-          <div className="space-y-2">
-            {upcoming.map((task, i) => (
-              <TaskCard key={task.id} task={task} index={i} />
-            ))}
-          </div>
-        </section>
-
-        {/* Completed Practice */}
         <Collapsible>
           <CollapsibleTrigger className="flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground font-medium mb-3 hover:text-foreground transition-colors group">
             Completed Practice
             <ChevronDown className="h-3.5 w-3.5 transition-transform group-data-[state=open]:rotate-180" />
           </CollapsibleTrigger>
           <CollapsibleContent>
-            <div className="space-y-2">
-              {completed.map((task, i) => (
-                <TaskCard key={task.id} task={task} index={i} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {completedTasks.map((task, i) => (
+                <TaskRow key={task.id} task={task} index={i} />
               ))}
             </div>
           </CollapsibleContent>
