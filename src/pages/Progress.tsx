@@ -246,7 +246,6 @@ const Progress = () => {
               >
                 {showReadiness ? "Hide" : "Show"} Readiness Prompt
               </button>
-            </div>
 
               {/* Readiness Prompt — hidden by default, toggle-able */}
               {showReadiness && (
