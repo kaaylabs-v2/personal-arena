@@ -104,6 +104,7 @@ const journeyComparison = [
 
 const Progress = () => {
   const [selectedJourney, setSelectedJourney] = useState("all");
+  const [growthView, setGrowthView] = useState<"overall" | "byJourney">("overall");
 
   const growthData = selectedJourney === "all" ? allGrowthData : (journeyGrowthData[selectedJourney] || allGrowthData);
   const outcomes = journeyOutcomes[selectedJourney] || journeyOutcomes.all;
