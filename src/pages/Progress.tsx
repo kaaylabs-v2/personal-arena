@@ -105,6 +105,7 @@ const journeyComparison = [
 const Progress = () => {
   const [selectedJourney, setSelectedJourney] = useState("all");
   const [growthView, setGrowthView] = useState<"overall" | "byJourney">("overall");
+  const [showReadiness, setShowReadiness] = useState(false);
 
   const growthData = selectedJourney === "all" ? allGrowthData : (journeyGrowthData[selectedJourney] || allGrowthData);
   const outcomes = journeyOutcomes[selectedJourney] || journeyOutcomes.all;
@@ -239,6 +240,26 @@ const Progress = () => {
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-0.5">Est. to Mastery</p>
                 </div>
               </div>
+              <button
+                onClick={() => setShowReadiness((v) => !v)}
+                className="mt-3 text-[10px] text-primary hover:text-primary/80 transition-colors font-medium"
+              >
+                {showReadiness ? "Hide" : "Show"} Readiness Prompt
+              </button>
+
+              {/* Readiness Prompt — hidden by default, toggle-able */}
+              {showReadiness && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  className="rounded-lg border border-dashed border-primary/30 bg-primary/5 px-4 py-3 mt-3"
+                >
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-1">Readiness Prompt</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Based on your trajectory, you may be ready to attempt a higher-complexity scenario in <span className="text-foreground font-medium">Team Leadership</span>. Consider testing your edge.
+                  </p>
+                </motion.div>
+              )}
             </div>
 
             {/* Bottom Left — Capability Breakdown */}

@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronDown, Plus, CheckCircle2 } from "lucide-react";
+import { ChevronDown, Plus, CheckCircle2, Lightbulb } from "lucide-react";
 
 const activeJourneys = [
   {
@@ -74,6 +74,32 @@ const Sessions = () => {
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
           <h1 className="text-2xl font-display font-bold text-foreground mb-1">Continue Your Mastery</h1>
           <p className="text-sm text-muted-foreground mb-6">Pick up where you left off or start something new.</p>
+
+          {/* Mastery Readiness Panel */}
+          <div className="rounded-xl border border-border bg-card p-4 mb-5">
+            <h3 className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-3">Mastery Readiness</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {[
+                { label: "Current Level", value: "2.8", accent: false },
+                { label: "Target Level", value: "4.0", accent: true },
+                { label: "Trend", value: "↑ Rising", accent: false },
+                { label: "Confidence", value: "Moderate", accent: false },
+              ].map((item) => (
+                <div key={item.label} className="rounded-lg bg-muted/50 px-3 py-2.5 text-center">
+                  <p className={`text-lg font-display font-bold ${item.accent ? "text-primary" : "text-foreground"}`}>{item.value}</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-0.5">{item.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Insight Nudge */}
+          <div className="rounded-lg border border-dashed border-primary/30 bg-primary/5 px-4 py-3 mb-5 flex items-start gap-3">
+            <Lightbulb className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              <span className="text-card-foreground font-medium">Suggested:</span> Your evidence evaluation has plateaued — consider a Challenge-focused session to push past your current reasoning patterns.
+            </p>
+          </div>
 
           {/* Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
