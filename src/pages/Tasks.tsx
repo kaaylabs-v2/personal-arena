@@ -70,10 +70,10 @@ const Tasks = () => {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-display font-semibold text-foreground">
-              Your Practice Opportunities
+              Your Practice
             </h1>
             <p className="text-sm text-muted-foreground mt-0.5">
-              Scenarios from your active mastery journeys
+              Scenarios drawn from your active mastery journeys
             </p>
           </div>
           <div className="flex rounded-lg bg-muted p-0.5">
