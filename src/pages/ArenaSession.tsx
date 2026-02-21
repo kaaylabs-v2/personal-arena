@@ -1,10 +1,20 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Send, Pause, Lightbulb, Eye, Shield, Shuffle, RotateCcw } from "lucide-react";
+import {
+  Send,
+  Pause,
+  Lightbulb,
+  Eye,
+  Shield,
+  Shuffle,
+  RotateCcw,
+  Mic,
+  MicOff,
+} from "lucide-react";
 import { Layout } from "@/components/Layout";
 
 const promptCategories = [
@@ -15,11 +25,19 @@ const promptCategories = [
   { id: "reflect", label: "Reflect", icon: RotateCcw },
 ];
 
+const scenario = {
+  title: "Distributed Team Communication",
+  context:
+    "You lead a product team of 12 people spread across 4 time zones. Your team has been missing sprint commitments for the last 3 cycles. Stakeholders are escalating concerns about predictability. Your team reports feeling both over-managed and under-informed.",
+  task: "Determine a communication strategy that improves delivery predictability without reducing team autonomy.",
+};
+
 const ArenaSession = () => {
   const navigate = useNavigate();
   const [response, setResponse] = useState("");
+  const [isRecording, setIsRecording] = useState(false);
   const [activeCategory, setActiveCategory] = useState("clarify");
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<{ role: "arena" | "learner"; category: string; text: string }[]>([
     {
       role: "arena",
       category: "clarify",
@@ -31,9 +49,9 @@ const ArenaSession = () => {
     if (!response.trim()) return;
     setMessages((prev) => [
       ...prev,
-      { role: "learner", category: "", text: response },
+      { role: "learner" as const, category: "", text: response },
       {
-        role: "arena",
+        role: "arena" as const,
         category: "challenge",
         text: "Interesting. But couldn't too much structure stifle creative problem-solving in your team? How would you balance this?",
       },
@@ -44,11 +62,43 @@ const ArenaSession = () => {
   return (
     <Layout>
       <div className="flex flex-1 h-[calc(100vh-3.5rem)] overflow-hidden">
-        {/* Left: Conversation */}
-        <div className="flex-1 flex flex-col border-r border-border">
+        {/* LEFT PANEL — Scenario */}
+        <div className="w-72 flex-shrink-0 border-r border-border bg-surface flex flex-col">
           <div className="px-5 py-4 border-b border-border">
-            <h2 className="text-sm font-semibold text-foreground">Arena Session</h2>
-            <div className="flex gap-1.5 mt-3">
+            <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
+              Scenario
+            </h3>
+          </div>
+          <div className="flex-1 overflow-auto px-5 py-4 space-y-5">
+            <div>
+              <h4 className="text-sm font-semibold text-surface-foreground font-display">
+                {scenario.title}
+              </h4>
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1.5">
+                Context
+              </p>
+              <p className="text-sm leading-relaxed text-surface-foreground/80">
+                {scenario.context}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1.5">
+                Your Task
+              </p>
+              <p className="text-sm leading-relaxed text-surface-foreground/80">
+                {scenario.task}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* CENTER PANEL — Conversation */}
+        <div className="flex-1 flex flex-col min-w-0">
+          <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-foreground">Arena Dialogue</h2>
+            <div className="flex gap-1.5">
               {promptCategories.map((cat) => (
                 <button
                   key={cat.id}
@@ -67,31 +117,34 @@ const ArenaSession = () => {
           </div>
 
           <div className="flex-1 overflow-auto px-5 py-4 space-y-4">
-            {messages.map((msg, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={`max-w-[85%] ${msg.role === "learner" ? "ml-auto" : ""}`}
-              >
-                {msg.category && (
-                  <span className="text-[10px] uppercase tracking-wider text-primary font-medium mb-1 block">
-                    {msg.category}
-                  </span>
-                )}
-                <div
-                  className={`rounded-xl px-4 py-3 text-sm leading-relaxed ${
-                    msg.role === "learner"
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-surface text-surface-foreground"
-                  }`}
+            <AnimatePresence initial={false}>
+              {messages.map((msg, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`max-w-[85%] ${msg.role === "learner" ? "ml-auto" : ""}`}
                 >
-                  {msg.text}
-                </div>
-              </motion.div>
-            ))}
+                  {msg.category && (
+                    <span className="text-[10px] uppercase tracking-wider text-primary font-medium mb-1 block">
+                      {msg.category}
+                    </span>
+                  )}
+                  <div
+                    className={`rounded-xl px-4 py-3 text-sm leading-relaxed ${
+                      msg.role === "learner"
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-surface text-surface-foreground"
+                    }`}
+                  >
+                    {msg.text}
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
 
+          {/* Bottom Bar */}
           <div className="p-4 border-t border-border">
             <div className="flex gap-2">
               <Textarea
@@ -100,7 +153,10 @@ const ArenaSession = () => {
                 placeholder="Share your response..."
                 className="min-h-[60px] resize-none bg-card flex-1"
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSubmit(); }
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit();
+                  }
                 }}
               />
             </div>
@@ -108,20 +164,30 @@ const ArenaSession = () => {
               <Button onClick={handleSubmit} disabled={!response.trim()} className="flex-1">
                 <Send className="mr-2 h-4 w-4" /> Submit Response
               </Button>
-              <Button variant="outline" onClick={() => navigate("/session-summary")}>
-                <Pause className="mr-2 h-4 w-4" /> End Session
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsRecording(!isRecording)}
+                className={isRecording ? "text-destructive border-destructive" : ""}
+              >
+                {isRecording ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
               </Button>
               <Button variant="outline" size="sm">
                 <Lightbulb className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => navigate("/session-summary")}>
+                <Pause className="h-4 w-4" />
               </Button>
             </div>
           </div>
         </div>
 
-        {/* Right: Thinking Scaffold */}
-        <div className="w-80 flex-shrink-0 flex flex-col bg-surface">
+        {/* RIGHT PANEL — Thinking Scaffold */}
+        <div className="w-80 flex-shrink-0 flex flex-col border-l border-border bg-surface">
           <div className="px-4 py-4 border-b border-border">
-            <h3 className="text-sm font-semibold text-surface-foreground">Thinking Scaffold</h3>
+            <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
+              Thinking Scaffold
+            </h3>
           </div>
           <Tabs defaultValue="assumptions" className="flex-1 flex flex-col">
             <TabsList className="mx-4 mt-3 bg-muted">
