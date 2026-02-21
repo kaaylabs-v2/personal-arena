@@ -12,6 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import ArenaSession from "./pages/ArenaSession";
 import SessionSummary from "./pages/SessionSummary";
 import Completion from "./pages/Completion";
+import Sessions from "./pages/Sessions";
 import NextMastery from "./pages/NextMastery";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
