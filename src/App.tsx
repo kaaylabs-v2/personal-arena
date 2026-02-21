@@ -36,7 +36,7 @@ const App = () => (
           <Route path="/arena-session" element={<ArenaSession />} />
           <Route path="/session-summary" element={<SessionSummary />} />
           <Route path="/sessions" element={<Sessions />} />
-          <Route path="/tasks" element={<Dashboard />} />
+          <Route path="/tasks" element={<Tasks />} />
           <Route path="/progress" element={<Dashboard />} />
           <Route path="/journal" element={<Dashboard />} />
           <Route path="/completion" element={<Completion />} />
