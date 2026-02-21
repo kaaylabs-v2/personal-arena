@@ -38,7 +38,7 @@ const App = () => (
           <Route path="/session-summary" element={<SessionSummary />} />
           <Route path="/sessions" element={<Sessions />} />
           <Route path="/tasks" element={<Tasks />} />
-          <Route path="/progress" element={<Dashboard />} />
+          <Route path="/progress" element={<Progress />} />
           <Route path="/journal" element={<Dashboard />} />
           <Route path="/completion" element={<Completion />} />
           <Route path="/next-mastery" element={<NextMastery />} />
