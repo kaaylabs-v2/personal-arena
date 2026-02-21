@@ -12,6 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import ArenaSession from "./pages/ArenaSession";
 import SessionSummary from "./pages/SessionSummary";
 import Completion from "./pages/Completion";
+import Sessions from "./pages/Sessions";
 import NextMastery from "./pages/NextMastery";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
@@ -33,7 +34,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/arena-session" element={<ArenaSession />} />
           <Route path="/session-summary" element={<SessionSummary />} />
-          <Route path="/sessions" element={<Dashboard />} />
+          <Route path="/sessions" element={<Sessions />} />
           <Route path="/tasks" element={<Dashboard />} />
           <Route path="/progress" element={<Dashboard />} />
           <Route path="/journal" element={<Dashboard />} />
