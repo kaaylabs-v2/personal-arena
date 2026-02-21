@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
-import { TrendingUp, Target, Zap, BarChart3 } from "lucide-react";
+import { TrendingUp, Target, Zap, BarChart3, ChevronDown } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -9,13 +10,23 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  Radar,
 } from "recharts";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-const growthData = [
+const journeys = [
+  { id: "all", name: "All Journeys" },
+  { id: "team-leadership", name: "Team Leadership" },
+  { id: "customer-experience", name: "Customer Experience" },
+  { id: "strategic-thinking", name: "Strategic Thinking" },
+];
+
+const allGrowthData = [
   { week: "W1", level: 2.2 },
   { week: "W2", level: 2.4 },
   { week: "W3", level: 2.5 },
@@ -24,25 +35,66 @@ const growthData = [
   { week: "W6", level: 3.1 },
 ];
 
+const journeyGrowthData: Record<string, { week: string; level: number }[]> = {
+  "team-leadership": [
+    { week: "W1", level: 2.4 }, { week: "W2", level: 2.6 }, { week: "W3", level: 2.7 },
+    { week: "W4", level: 2.9 }, { week: "W5", level: 3.0 }, { week: "W6", level: 3.1 },
+  ],
+  "customer-experience": [
+    { week: "W1", level: 2.0 }, { week: "W2", level: 2.1 }, { week: "W3", level: 2.3 },
+    { week: "W4", level: 2.4 }, { week: "W5", level: 2.5 }, { week: "W6", level: 2.6 },
+  ],
+  "strategic-thinking": [
+    { week: "W1", level: 1.4 }, { week: "W2", level: 1.5 }, { week: "W3", level: 1.5 },
+    { week: "W4", level: 1.6 }, { week: "W5", level: 1.7 }, { week: "W6", level: 1.8 },
+  ],
+};
+
+const journeyOutcomes: Record<string, { current: number; target: number; time: string; est: string }> = {
+  all: { current: 3.1, target: 4.0, time: "6.5h", est: "~8w" },
+  "team-leadership": { current: 3.1, target: 4.0, time: "3.2h", est: "~6w" },
+  "customer-experience": { current: 2.6, target: 3.5, time: "2.1h", est: "~7w" },
+  "strategic-thinking": { current: 1.8, target: 3.0, time: "1.2h", est: "~12w" },
+};
+
+const allStrengths = [
+  { name: "Clarity", level: 3.4 },
+  { name: "Reflection", level: 3.1 },
+  { name: "Active Listening", level: 3.0 },
+];
+
+const allFocusAreas = [
+  { name: "Evidence Use", level: 2.3 },
+  { name: "Reasoning", level: 2.1 },
+  { name: "Alternatives", level: 1.8 },
+];
+
+const journeyStrengths: Record<string, { name: string; level: number }[]> = {
+  "team-leadership": [{ name: "Clarity", level: 3.4 }, { name: "Delegation", level: 3.2 }],
+  "customer-experience": [{ name: "Active Listening", level: 3.0 }, { name: "Empathy", level: 2.9 }],
+  "strategic-thinking": [{ name: "Pattern Recognition", level: 2.1 }],
+};
+
+const journeyFocusAreas: Record<string, { name: string; level: number }[]> = {
+  "team-leadership": [{ name: "Feedback Timing", level: 2.4 }, { name: "Conflict Nav.", level: 2.1 }],
+  "customer-experience": [{ name: "De-escalation", level: 2.2 }, { name: "Reframing", level: 1.9 }],
+  "strategic-thinking": [{ name: "Alternatives", level: 1.8 }, { name: "Evidence Use", level: 1.5 }],
+};
+
 const journeyComparison = [
   { name: "Team Leadership", current: 3.1, target: 4.0, color: "hsl(174, 42%, 40%)" },
   { name: "Customer Experience", current: 2.6, target: 3.5, color: "hsl(210, 70%, 55%)" },
   { name: "Strategic Thinking", current: 1.8, target: 3.0, color: "hsl(38, 92%, 50%)" },
 ];
 
-const strengths = [
-  { name: "Clarity", level: 3.4 },
-  { name: "Reflection", level: 3.1 },
-  { name: "Active Listening", level: 3.0 },
-];
-
-const focusAreas = [
-  { name: "Evidence Use", level: 2.3 },
-  { name: "Reasoning", level: 2.1 },
-  { name: "Alternatives", level: 1.8 },
-];
-
 const Progress = () => {
+  const [selectedJourney, setSelectedJourney] = useState("all");
+
+  const growthData = selectedJourney === "all" ? allGrowthData : (journeyGrowthData[selectedJourney] || allGrowthData);
+  const outcomes = journeyOutcomes[selectedJourney] || journeyOutcomes.all;
+  const strengths = selectedJourney === "all" ? allStrengths : (journeyStrengths[selectedJourney] || allStrengths);
+  const focusAreas = selectedJourney === "all" ? allFocusAreas : (journeyFocusAreas[selectedJourney] || allFocusAreas);
+
   return (
     <Layout>
       <div className="max-w-5xl mx-auto px-6 py-6">
@@ -51,13 +103,30 @@ const Progress = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
         >
-          <div className="mb-6">
-            <h1 className="text-2xl font-display font-semibold text-foreground">
-              Your Progress
-            </h1>
-            <p className="text-sm text-muted-foreground mt-0.5">
-              Capability growth across your mastery journeys
-            </p>
+          <div className="flex items-start justify-between mb-6 gap-4">
+            <div>
+              <h1 className="text-2xl font-display font-semibold text-foreground">
+                Capability Growth
+              </h1>
+              <p className="text-sm text-muted-foreground mt-0.5">
+                Across your mastery journeys
+              </p>
+            </div>
+            <div className="shrink-0">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Viewing</p>
+              <Select value={selectedJourney} onValueChange={setSelectedJourney}>
+                <SelectTrigger className="w-[200px] h-8 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {journeys.map((j) => (
+                    <SelectItem key={j.id} value={j.id} className="text-xs">
+                      {j.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -69,52 +138,20 @@ const Progress = () => {
               <div className="h-[180px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={growthData}>
-                    <CartesianGrid
-                      strokeDasharray="3 3"
-                      stroke="hsl(var(--border))"
-                      vertical={false}
-                    />
-                    <XAxis
-                      dataKey="week"
-                      tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
-                      axisLine={false}
-                      tickLine={false}
-                    />
-                    <YAxis
-                      domain={[1, 5]}
-                      ticks={[1, 2, 3, 4, 5]}
-                      tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
-                      axisLine={false}
-                      tickLine={false}
-                      width={24}
-                    />
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                    <XAxis dataKey="week" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+                    <YAxis domain={[1, 5]} ticks={[1, 2, 3, 4, 5]} tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={24} />
                     <Tooltip
-                      contentStyle={{
-                        backgroundColor: "hsl(var(--card))",
-                        border: "1px solid hsl(var(--border))",
-                        borderRadius: "8px",
-                        fontSize: "12px",
-                      }}
+                      contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }}
                       formatter={(value: number) => [`Level ${value}`, "Capability"]}
                     />
-                    <Line
-                      type="monotone"
-                      dataKey="level"
-                      stroke="hsl(var(--primary))"
-                      strokeWidth={2}
-                      dot={{ r: 3, fill: "hsl(var(--primary))" }}
-                      activeDot={{ r: 5 }}
-                    />
+                    <Line type="monotone" dataKey="level" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 3, fill: "hsl(var(--primary))" }} activeDot={{ r: 5 }} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
               <div className="flex items-center justify-between mt-2 text-[10px] text-muted-foreground uppercase tracking-wider">
-                <span>
-                  Baseline: <strong className="text-card-foreground">2.2</strong>
-                </span>
-                <span>
-                  Current: <strong className="text-primary">3.1</strong>
-                </span>
+                <span>Baseline: <strong className="text-card-foreground">{growthData[0]?.level}</strong></span>
+                <span>Current: <strong className="text-primary">{growthData[growthData.length - 1]?.level}</strong></span>
               </div>
             </div>
 
@@ -125,28 +162,20 @@ const Progress = () => {
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 <div className="rounded-lg bg-muted/50 p-3 text-center">
-                  <p className="text-2xl font-display font-bold text-primary">3.1</p>
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-0.5">
-                    Current Level
-                  </p>
+                  <p className="text-2xl font-display font-bold text-primary">{outcomes.current}</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-0.5">Current Level</p>
                 </div>
                 <div className="rounded-lg bg-muted/50 p-3 text-center">
-                  <p className="text-2xl font-display font-bold text-foreground">4.0</p>
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-0.5">
-                    Target Level
-                  </p>
+                  <p className="text-2xl font-display font-bold text-foreground">{outcomes.target}</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-0.5">Target Level</p>
                 </div>
                 <div className="rounded-lg bg-muted/50 p-3 text-center">
-                  <p className="text-2xl font-display font-bold text-foreground">6.5h</p>
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-0.5">
-                    Time Invested
-                  </p>
+                  <p className="text-2xl font-display font-bold text-foreground">{outcomes.time}</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-0.5">Time Invested</p>
                 </div>
                 <div className="rounded-lg bg-muted/50 p-3 text-center">
-                  <p className="text-2xl font-display font-bold text-foreground">~8w</p>
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-0.5">
-                    Est. to Mastery
-                  </p>
+                  <p className="text-2xl font-display font-bold text-foreground">{outcomes.est}</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-0.5">Est. to Mastery</p>
                 </div>
               </div>
             </div>
@@ -157,48 +186,26 @@ const Progress = () => {
                 <Zap className="h-3.5 w-3.5 text-primary" /> Capability Breakdown
               </h3>
               <div className="space-y-2 mb-3">
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
-                  Strengths
-                </p>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Strengths</p>
                 {strengths.map((cap) => (
                   <div key={cap.name} className="flex items-center gap-2">
-                    <span className="text-xs text-card-foreground w-28 truncate">
-                      {cap.name}
-                    </span>
+                    <span className="text-xs text-card-foreground w-28 truncate">{cap.name}</span>
                     <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
-                      <motion.div
-                        className="h-full rounded-full bg-primary"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${(cap.level / 5) * 100}%` }}
-                        transition={{ duration: 0.6 }}
-                      />
+                      <motion.div className="h-full rounded-full bg-primary" initial={{ width: 0 }} animate={{ width: `${(cap.level / 5) * 100}%` }} transition={{ duration: 0.6 }} />
                     </div>
-                    <span className="text-[10px] text-muted-foreground w-6 text-right">
-                      {cap.level}
-                    </span>
+                    <span className="text-[10px] text-muted-foreground w-6 text-right">{cap.level}</span>
                   </div>
                 ))}
               </div>
               <div className="space-y-2">
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
-                  Focus Areas
-                </p>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Focus Areas</p>
                 {focusAreas.map((cap) => (
                   <div key={cap.name} className="flex items-center gap-2">
-                    <span className="text-xs text-card-foreground w-28 truncate">
-                      {cap.name}
-                    </span>
+                    <span className="text-xs text-card-foreground w-28 truncate">{cap.name}</span>
                     <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
-                      <motion.div
-                        className="h-full rounded-full bg-primary/50"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${(cap.level / 5) * 100}%` }}
-                        transition={{ duration: 0.6 }}
-                      />
+                      <motion.div className="h-full rounded-full bg-primary/50" initial={{ width: 0 }} animate={{ width: `${(cap.level / 5) * 100}%` }} transition={{ duration: 0.6 }} />
                     </div>
-                    <span className="text-[10px] text-muted-foreground w-6 text-right">
-                      {cap.level}
-                    </span>
+                    <span className="text-[10px] text-muted-foreground w-6 text-right">{cap.level}</span>
                   </div>
                 ))}
               </div>
@@ -215,29 +222,17 @@ const Progress = () => {
                   return (
                     <div key={journey.name}>
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs text-card-foreground font-medium">
-                          {journey.name}
-                        </span>
-                        <span className="text-[10px] text-muted-foreground">
-                          {journey.current} / {journey.target}
-                        </span>
+                        <span className="text-xs text-card-foreground font-medium">{journey.name}</span>
+                        <span className="text-[10px] text-muted-foreground">{journey.current} / {journey.target}</span>
                       </div>
                       <div className="h-2 rounded-full bg-muted overflow-hidden">
-                        <motion.div
-                          className="h-full rounded-full"
-                          style={{ backgroundColor: journey.color }}
-                          initial={{ width: 0 }}
-                          animate={{ width: `${pct}%` }}
-                          transition={{ duration: 0.8 }}
-                        />
+                        <motion.div className="h-full rounded-full" style={{ backgroundColor: journey.color }} initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 0.8 }} />
                       </div>
                     </div>
                   );
                 })}
               </div>
-              <p className="text-[10px] text-muted-foreground mt-3">
-                Levels shown as current / target across active journeys
-              </p>
+              <p className="text-[10px] text-muted-foreground mt-3">Levels shown as current / target across active journeys</p>
             </div>
           </div>
         </motion.div>
