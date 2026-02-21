@@ -56,6 +56,16 @@ const TaskRow = ({ task, index }: { task: PracticeTask; index: number }) => {
             </span>
           )}
         </div>
+        <div className="flex items-center gap-1.5 mt-1">
+          <span className="text-[10px] text-muted-foreground shrink-0">{task.currentLevel}</span>
+          <div className="relative h-1 flex-1 max-w-[80px] rounded-full bg-secondary overflow-hidden">
+            <div
+              className="absolute inset-y-0 left-0 rounded-full bg-primary/60 transition-all"
+              style={{ width: `${(task.currentLevel / task.targetLevel) * 100}%` }}
+            />
+          </div>
+          <span className="text-[10px] text-muted-foreground shrink-0">{task.targetLevel}</span>
+        </div>
       </div>
       <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
     </motion.button>
