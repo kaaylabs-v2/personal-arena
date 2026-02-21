@@ -241,6 +241,21 @@ const Progress = () => {
               </div>
             </div>
 
+              {/* Readiness Prompt — hidden by default, toggle-able */}
+              {showReadiness && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  className="rounded-lg border border-dashed border-primary/30 bg-primary/5 px-4 py-3 mt-3"
+                >
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-1">Readiness Prompt</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Based on your trajectory, you may be ready to attempt a higher-complexity scenario in <span className="text-foreground font-medium">Team Leadership</span>. Consider testing your edge.
+                  </p>
+                </motion.div>
+              )}
+            </div>
+
             {/* Bottom Left — Capability Breakdown */}
             <div className="rounded-xl border border-border bg-card p-5">
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-2">
