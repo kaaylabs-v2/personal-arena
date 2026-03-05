@@ -16,6 +16,7 @@ import {
   MicOff,
 } from "lucide-react";
 import { Layout } from "@/components/Layout";
+import { SessionProgressIndicator } from "@/components/SessionProgressIndicator";
 
 const promptCategories = [
   { id: "clarify", label: "Clarify", icon: Eye },
@@ -57,6 +58,7 @@ const ArenaSession = () => {
       },
     ]);
     setResponse("");
+    setActiveCategory("challenge");
   };
 
   return (
@@ -65,38 +67,29 @@ const ArenaSession = () => {
         {/* LEFT PANEL — Scenario */}
         <div className="w-72 flex-shrink-0 border-r border-border bg-surface flex flex-col">
           <div className="px-5 py-4 border-b border-border">
-            <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
-              Scenario
-            </h3>
+            <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-medium">Scenario</h3>
           </div>
           <div className="flex-1 overflow-auto px-5 py-4 space-y-5">
             <div>
-              <h4 className="text-sm font-semibold text-surface-foreground font-display">
-                {scenario.title}
-              </h4>
+              <h4 className="text-sm font-semibold text-surface-foreground font-display">{scenario.title}</h4>
             </div>
             <div>
-              <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1.5">
-                Context
-              </p>
-              <p className="text-sm leading-relaxed text-surface-foreground/80">
-                {scenario.context}
-              </p>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1.5">Context</p>
+              <p className="text-sm leading-relaxed text-surface-foreground/80">{scenario.context}</p>
             </div>
             <div>
-              <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1.5">
-                Your Task
-              </p>
-              <p className="text-sm leading-relaxed text-surface-foreground/80">
-                {scenario.task}
-              </p>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1.5">Your Task</p>
+              <p className="text-sm leading-relaxed text-surface-foreground/80">{scenario.task}</p>
             </div>
           </div>
         </div>
 
         {/* CENTER PANEL — Conversation */}
         <div className="flex-1 flex flex-col min-w-0">
-          <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+          {/* Session Progress Indicator */}
+          <SessionProgressIndicator activeStage={activeCategory} />
+
+          <div className="px-5 py-3 border-b border-border flex items-center justify-between">
             <h2 className="text-sm font-semibold text-foreground">Arena Dialogue</h2>
             <div className="flex gap-1.5">
               {promptCategories.map((cat) => (
@@ -185,9 +178,7 @@ const ArenaSession = () => {
         {/* RIGHT PANEL — Thinking Scaffold */}
         <div className="w-80 flex-shrink-0 flex flex-col border-l border-border bg-surface">
           <div className="px-4 py-4 border-b border-border">
-            <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
-              Thinking Scaffold
-            </h3>
+            <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-medium">Thinking Scaffold</h3>
           </div>
           <Tabs defaultValue="assumptions" className="flex-1 flex flex-col">
             <TabsList className="mx-4 mt-3 bg-muted">
