@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Layout } from "@/components/Layout";
-import { BookOpen, Flag, ChevronRight, X, Clock, RotateCcw } from "lucide-react";
+import { BookOpen, Flag, ChevronRight, X, RotateCcw, AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface JournalEntry {
@@ -18,6 +18,7 @@ interface JournalEntry {
   revisitFlag: boolean;
   revisitDate?: string;
   reflection?: string;
+  patternInsight?: string;
 }
 
 const entries: JournalEntry[] = [
@@ -47,6 +48,7 @@ const entries: JournalEntry[] = [
     revisitFlag: false,
     revisitDate: "2026-02-28",
     reflection: "Still confident in this choice. The written format surfaces more thoughtful input.",
+    patternInsight: "You tend to commit to solutions before evaluating multiple alternatives.",
   },
   {
     id: "2",
@@ -71,6 +73,7 @@ const entries: JournalEntry[] = [
     ],
     revisitFlag: true,
     revisitDate: "2026-02-26",
+    patternInsight: "You frequently anchor on retention metrics — consider whether growth signals were underweighted.",
   },
   {
     id: "3",
@@ -119,24 +122,13 @@ const Journal = () => {
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
           <div className="mb-6">
             <h1 className="text-2xl font-display font-semibold text-foreground">Decision Journal</h1>
-            <p className="text-sm text-muted-foreground mt-0.5">
-              Reflect on your reasoning over time
-            </p>
+            <p className="text-sm text-muted-foreground mt-0.5">Reflect on your reasoning over time</p>
           </div>
 
           <AnimatePresence mode="wait">
             {selectedEntry ? (
-              <motion.div
-                key="detail"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.25 }}
-              >
-                <button
-                  onClick={() => setSelectedEntry(null)}
-                  className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mb-4"
-                >
+              <motion.div key="detail" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}>
+                <button onClick={() => setSelectedEntry(null)} className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mb-4">
                   <X className="h-3 w-3" /> Back to timeline
                 </button>
 
@@ -146,9 +138,7 @@ const Journal = () => {
                       <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">
                         {new Date(selectedEntry.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
                       </p>
-                      <h2 className="text-lg font-display font-semibold text-foreground">
-                        {selectedEntry.title}
-                      </h2>
+                      <h2 className="text-lg font-display font-semibold text-foreground">{selectedEntry.title}</h2>
                       <Badge variant="secondary" className="mt-1.5 text-[10px]">{selectedEntry.journey}</Badge>
                     </div>
                     {selectedEntry.revisitFlag && (
@@ -158,36 +148,35 @@ const Journal = () => {
                     )}
                   </div>
 
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-5">
-                    {selectedEntry.summary}
-                  </p>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-5">{selectedEntry.summary}</p>
+
+                  {/* Pattern Insight Tag */}
+                  {selectedEntry.patternInsight && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="rounded-lg border border-dashed border-warning/30 bg-warning/5 px-4 py-3 mb-5 flex items-start gap-2.5"
+                    >
+                      <AlertTriangle className="h-3.5 w-3.5 text-warning mt-0.5 shrink-0" />
+                      <div>
+                        <p className="text-[10px] uppercase tracking-wider text-warning font-medium mb-0.5">Pattern Detected</p>
+                        <p className="text-xs text-muted-foreground leading-relaxed">{selectedEntry.patternInsight}</p>
+                      </div>
+                    </motion.div>
+                  )}
 
                   {/* Scaffold Tabs */}
                   <div className="flex rounded-lg bg-muted p-0.5 mb-4">
                     {scaffoldTabs.map((t) => (
-                      <button
-                        key={t}
-                        onClick={() => setActiveTab(t)}
-                        className={`flex-1 px-2 py-1.5 rounded-md text-[11px] font-medium transition-all ${
-                          activeTab === t
-                            ? "bg-background text-foreground shadow-sm"
-                            : "text-muted-foreground hover:text-foreground"
-                        }`}
-                      >
-                        {t}
-                      </button>
+                      <button key={t} onClick={() => setActiveTab(t)}
+                        className={`flex-1 px-2 py-1.5 rounded-md text-[11px] font-medium transition-all ${activeTab === t ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+                      >{t}</button>
                     ))}
                   </div>
 
                   <div className="min-h-[120px]">
                     <AnimatePresence mode="wait">
-                      <motion.div
-                        key={activeTab}
-                        initial={{ opacity: 0, y: 4 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.15 }}
-                      >
+                      <motion.div key={activeTab} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
                         {activeTab === "Assumptions" || activeTab === "Evidence" || activeTab === "Alternatives" ? (
                           <ul className="space-y-2">
                             {(selectedEntry[tabKey[activeTab]] as string[])?.map((item, i) => (
@@ -220,12 +209,7 @@ const Journal = () => {
                 </div>
               </motion.div>
             ) : (
-              <motion.div
-                key="timeline"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
+              <motion.div key="timeline" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                 {/* Timeline */}
                 <div className="relative">
                   <div className="absolute left-3 top-2 bottom-2 w-px bg-border" />
@@ -233,9 +217,7 @@ const Journal = () => {
                     {entries.map((entry, i) => (
                       <motion.button
                         key={entry.id}
-                        initial={{ opacity: 0, y: 4 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.05 }}
+                        initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
                         onClick={() => { setSelectedEntry(entry); setActiveTab("Assumptions"); }}
                         className="w-full text-left pl-8 relative group"
                       >
@@ -258,10 +240,13 @@ const Journal = () => {
                                     <RotateCcw className="h-2 w-2" /> Reflected
                                   </Badge>
                                 )}
+                                {entry.patternInsight && (
+                                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-warning/30 text-warning flex items-center gap-0.5">
+                                    <AlertTriangle className="h-2 w-2" /> Pattern
+                                  </Badge>
+                                )}
                               </div>
-                              <p className="text-sm font-medium text-card-foreground truncate group-hover:text-primary transition-colors">
-                                {entry.title}
-                              </p>
+                              <p className="text-sm font-medium text-card-foreground truncate group-hover:text-primary transition-colors">{entry.title}</p>
                               <p className="text-xs text-muted-foreground truncate mt-0.5">{entry.summary}</p>
                             </div>
                             <ChevronRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />

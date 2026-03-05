@@ -1,23 +1,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
-import { TrendingUp, Target, Zap, BarChart3, ChevronDown } from "lucide-react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { TrendingUp, Target, Zap, BarChart3 } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { MasteryCompletion } from "@/components/MasteryCompletion";
 
 const journeys = [
   { id: "all", name: "All Journeys" },
@@ -27,12 +14,8 @@ const journeys = [
 ];
 
 const allGrowthData = [
-  { week: "W1", level: 2.2 },
-  { week: "W2", level: 2.4 },
-  { week: "W3", level: 2.5 },
-  { week: "W4", level: 2.8 },
-  { week: "W5", level: 2.9 },
-  { week: "W6", level: 3.1 },
+  { week: "W1", level: 2.2 }, { week: "W2", level: 2.4 }, { week: "W3", level: 2.5 },
+  { week: "W4", level: 2.8 }, { week: "W5", level: 2.9 }, { week: "W6", level: 3.1 },
 ];
 
 const multiJourneyGrowthData = [
@@ -73,15 +56,11 @@ const journeyOutcomes: Record<string, { current: number; target: number; time: s
 };
 
 const allStrengths = [
-  { name: "Clarity", level: 3.4 },
-  { name: "Reflection", level: 3.1 },
-  { name: "Active Listening", level: 3.0 },
+  { name: "Clarity", level: 3.4 }, { name: "Reflection", level: 3.1 }, { name: "Active Listening", level: 3.0 },
 ];
 
 const allFocusAreas = [
-  { name: "Evidence Use", level: 2.3 },
-  { name: "Reasoning", level: 2.1 },
-  { name: "Alternatives", level: 1.8 },
+  { name: "Evidence Use", level: 2.3 }, { name: "Reasoning", level: 2.1 }, { name: "Alternatives", level: 1.8 },
 ];
 
 const journeyStrengths: Record<string, { name: string; level: number }[]> = {
@@ -105,46 +84,46 @@ const journeyComparison = [
 const Progress = () => {
   const [selectedJourney, setSelectedJourney] = useState("all");
   const [growthView, setGrowthView] = useState<"overall" | "byJourney">("overall");
-  const [showReadiness, setShowReadiness] = useState(false);
 
   const growthData = selectedJourney === "all" ? allGrowthData : (journeyGrowthData[selectedJourney] || allGrowthData);
   const outcomes = journeyOutcomes[selectedJourney] || journeyOutcomes.all;
   const strengths = selectedJourney === "all" ? allStrengths : (journeyStrengths[selectedJourney] || allStrengths);
   const focusAreas = selectedJourney === "all" ? allFocusAreas : (journeyFocusAreas[selectedJourney] || allFocusAreas);
 
+  // Mock: mastery readiness when current >= 80% of target
+  const readinessRatio = outcomes.current / outcomes.target;
+  const showMasteryReadiness = readinessRatio >= 0.75;
+  // Mock: mastery completion
+  const showMasteryCompletion = false;
+
   return (
     <Layout>
       <div className="max-w-5xl mx-auto px-6 py-6">
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-        >
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
           <div className="flex items-start justify-between mb-6 gap-4">
             <div>
-              <h1 className="text-2xl font-display font-semibold text-foreground">
-                Capability Growth
-              </h1>
-              <p className="text-sm text-muted-foreground mt-0.5">
-                Across your mastery journeys
-              </p>
+              <h1 className="text-2xl font-display font-semibold text-foreground">Capability Growth</h1>
+              <p className="text-sm text-muted-foreground mt-0.5">Across your mastery journeys</p>
             </div>
             <div className="shrink-0">
               <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Viewing</p>
               <Select value={selectedJourney} onValueChange={setSelectedJourney}>
-                <SelectTrigger className="w-[200px] h-8 text-xs">
-                  <SelectValue />
-                </SelectTrigger>
+                <SelectTrigger className="w-[200px] h-8 text-xs"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {journeys.map((j) => (
-                    <SelectItem key={j.id} value={j.id} className="text-xs">
-                      {j.name}
-                    </SelectItem>
+                    <SelectItem key={j.id} value={j.id} className="text-xs">{j.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
           </div>
+
+          {/* Mastery Completion (conditional) */}
+          {showMasteryCompletion && (
+            <div className="mb-5">
+              <MasteryCompletion journeyName="Strategic Leadership" level={4} sessions={8} />
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Top Left — Capability Growth */}
@@ -156,17 +135,9 @@ const Progress = () => {
                 {selectedJourney === "all" && (
                   <div className="flex rounded-md bg-muted p-0.5">
                     {(["overall", "byJourney"] as const).map((v) => (
-                      <button
-                        key={v}
-                        onClick={() => setGrowthView(v)}
-                        className={`px-2.5 py-1 rounded text-[10px] font-medium transition-all ${
-                          growthView === v
-                            ? "bg-background text-foreground shadow-sm"
-                            : "text-muted-foreground hover:text-foreground"
-                        }`}
-                      >
-                        {v === "overall" ? "Overall" : "By Journey"}
-                      </button>
+                      <button key={v} onClick={() => setGrowthView(v)}
+                        className={`px-2.5 py-1 rounded text-[10px] font-medium transition-all ${growthView === v ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+                      >{v === "overall" ? "Overall" : "By Journey"}</button>
                     ))}
                   </div>
                 )}
@@ -178,10 +149,7 @@ const Progress = () => {
                       <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
                       <XAxis dataKey="week" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
                       <YAxis domain={[1, 5]} ticks={[1, 2, 3, 4, 5]} tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={24} />
-                      <Tooltip
-                        contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }}
-                        formatter={(value: number, name: string) => [`Level ${value}`, name]}
-                      />
+                      <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }} formatter={(value: number, name: string) => [`Level ${value}`, name]} />
                       {Object.entries(journeyLineColors).map(([name, color]) => (
                         <Line key={name} type="monotone" dataKey={name} stroke={color} strokeWidth={2} dot={{ r: 2, fill: color }} activeDot={{ r: 4 }} />
                       ))}
@@ -191,10 +159,7 @@ const Progress = () => {
                       <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
                       <XAxis dataKey="week" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
                       <YAxis domain={[1, 5]} ticks={[1, 2, 3, 4, 5]} tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={24} />
-                      <Tooltip
-                        contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }}
-                        formatter={(value: number) => [`Level ${value}`, "Capability"]}
-                      />
+                      <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }} formatter={(value: number) => [`Level ${value}`, "Capability"]} />
                       <Line type="monotone" dataKey="level" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 3, fill: "hsl(var(--primary))" }} activeDot={{ r: 5 }} />
                     </LineChart>
                   )}
@@ -240,24 +205,21 @@ const Progress = () => {
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-0.5">Est. to Mastery</p>
                 </div>
               </div>
-              <button
-                onClick={() => setShowReadiness((v) => !v)}
-                className="mt-3 text-[10px] text-primary hover:text-primary/80 transition-colors font-medium"
-              >
-                {showReadiness ? "Hide" : "Show"} Readiness Prompt
-              </button>
 
-              {/* Readiness Prompt — hidden by default, toggle-able */}
-              {showReadiness && (
+              {/* Mastery Readiness Prompt — conditional */}
+              {showMasteryReadiness && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
-                  className="rounded-lg border border-dashed border-primary/30 bg-primary/5 px-4 py-3 mt-3"
+                  className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 mt-4 flex items-start gap-2.5"
                 >
-                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-1">Readiness Prompt</p>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    Based on your trajectory, you may be ready to attempt a higher-complexity scenario in <span className="text-foreground font-medium">Team Leadership</span>. Consider testing your edge.
-                  </p>
+                  <Target className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-primary font-medium mb-0.5">Approaching Mastery</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      You are approaching your mastery target. Try an <span className="text-foreground font-medium">integrated scenario</span> to validate your capability.
+                    </p>
+                  </div>
                 </motion.div>
               )}
             </div>

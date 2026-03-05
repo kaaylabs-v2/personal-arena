@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown, Clock, ArrowRight } from "lucide-react";
+import { InsightBanner } from "@/components/InsightBanner";
 
 interface PracticeTask {
   id: string;
@@ -33,36 +34,27 @@ const completedTasks: PracticeTask[] = [
 
 const TaskRow = ({ task, index }: { task: PracticeTask; index: number }) => {
   const navigate = useNavigate();
-
   return (
     <motion.button
-      initial={{ opacity: 0, y: 3 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.03 }}
+      initial={{ opacity: 0, y: 3 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.03 }}
       onClick={() => navigate("/arena-session")}
       className="w-full text-left rounded-lg border border-border bg-card px-3.5 py-2.5 hover:border-primary/30 transition-all group flex items-center gap-3"
     >
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-card-foreground truncate group-hover:text-primary transition-colors">
-          {task.name}
-        </p>
+        <p className="text-sm font-medium text-card-foreground truncate group-hover:text-primary transition-colors">{task.name}</p>
         <div className="flex items-center gap-2 mt-0.5">
           <span className="text-[11px] text-muted-foreground truncate">{task.journey}</span>
           <span className="text-[11px] text-primary/70 font-medium truncate">{task.capability}</span>
           {task.estimatedTime && (
             <span className="text-[11px] text-muted-foreground flex items-center gap-0.5 shrink-0">
-              <Clock className="h-2.5 w-2.5" />
-              {task.estimatedTime}
+              <Clock className="h-2.5 w-2.5" />{task.estimatedTime}
             </span>
           )}
         </div>
         <div className="flex items-center gap-1.5 mt-1">
           <span className="text-[10px] text-muted-foreground shrink-0">{task.currentLevel}</span>
           <div className="relative h-1 flex-1 max-w-[80px] rounded-full bg-secondary overflow-hidden">
-            <div
-              className="absolute inset-y-0 left-0 rounded-full bg-primary/60 transition-all"
-              style={{ width: `${(task.currentLevel / task.targetLevel) * 100}%` }}
-            />
+            <div className="absolute inset-y-0 left-0 rounded-full bg-primary/60 transition-all" style={{ width: `${(task.currentLevel / task.targetLevel) * 100}%` }} />
           </div>
           <span className="text-[10px] text-muted-foreground shrink-0">{task.targetLevel}</span>
         </div>
@@ -81,29 +73,29 @@ const Tasks = () => {
       <div className="max-w-4xl mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-display font-semibold text-foreground">
-              Your Practice
-            </h1>
-            <p className="text-sm text-muted-foreground mt-0.5">
-              Scenarios drawn from your active mastery journeys
-            </p>
+            <h1 className="text-2xl font-display font-semibold text-foreground">Your Practice</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">Scenarios drawn from your active mastery journeys</p>
           </div>
           <div className="flex rounded-lg bg-muted p-0.5">
             {(["today", "upcoming"] as const).map((t) => (
-              <button
-                key={t}
-                onClick={() => setTab(t)}
-                className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition-all ${
-                  tab === t
-                    ? "bg-background text-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {t === "today" ? "Today" : "Upcoming"}
-              </button>
+              <button key={t} onClick={() => setTab(t)}
+                className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition-all ${tab === t ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+              >{t === "today" ? "Today" : "Upcoming"}</button>
             ))}
           </div>
         </div>
+
+        {/* Plateau Detection */}
+        <InsightBanner title="Plateau Detected" className="mb-4">
+          Your <span className="text-foreground font-medium">Evidence Evaluation</span> has plateaued over the last 4 sessions.
+          Try a <span className="text-foreground font-medium">Challenge-focused</span> scenario to strengthen this skill.
+        </InsightBanner>
+
+        {/* Capability Imbalance */}
+        <InsightBanner title="Capability Imbalance" className="mb-6">
+          Your reasoning clarity is strong, but <span className="text-foreground font-medium">alternatives generation</span> is lagging.
+          Suggested focus: <span className="text-foreground font-medium">Explore Alternatives</span>.
+        </InsightBanner>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-8">
           {tasks.map((task, i) => (

@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Save, ArrowRight } from "lucide-react";
+import { Save, CheckCircle2, AlertCircle, Target } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { useState } from "react";
 
@@ -13,6 +13,12 @@ const rubric = [
   { name: "Alternatives Considered", score: 2.4, max: 5 },
   { name: "Reflection Depth", score: 3.0, max: 5 },
 ];
+
+const sessionInsight = {
+  strengths: ["Clear problem framing", "Stakeholder awareness"],
+  improve: ["Explore alternatives before committing"],
+  suggestedPractice: "Scenario: Conflicting Stakeholder Priorities",
+};
 
 const SessionSummary = () => {
   const navigate = useNavigate();
@@ -37,6 +43,50 @@ const SessionSummary = () => {
               </div>
             ))}
           </div>
+
+          {/* Session Insight Panel */}
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+            className="rounded-xl border border-primary/20 bg-primary/5 p-5 mb-8"
+          >
+            <p className="text-[10px] uppercase tracking-wider text-primary font-medium mb-3">Session Insight</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-1.5 flex items-center gap-1">
+                  <CheckCircle2 className="h-3 w-3 text-primary" /> Strengths
+                </p>
+                <ul className="space-y-1">
+                  {sessionInsight.strengths.map((s) => (
+                    <li key={s} className="text-xs text-card-foreground flex items-start gap-1.5">
+                      <span className="h-1 w-1 rounded-full bg-primary mt-1.5 shrink-0" />
+                      {s}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-1.5 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3 text-warning" /> Improve Next
+                </p>
+                <ul className="space-y-1">
+                  {sessionInsight.improve.map((s) => (
+                    <li key={s} className="text-xs text-card-foreground flex items-start gap-1.5">
+                      <span className="h-1 w-1 rounded-full bg-warning mt-1.5 shrink-0" />
+                      {s}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-1.5 flex items-center gap-1">
+                  <Target className="h-3 w-3 text-info" /> Suggested Practice
+                </p>
+                <p className="text-xs text-card-foreground">{sessionInsight.suggestedPractice}</p>
+              </div>
+            </div>
+          </motion.div>
 
           <div className="rounded-xl border border-border bg-card p-5 mb-8">
             <h3 className="text-sm font-semibold text-card-foreground mb-4">Rubric Score Breakdown</h3>
