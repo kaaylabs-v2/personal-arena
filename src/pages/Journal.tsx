@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Layout } from "@/components/Layout";
 import { BookOpen, Flag, ChevronRight, X, RotateCcw, AlertTriangle } from "lucide-react";
+import { PageHeader } from "@/components/PageHeader";
 import { Badge } from "@/components/ui/badge";
 
 interface JournalEntry {
@@ -118,12 +119,9 @@ const Journal = () => {
 
   return (
     <Layout>
-      <div className="max-w-5xl mx-auto px-6 py-6">
+      <div className="max-w-5xl mx-auto px-6 py-4">
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-          <div className="mb-6">
-            <h1 className="text-2xl font-display font-semibold text-foreground">Decision Journal</h1>
-            <p className="text-sm text-muted-foreground mt-0.5">Reflect on your reasoning over time</p>
-          </div>
+          <PageHeader title="Decision Journal" subtitle="Reflect on your reasoning over time" />
 
           <AnimatePresence mode="wait">
             {selectedEntry ? (

@@ -4,6 +4,7 @@ import { Layout } from "@/components/Layout";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown, Plus, CheckCircle2, Lightbulb, Target, BookOpen, Shield, Building2 } from "lucide-react";
 import { InsightBanner } from "@/components/InsightBanner";
+import { PageHeader } from "@/components/PageHeader";
 
 const assignedJourneys = [
   { id: "a1", objective: "Strategic Decision Making for Senior Leaders", domain: "Leadership", currentLevel: 1.6, targetLevel: 4.0, progress: 18, focusArea: "Evidence-based reasoning", assignedBy: "Nexus Studio" },
@@ -43,10 +44,9 @@ const Sessions = () => {
 
   return (
     <Layout>
-      <div className="max-w-5xl mx-auto px-6 py-6">
+      <div className="max-w-5xl mx-auto px-6 py-4">
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-          <h1 className="text-2xl font-display font-bold text-foreground mb-1">Continue Your Mastery</h1>
-          <p className="text-sm text-muted-foreground mb-6">Pick up where you left off or start something new.</p>
+          <PageHeader title="Arena Sessions" subtitle="Pick up where you left off or start something new." />
 
           {/* Mastery Readiness Panel */}
           <div className="rounded-xl border border-border bg-card p-4 mb-5">

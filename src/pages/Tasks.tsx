@@ -5,6 +5,7 @@ import { Layout } from "@/components/Layout";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown, Clock, ArrowRight } from "lucide-react";
 import { InsightBanner } from "@/components/InsightBanner";
+import { PageHeader } from "@/components/PageHeader";
 
 interface PracticeTask {
   id: string;
@@ -70,12 +71,8 @@ const Tasks = () => {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto px-6 py-8">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-display font-semibold text-foreground">Your Practice</h1>
-            <p className="text-sm text-muted-foreground mt-0.5">Scenarios drawn from your active mastery journeys</p>
-          </div>
+      <div className="max-w-4xl mx-auto px-6 py-4">
+        <PageHeader title="Practice" subtitle="Scenarios drawn from your active mastery journeys">
           <div className="flex rounded-lg bg-muted p-0.5">
             {(["today", "upcoming"] as const).map((t) => (
               <button key={t} onClick={() => setTab(t)}
@@ -83,7 +80,7 @@ const Tasks = () => {
               >{t === "today" ? "Today" : "Upcoming"}</button>
             ))}
           </div>
-        </div>
+        </PageHeader>
 
         {/* Plateau Detection */}
         <InsightBanner title="Plateau Detected" className="mb-4">
