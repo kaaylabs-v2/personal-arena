@@ -70,7 +70,7 @@ const MandatedJourneyCard = ({ journey, onClick }: { journey: typeof mandatedJou
     initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.3 }}
     onClick={onClick}
-    className="rounded-xl border-2 border-primary/25 bg-card p-5 cursor-pointer transition-all hover:border-primary/50 hover:shadow-md"
+    className="rounded-xl border border-border border-l-4 border-l-primary bg-card shadow-sm p-5 cursor-pointer transition-all hover:border-primary/50 hover:shadow-md"
   >
     <div className="flex items-start justify-between mb-3">
       <div className="min-w-0 mr-3">
@@ -101,7 +101,7 @@ const SelfInitiatedJourneyCard = ({ journey, onClick }: { journey: typeof selfIn
     initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.3 }}
     onClick={onClick}
-    className="rounded-xl border border-border bg-card/80 p-5 cursor-pointer transition-colors hover:border-muted-foreground/30 hover:shadow-sm"
+    className="rounded-xl border border-border/60 bg-card/60 p-5 cursor-pointer transition-colors hover:border-muted-foreground/30 hover:shadow-sm"
   >
     <div className="flex items-start justify-between mb-3">
       <div className="min-w-0 mr-3">
