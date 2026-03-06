@@ -185,15 +185,14 @@ const JourneyDashboard = () => {
             </div>
           )}
 
-          {/* Capability Imbalance Insight */}
-          <InsightBanner title={journey.insight.title} className="mb-5">
+          {/* Row 0 — Capability Imbalance (full width) */}
+          <InsightBanner title={journey.insight.title} className="mb-4">
             {journey.insight.message}{" "}
             <span className="text-foreground font-medium">{journey.insight.highlight}</span>
           </InsightBanner>
 
-          {/* 2x2 Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-            {/* Target Outcome */}
+          {/* Row 1 — Target Outcome + Progress Snapshot */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div className="rounded-xl border border-border bg-card p-5">
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-2">
                 <Target className="h-3.5 w-3.5 text-primary" /> Target Outcome
@@ -205,7 +204,6 @@ const JourneyDashboard = () => {
               </div>
             </div>
 
-            {/* Progress Snapshot */}
             <div className="rounded-xl border border-border bg-card p-5">
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-2">
                 <TrendingUp className="h-3.5 w-3.5 text-primary" /> Progress Snapshot
@@ -224,7 +222,10 @@ const JourneyDashboard = () => {
                 </div>
               </div>
             </div>
+          </div>
 
+          {/* Row 2 — Capability Focus + Next Step */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             {/* Capability Focus */}
             <div className="rounded-xl border border-border bg-card p-5">
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-2">
@@ -273,31 +274,34 @@ const JourneyDashboard = () => {
               )}
             </div>
 
-            {/* Next Step */}
-            <div className="rounded-xl border border-border bg-card p-5 flex flex-col">
-              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-2">
-                <ArrowRight className="h-3.5 w-3.5 text-primary" /> Next Step
-              </h3>
-              <div className="flex-1">
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Next Session</p>
-                <p className="text-sm font-medium text-card-foreground mb-1">{journey.nextSession || "No upcoming session"}</p>
-                <p className="text-xs text-muted-foreground mb-4">Focus: {journey.focusArea} · ~20 min</p>
-              </div>
-              <div className="flex gap-2">
-                <Button onClick={() => navigate("/arena-session")} size="sm" className="flex-1">
-                  <Target className="mr-1.5 h-3.5 w-3.5" /> Continue Journey
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Mic className="h-3.5 w-3.5" />
+            {/* Next Step — visually emphasized */}
+            <div className="rounded-xl border-2 border-primary/30 bg-card p-5 flex flex-col relative overflow-hidden">
+              <div className="absolute inset-0 bg-primary/[0.03] pointer-events-none" />
+              <div className="relative z-10 flex flex-col h-full">
+                <h3 className="text-xs font-semibold text-primary uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <ArrowRight className="h-3.5 w-3.5" /> Next Step
+                </h3>
+                <div className="flex-1 space-y-3">
+                  <div>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Next Session</p>
+                    <p className="text-sm font-semibold text-card-foreground">{journey.nextSession || "No upcoming session"}</p>
+                  </div>
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                    <span className="flex items-center gap-1"><Zap className="h-3 w-3 text-primary" /> {journey.focusArea}</span>
+                    <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> ~20 min</span>
+                  </div>
+                </div>
+                <Button onClick={() => navigate("/arena-session")} className="w-full mt-4">
+                  <Target className="mr-1.5 h-4 w-4" /> Continue Journey
                 </Button>
               </div>
             </div>
           </div>
 
-          {/* Journey Milestones */}
-          <div className="rounded-xl border border-border bg-card p-5 mb-5">
+          {/* Row 3 — Journey Milestones (full width) */}
+          <div className="rounded-xl border border-border bg-card p-5 mb-4">
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Journey Milestones</h3>
-            <div className="space-y-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
               {journey.milestones.map((m, i) => (
                 <motion.div key={m.label} initial={{ opacity: 0, x: -4 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }} className="flex items-center gap-2.5">
                   {m.done ? <CheckSquare className="h-4 w-4 text-primary shrink-0" /> : <Square className="h-4 w-4 text-muted-foreground/40 shrink-0" />}
@@ -307,17 +311,17 @@ const JourneyDashboard = () => {
             </div>
           </div>
 
-          {/* Recommended Next */}
+          {/* Row 4 — Recommended Next (full width) */}
           <div className="rounded-xl border border-border bg-card p-4">
             <h3 className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-3 flex items-center gap-1.5">
               <Lightbulb className="h-3 w-3 text-primary" /> Recommended Next
             </h3>
-            <div className="space-y-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               {journey.recommendations.map((rec, i) => (
                 <button
                   key={i}
                   onClick={() => navigate(rec.action)}
-                  className="w-full text-left rounded-lg bg-muted/50 px-3 py-2.5 hover:bg-muted transition-colors flex items-center gap-3 group"
+                  className="text-left rounded-lg bg-muted/50 px-3 py-2.5 hover:bg-muted transition-colors flex items-center gap-3 group"
                 >
                   <rec.icon className="h-3.5 w-3.5 text-primary shrink-0" />
                   <div className="flex-1 min-w-0">
