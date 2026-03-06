@@ -15,7 +15,7 @@ export function GlobalContextBar({ pageTitle }: GlobalContextBarProps) {
     <header className="h-11 flex items-center border-b border-border px-4 gap-2.5 bg-background shrink-0">
       <SidebarTrigger />
 
-      {/* Arena | Page Title */}
+      {/* Page Title + Journey Context */}
       <div className="flex items-center gap-2 min-w-0">
         {isCollapsed && (
           <div className="flex items-center gap-1.5 shrink-0">
@@ -23,22 +23,20 @@ export function GlobalContextBar({ pageTitle }: GlobalContextBarProps) {
               <span className="text-primary-foreground font-display font-bold text-[10px]">A</span>
             </div>
             <span className="font-display font-semibold text-foreground text-sm tracking-tight">Arena</span>
+            <span className="text-border shrink-0 mx-0.5">|</span>
           </div>
         )}
         {pageTitle && (
-          <>
-            {isCollapsed && <span className="text-border shrink-0">|</span>}
-            <span className="text-sm font-medium text-foreground truncate">{pageTitle}</span>
-          </>
+          <span className="text-sm font-medium text-foreground shrink-0">{pageTitle}</span>
         )}
       </div>
 
       <div className="h-4 w-px bg-border mx-0.5 shrink-0" />
 
-      {/* Journey context */}
+      {/* Active journey context */}
       <div className="flex items-center gap-2 text-xs text-muted-foreground min-w-0">
-        <span className="truncate text-muted-foreground">Strategic Leadership</span>
-        <span className="shrink-0">3.1 → 4.0</span>
+        <span className="truncate font-medium text-foreground">Strategic Leadership</span>
+        <span className="shrink-0 text-muted-foreground">Level 3.1 → 4.0</span>
         <span className="flex items-center gap-0.5 text-primary shrink-0">
           <TrendingUp className="h-3 w-3" /> Rising
         </span>
