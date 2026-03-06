@@ -163,7 +163,7 @@ const JourneyCard = ({ journey, index, navigate }: { journey: Journey; index: nu
       transition={{ duration: 0.3, delay: index * 0.06 }}
       className="rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/40 hover:shadow-sm"
     >
-      <div className="cursor-pointer" onClick={() => navigate("/dashboard")}>
+      <div className="cursor-pointer" onClick={() => navigate(`/journey/${journey.id}`)}>
         <div className="flex items-start justify-between mb-3">
           <div className="min-w-0 mr-3">
             <h3 className="text-sm font-semibold text-card-foreground font-display leading-snug truncate">{journey.objective}</h3>
@@ -178,7 +178,10 @@ const JourneyCard = ({ journey, index, navigate }: { journey: Journey; index: nu
         </div>
         <p className="text-xs text-muted-foreground">Focus: <span className="text-card-foreground">{journey.focusArea}</span></p>
         {journey.nextSession && (
-          <p className="text-[10px] text-primary mt-2 flex items-center gap-1">
+          <p
+            className="text-[10px] text-primary mt-2 flex items-center gap-1 hover:underline"
+            onClick={(e) => { e.stopPropagation(); navigate("/arena-session"); }}
+          >
             <Target className="h-3 w-3" /> Next Session: <span className="font-medium">{journey.nextSession}</span>
           </p>
         )}
