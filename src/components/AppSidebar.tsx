@@ -1,4 +1,4 @@
-import { Home, Target, ListTodo, TrendingUp, BookOpen, User } from "lucide-react";
+import { Home, Target, Map, ListTodo, TrendingUp, BookOpen, User } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
   Sidebar,

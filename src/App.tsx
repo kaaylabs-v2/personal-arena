@@ -21,6 +21,7 @@ import Progress from "./pages/Progress";
 import Journal from "./pages/Journal";
 import NotFound from "./pages/NotFound";
 import StartingPoint from "./pages/StartingPoint";
+import SkillMap from "./pages/SkillMap";
 
 const queryClient = new QueryClient();
 
