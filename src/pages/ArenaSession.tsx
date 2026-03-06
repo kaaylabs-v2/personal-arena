@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -14,12 +14,12 @@ import {
   RotateCcw,
   Mic,
   MicOff,
-  ChevronDown,
 } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { SessionProgressIndicator } from "@/components/SessionProgressIndicator";
 import { SessionPath } from "@/components/SessionPath";
 import { ThinkingScaffold } from "@/components/ThinkingScaffold";
+import { ScrollHints } from "@/components/ScrollHints";
 
 const promptCategories = [
   { id: "clarify", label: "Clarify", icon: Eye },
