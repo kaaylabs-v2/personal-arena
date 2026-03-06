@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { SessionProgressIndicator } from "@/components/SessionProgressIndicator";
+import { SessionPath } from "@/components/SessionPath";
 
 const promptCategories = [
   { id: "clarify", label: "Clarify", icon: Eye },
@@ -80,6 +81,9 @@ const ArenaSession = () => {
             <div>
               <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1.5">Your Task</p>
               <p className="text-sm leading-relaxed text-surface-foreground/80">{scenario.task}</p>
+            </div>
+            <div className="pt-2 border-t border-border">
+              <SessionPath sessions={[]} currentSession={3} />
             </div>
           </div>
         </div>
