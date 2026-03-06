@@ -41,6 +41,8 @@ const ArenaSession = () => {
   const [response, setResponse] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const [activeCategory, setActiveCategory] = useState("clarify");
+  const [showScrollHint, setShowScrollHint] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<{ role: "arena" | "learner"; category: string; text: string }[]>([
     {
       role: "arena",
@@ -48,6 +50,26 @@ const ArenaSession = () => {
       text: "You've stated that distributed teams need more structured communication. Can you clarify what 'structured' means to you in practice?",
     },
   ]);
+
+  const checkScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const hasMore = el.scrollHeight - el.scrollTop - el.clientHeight > 20;
+    setShowScrollHint(hasMore);
+  }, []);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    checkScroll();
+    el.addEventListener("scroll", checkScroll);
+    const ro = new ResizeObserver(checkScroll);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener("scroll", checkScroll);
+      ro.disconnect();
+    };
+  }, [checkScroll]);
 
   const handleSubmit = () => {
     if (!response.trim()) return;
@@ -68,11 +90,11 @@ const ArenaSession = () => {
     <Layout pageTitle="Arena Session">
       <div className="flex flex-1 h-[calc(100vh-2.75rem)] overflow-hidden">
         {/* LEFT PANEL — Scenario */}
-        <div className="w-72 flex-shrink-0 border-r border-border bg-surface flex flex-col">
+        <div className="w-72 flex-shrink-0 border-r border-border bg-surface flex flex-col relative">
           <div className="px-5 py-4 border-b border-border">
             <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-medium">Scenario</h3>
           </div>
-          <div className="flex-1 overflow-auto px-5 py-4 space-y-5">
+          <div ref={scrollRef} className="flex-1 overflow-auto px-5 py-4 space-y-5 scrollbar-none">
             <div>
               <h4 className="text-sm font-semibold text-surface-foreground font-display">{scenario.title}</h4>
             </div>
@@ -86,6 +108,17 @@ const ArenaSession = () => {
             </div>
             <div className="pt-2 border-t border-border">
               <SessionPath currentSession={3} />
+            </div>
+          </div>
+          {/* Scroll hint */}
+          <div
+            className={`absolute bottom-0 left-0 right-0 pointer-events-none flex flex-col items-center transition-opacity duration-300 ${
+              showScrollHint ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <div className="h-8 w-full bg-gradient-to-t from-surface to-transparent" />
+            <div className="bg-surface pb-1.5">
+              <ChevronDown className="h-3.5 w-3.5 text-muted-foreground animate-bounce" />
             </div>
           </div>
         </div>
