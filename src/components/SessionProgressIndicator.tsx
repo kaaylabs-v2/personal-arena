@@ -1,12 +1,12 @@
 import { cn } from "@/lib/utils";
-import { Check } from "lucide-react";
+import { Check, Circle } from "lucide-react";
 
 const stages = [
-  { id: "clarify", label: "Clarify" },
-  { id: "challenge", label: "Challenge" },
-  { id: "evidence", label: "Evidence" },
-  { id: "alternative", label: "Alternatives" },
-  { id: "reflect", label: "Reflect" },
+  { id: "clarify", label: "Clarify", step: 1 },
+  { id: "challenge", label: "Challenge", step: 2 },
+  { id: "evidence", label: "Evidence", step: 3 },
+  { id: "alternative", label: "Alternatives", step: 4 },
+  { id: "reflect", label: "Reflect", step: 5 },
 ];
 
 interface SessionProgressIndicatorProps {
@@ -58,26 +58,37 @@ export const SessionProgressIndicator = ({
         />
       </div>
 
-      {/* Stage pills */}
-      <div className="flex items-center gap-1.5 px-5 py-2">
-        {stages.map((stage, i) => (
-          <div key={stage.id} className="flex items-center gap-1.5">
-            <span
-              className={cn(
-                "text-[10px] font-medium px-2.5 py-1 rounded-full transition-colors flex items-center gap-1",
-                i < activeIndex && "text-primary bg-primary/10",
-                i === activeIndex && "text-primary-foreground bg-primary shadow-sm",
-                i > activeIndex && "text-muted-foreground bg-muted/50"
+      {/* Stage pills — enhanced with step numbers and clear state indicators */}
+      <div className="flex items-center gap-0.5 px-5 py-2.5">
+        {stages.map((stage, i) => {
+          const isCompleted = i < activeIndex;
+          const isActive = i === activeIndex;
+          const isUpcoming = i > activeIndex;
+
+          return (
+            <div key={stage.id} className="flex items-center gap-0.5">
+              <span
+                className={cn(
+                  "text-[10px] font-medium px-3 py-1.5 rounded-full transition-all duration-300 flex items-center gap-1.5",
+                  isCompleted && "text-primary bg-primary/10 ring-1 ring-primary/20",
+                  isActive && "text-primary-foreground bg-primary shadow-sm shadow-primary/25 ring-1 ring-primary",
+                  isUpcoming && "text-muted-foreground bg-muted/40"
+                )}
+              >
+                {isCompleted && <Check className="h-3 w-3" />}
+                {isActive && <Circle className="h-2.5 w-2.5 fill-current" />}
+                {isUpcoming && <span className="text-[9px] opacity-50">{stage.step}</span>}
+                {stage.label}
+              </span>
+              {i < stages.length - 1 && (
+                <div className={cn(
+                  "w-4 h-px mx-0.5 transition-colors duration-300",
+                  isCompleted ? "bg-primary" : "bg-border"
+                )} />
               )}
-            >
-              {i < activeIndex && <Check className="h-2.5 w-2.5" />}
-              {stage.label}
-            </span>
-            {i < stages.length - 1 && (
-              <span className={cn("text-[10px]", i < activeIndex ? "text-primary" : "text-muted-foreground/30")}>→</span>
-            )}
-          </div>
-        ))}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
