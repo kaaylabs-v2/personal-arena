@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { InsightBanner } from "@/components/InsightBanner";
-import { Lightbulb, HelpCircle } from "lucide-react";
+import { HelpCircle, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+
+const STORAGE_KEY = "arena-session-notes";
 
 const stageData: Record<
   string,
@@ -56,17 +58,65 @@ const stageData: Record<
   },
 };
 
+type SaveStatus = "idle" | "saving" | "saved";
+
+function loadNotes(): Record<string, string> {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return { assumptions: "", evidence: "", alternatives: "", notes: "" };
+}
+
+function persistNotes(notes: Record<string, string>) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+}
+
 interface ThinkingScaffoldProps {
   activeStage: string;
 }
 
 export const ThinkingScaffold = ({ activeStage }: ThinkingScaffoldProps) => {
-  const [notes, setNotes] = useState<Record<string, string>>({
-    assumptions: "",
-    evidence: "",
-    alternatives: "",
-    notes: "",
-  });
+  const [notes, setNotes] = useState<Record<string, string>>(loadNotes);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const savedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const doSave = useCallback((current: Record<string, string>) => {
+    setSaveStatus("saving");
+    persistNotes(current);
+    setTimeout(() => {
+      setSaveStatus("saved");
+      savedTimerRef.current = setTimeout(() => setSaveStatus("idle"), 2000);
+    }, 300);
+  }, []);
+
+  const handleChange = useCallback((tab: string, value: string) => {
+    setNotes((prev) => {
+      const next = { ...prev, [tab]: value };
+      // Clear previous timers
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      if (savedTimerRef.current) clearTimeout(savedTimerRef.current);
+      setSaveStatus("saving");
+      debounceRef.current = setTimeout(() => doSave(next), 2000);
+      return next;
+    });
+  }, [doSave]);
+
+  const handleBlur = useCallback(() => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+      debounceRef.current = null;
+    }
+    doSave(notes);
+  }, [notes, doSave]);
+
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      if (savedTimerRef.current) clearTimeout(savedTimerRef.current);
+    };
+  }, []);
 
   const current = stageData[activeStage] ?? stageData.clarify;
 
@@ -148,12 +198,30 @@ export const ThinkingScaffold = ({ activeStage }: ThinkingScaffoldProps) => {
               <TabsContent key={tab} value={tab} className="flex-1 px-4 py-3">
                 <Textarea
                   value={notes[tab]}
-                  onChange={(e) =>
-                    setNotes((prev) => ({ ...prev, [tab]: e.target.value }))
-                  }
+                  onChange={(e) => handleChange(tab, e.target.value)}
+                  onBlur={handleBlur}
                   placeholder={`Jot down your ${tab}...`}
                   className="min-h-[120px] resize-none bg-card border-border text-sm"
                 />
+                <AnimatePresence mode="wait">
+                  {saveStatus !== "idle" && (
+                    <motion.p
+                      key={saveStatus}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="mt-1.5 text-[10px] text-muted-foreground flex items-center gap-1"
+                    >
+                      {saveStatus === "saving" && "Saving..."}
+                      {saveStatus === "saved" && (
+                        <>
+                          <Check className="h-3 w-3 text-primary" />
+                          Saved
+                        </>
+                      )}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
               </TabsContent>
             )
           )}
