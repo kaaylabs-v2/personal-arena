@@ -2,7 +2,8 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { InsightBanner } from "@/components/InsightBanner";
-import { HelpCircle, Check } from "lucide-react";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
+import { HelpCircle, Check, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const STORAGE_KEY = "arena-session-notes";
