@@ -80,6 +80,7 @@ interface ThinkingScaffoldProps {
 export const ThinkingScaffold = ({ activeStage }: ThinkingScaffoldProps) => {
   const [notes, setNotes] = useState<Record<string, string>>(loadNotes);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
+  const [summaryOpen, setSummaryOpen] = useState(true);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const savedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -118,6 +119,19 @@ export const ThinkingScaffold = ({ activeStage }: ThinkingScaffoldProps) => {
       if (savedTimerRef.current) clearTimeout(savedTimerRef.current);
     };
   }, []);
+
+  const renderSummaryItems = (text: string): string[] => {
+    return text
+      .split("\n")
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0);
+  };
+
+  const hasSummaryContent =
+    notes.assumptions?.trim() ||
+    notes.evidence?.trim() ||
+    notes.alternatives?.trim() ||
+    notes.notes?.trim();
 
   const current = stageData[activeStage] ?? stageData.clarify;
 
