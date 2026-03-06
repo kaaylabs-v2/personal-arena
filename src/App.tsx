@@ -49,6 +49,7 @@ const App = () => (
           <Route path="/next-mastery" element={<NextMastery />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/starting-point" element={<StartingPoint />} />
+          <Route path="/skill-map" element={<SkillMap />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
