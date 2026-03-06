@@ -5,6 +5,7 @@ import { InsightBanner } from "@/components/InsightBanner";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import { HelpCircle, Check, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { ScrollHints } from "@/components/ScrollHints";
 
 const STORAGE_KEY = "arena-session-notes";
 
