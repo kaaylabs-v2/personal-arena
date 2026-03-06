@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Layout } from "@/components/Layout";
 import { BookOpen, Flag, ChevronRight, X, RotateCcw, AlertTriangle } from "lucide-react";
-import { PageHeader } from "@/components/PageHeader";
+
 import { Badge } from "@/components/ui/badge";
 
 interface JournalEntry {
@@ -118,10 +118,9 @@ const Journal = () => {
   const [activeTab, setActiveTab] = useState<ScaffoldTab>("Assumptions");
 
   return (
-    <Layout>
+    <Layout pageTitle="Decision Journal">
       <div className="max-w-5xl mx-auto px-6 py-4">
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-          <PageHeader title="Decision Journal" subtitle="Reflect on your reasoning over time" />
 
           <AnimatePresence mode="wait">
             {selectedEntry ? (

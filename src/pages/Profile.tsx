@@ -4,14 +4,13 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Layout } from "@/components/Layout";
-import { PageHeader } from "@/components/PageHeader";
+
 
 const Profile = () => {
   return (
-    <Layout>
+    <Layout pageTitle="Profile">
       <div className="max-w-xl mx-auto px-6 py-4">
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-          <PageHeader title="Profile" subtitle="Privacy, voice, and notification settings" />
 
           <section className="mb-8">
             <h2 className="text-sm font-semibold text-foreground mb-4">Privacy Defaults</h2>

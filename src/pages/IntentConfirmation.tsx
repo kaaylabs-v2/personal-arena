@@ -10,7 +10,7 @@ const IntentConfirmation = () => {
   const { intent } = (location.state as { intent?: string }) || {};
 
   return (
-    <Layout>
+    <Layout pageTitle="Intent">
       <div className="max-w-xl mx-auto px-6 py-16">
         <motion.div
           initial={{ opacity: 0, y: 8 }}

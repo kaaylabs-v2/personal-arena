@@ -10,7 +10,7 @@ const Completion = () => {
   const [notifyOrg, setNotifyOrg] = useState<string | null>(null);
 
   return (
-    <Layout>
+    <Layout pageTitle="Completion">
       <div className="max-w-xl mx-auto px-6 py-16 text-center">
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}>
           <div className="h-16 w-16 rounded-2xl bg-accent flex items-center justify-center mx-auto mb-6">

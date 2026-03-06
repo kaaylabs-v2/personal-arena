@@ -48,7 +48,7 @@ const Assessment = () => {
   };
 
   return (
-    <Layout>
+    <Layout pageTitle="Assessment">
       <div className="max-w-2xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between mb-8">
           <p className="text-sm text-muted-foreground">
