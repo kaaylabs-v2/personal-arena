@@ -291,7 +291,7 @@ const JourneyDashboard = () => {
                     <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> ~20 min</span>
                   </div>
                 </div>
-                <Button onClick={() => navigate("/arena-session")} className="w-full mt-4">
+                <Button onClick={() => navigate(`/arena/session/${journey.nextSession ? journey.nextSession.toLowerCase().replace(/\s+/g, '-') : 'next'}-01`)} className="w-full mt-4">
                   <Target className="mr-1.5 h-4 w-4" /> Continue Journey
                 </Button>
               </div>

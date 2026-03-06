@@ -180,7 +180,7 @@ const JourneyCard = ({ journey, index, navigate }: { journey: Journey; index: nu
         {journey.nextSession && (
           <p
             className="text-[10px] text-primary mt-2 flex items-center gap-1 hover:underline"
-            onClick={(e) => { e.stopPropagation(); navigate("/arena-session"); }}
+            onClick={(e) => { e.stopPropagation(); navigate(`/arena/session/${journey.nextSession ? journey.nextSession.toLowerCase().replace(/\s+/g, '-') : 'next'}-01`); }}
           >
             <Target className="h-3 w-3" /> Next Session: <span className="font-medium">{journey.nextSession}</span>
           </p>
