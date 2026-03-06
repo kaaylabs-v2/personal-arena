@@ -31,18 +31,27 @@ export function ScrollHints({ children, className = "" }: ScrollHintsProps) {
     };
   }, [checkScroll]);
 
+  const scrollBy = (dir: "up" | "down") => {
+    scrollRef.current?.scrollBy({ top: dir === "up" ? -120 : 120, behavior: "smooth" });
+  };
+
   return (
     <div className="relative flex-1 min-h-0">
       {/* Up hint */}
       <div
-        className={`absolute top-0 left-0 right-0 z-10 pointer-events-none flex flex-col items-center transition-opacity duration-300 ${
-          canScrollUp ? "opacity-100" : "opacity-0"
+        className={`absolute top-0 left-0 right-0 z-10 flex flex-col items-center transition-opacity duration-300 ${
+          canScrollUp ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       >
-        <div className="pt-1">
+        <button
+          onClick={() => scrollBy("up")}
+          className="w-full flex flex-col items-center cursor-pointer pt-1 pb-0 bg-transparent border-none"
+          tabIndex={-1}
+          aria-label="Scroll up"
+        >
           <ChevronUp className="h-3.5 w-3.5 text-muted-foreground animate-bounce" />
-        </div>
-        <div className="h-6 w-full bg-gradient-to-b from-surface to-transparent" />
+        </button>
+        <div className="h-4 w-full bg-gradient-to-b from-surface to-transparent pointer-events-none" />
       </div>
 
       <div
@@ -54,14 +63,19 @@ export function ScrollHints({ children, className = "" }: ScrollHintsProps) {
 
       {/* Down hint */}
       <div
-        className={`absolute bottom-0 left-0 right-0 z-10 pointer-events-none flex flex-col items-center transition-opacity duration-300 ${
-          canScrollDown ? "opacity-100" : "opacity-0"
+        className={`absolute bottom-0 left-0 right-0 z-10 flex flex-col items-center transition-opacity duration-300 ${
+          canScrollDown ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       >
-        <div className="h-6 w-full bg-gradient-to-t from-surface to-transparent" />
-        <div className="pb-1">
+        <div className="h-4 w-full bg-gradient-to-t from-surface to-transparent pointer-events-none" />
+        <button
+          onClick={() => scrollBy("down")}
+          className="w-full flex flex-col items-center cursor-pointer pb-1 pt-0 bg-transparent border-none"
+          tabIndex={-1}
+          aria-label="Scroll down"
+        >
           <ChevronDown className="h-3.5 w-3.5 text-muted-foreground animate-bounce" />
-        </div>
+        </button>
       </div>
     </div>
   );
