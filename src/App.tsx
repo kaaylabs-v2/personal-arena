@@ -42,6 +42,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/journey/:journeyId" element={<JourneyDashboard />} />
           <Route path="/arena-session" element={<ArenaSession />} />
+          <Route path="/arena/session/:sessionId" element={<ArenaSession />} />
           <Route path="/session-summary" element={<SessionSummary />} />
           <Route path="/session-insight" element={<SessionInsight />} />
           <Route path="/sessions" element={<Sessions />} />

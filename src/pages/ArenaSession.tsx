@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -38,6 +38,7 @@ const scenario = {
 
 const ArenaSession = () => {
   const navigate = useNavigate();
+  const { sessionId } = useParams<{ sessionId: string }>();
   const [response, setResponse] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const [activeCategory, setActiveCategory] = useState("clarify");
