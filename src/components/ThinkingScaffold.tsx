@@ -144,7 +144,7 @@ export const ThinkingScaffold = ({ activeStage }: ThinkingScaffoldProps) => {
         </h3>
       </div>
 
-      <div className="flex-1 overflow-auto">
+      <ScrollHints>
         {/* AI Insight */}
         <AnimatePresence mode="wait">
           <motion.div
@@ -332,7 +332,7 @@ export const ThinkingScaffold = ({ activeStage }: ThinkingScaffoldProps) => {
             </Collapsible>
           </div>
         )}
-      </div>
+      </ScrollHints>
     </div>
   );
 };
