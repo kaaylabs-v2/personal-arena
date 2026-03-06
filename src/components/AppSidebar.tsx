@@ -1,4 +1,4 @@
-import { Home, Target, ListTodo, TrendingUp, BookOpen, User } from "lucide-react";
+import { Home, Target, Map, ListTodo, TrendingUp, BookOpen, User } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
   Sidebar,
@@ -14,6 +14,7 @@ import {
 const navItems = [
   { title: "Home", url: "/", icon: Home },
   { title: "Arena Sessions", url: "/sessions", icon: Target },
+  { title: "Skill Map", url: "/skill-map", icon: Map },
   { title: "Practice", url: "/tasks", icon: ListTodo },
   { title: "Progress", url: "/progress", icon: TrendingUp },
   { title: "Journal", url: "/journal", icon: BookOpen },
