@@ -1,19 +1,72 @@
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Layout } from "@/components/Layout";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown, Plus, CheckCircle2, Lightbulb, Target, BookOpen, Shield, Building2, Sparkles } from "lucide-react";
 import { InsightBanner } from "@/components/InsightBanner";
+import { useState } from "react";
 
-const assignedJourneys = [
-  { id: "a1", objective: "Strategic Decision Making for Senior Leaders", domain: "Leadership", currentLevel: 1.6, targetLevel: 4.0, progress: 18, focusArea: "Evidence-based reasoning", assignedBy: "Nexus Studio", nextSession: "Evidence Mapping" },
-  { id: "a2", objective: "Cross-Functional Stakeholder Alignment", domain: "Communication", currentLevel: 2.0, targetLevel: 3.5, progress: 35, focusArea: "Influence without authority", assignedBy: "Nexus Studio", nextSession: null },
+type SessionStatus = "completed" | "current" | "upcoming";
+
+interface JourneySession {
+  title: string;
+  order: number;
+  status: SessionStatus;
+}
+
+interface Journey {
+  id: string;
+  objective: string;
+  domain: string;
+  currentLevel: number;
+  targetLevel: number;
+  progress: number;
+  focusArea: string;
+  nextSession?: string | null;
+  assignedBy?: string;
+  sessions: JourneySession[];
+}
+
+const makeSessions = (titles: string[], currentIndex: number): JourneySession[] =>
+  titles.map((title, i) => ({
+    title,
+    order: i,
+    status: i < currentIndex ? "completed" : i === currentIndex ? "current" : "upcoming",
+  }));
+
+const assignedJourneys: Journey[] = [
+  {
+    id: "a1", objective: "Strategic Decision Making for Senior Leaders", domain: "Leadership",
+    currentLevel: 1.6, targetLevel: 4.0, progress: 18, focusArea: "Evidence-based reasoning",
+    assignedBy: "Nexus Studio", nextSession: "Evidence Mapping",
+    sessions: makeSessions(["Decision Frameworks", "Cognitive Bias Awareness", "Evidence Mapping", "Scenario Analysis", "Stakeholder Impact", "Risk Assessment", "Strategic Trade-offs", "Integrated Decision Scenario"], 2),
+  },
+  {
+    id: "a2", objective: "Cross-Functional Stakeholder Alignment", domain: "Communication",
+    currentLevel: 2.0, targetLevel: 3.5, progress: 35, focusArea: "Influence without authority",
+    assignedBy: "Nexus Studio", nextSession: null,
+    sessions: makeSessions(["Stakeholder Mapping", "Influence Strategies", "Negotiation Tactics", "Conflict Resolution", "Alignment Facilitation", "Cross-team Synthesis"], 2),
+  },
 ];
 
-const personalJourneys = [
-  { id: "1", objective: "Lead Distributed Teams Effectively", domain: "Leadership", currentLevel: 2.2, targetLevel: 4.0, progress: 45, focusArea: "Cross-team alignment", nextSession: "Async Decision Protocol" },
-  { id: "2", objective: "Make Data-Driven Decisions Under Uncertainty", domain: "Decision Making", currentLevel: 1.8, targetLevel: 3.5, progress: 22, focusArea: "Evidence evaluation", nextSession: null },
-  { id: "3", objective: "Present Strategy to Senior Stakeholders", domain: "Communication", currentLevel: 2.5, targetLevel: 4.0, progress: 60, focusArea: "Narrative structure", nextSession: "Board Presentation Drill" },
+const personalJourneys: Journey[] = [
+  {
+    id: "1", objective: "Lead Distributed Teams Effectively", domain: "Leadership",
+    currentLevel: 2.2, targetLevel: 4.0, progress: 45, focusArea: "Cross-team alignment",
+    nextSession: "Distributed Team Communication",
+    sessions: makeSessions(["Communication Cadence", "Async Decision Protocols", "Distributed Team Communication", "Stakeholder Escalation", "Evidence Mapping", "Conflicting Priorities", "Resource Trade-offs", "Risk Communication", "Cross-team Alignment", "Executive Summary Framing", "Adaptive Messaging", "Integrated Scenario"], 2),
+  },
+  {
+    id: "2", objective: "Make Data-Driven Decisions Under Uncertainty", domain: "Decision Making",
+    currentLevel: 1.8, targetLevel: 3.5, progress: 22, focusArea: "Evidence evaluation", nextSession: null,
+    sessions: makeSessions(["Data Literacy Foundations", "Statistical Reasoning", "Uncertainty Quantification", "Bayesian Thinking", "Decision Under Ambiguity", "Evidence Synthesis", "Integrated Analysis"], 1),
+  },
+  {
+    id: "3", objective: "Present Strategy to Senior Stakeholders", domain: "Communication",
+    currentLevel: 2.5, targetLevel: 4.0, progress: 60, focusArea: "Narrative structure",
+    nextSession: "Board Presentation Drill",
+    sessions: makeSessions(["Narrative Foundations", "Data Storytelling", "Audience Calibration", "Board Presentation Drill", "Objection Handling", "Executive Presence", "High-Stakes Pitch"], 3),
+  },
 ];
 
 const completedJourneys = [
@@ -36,39 +89,116 @@ const CircularBadge = ({ progress }: { progress: number }) => {
   );
 };
 
-interface JourneyCardProps {
-  journey: { id: string; objective: string; domain: string; currentLevel: number; targetLevel: number; progress: number; focusArea: string; nextSession?: string | null };
-  index: number;
-  navigate: (path: string) => void;
-}
-
-const JourneyCard = ({ journey, index, navigate }: JourneyCardProps) => (
+const SessionTimeline = ({ sessions, navigate }: { sessions: JourneySession[]; navigate: (path: string) => void }) => (
   <motion.div
-    key={journey.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.3, delay: index * 0.06 }}
-    onClick={() => navigate("/dashboard")}
-    className="rounded-xl border border-border bg-card p-5 cursor-pointer transition-colors hover:border-primary/40 hover:shadow-sm"
+    initial={{ opacity: 0, height: 0 }}
+    animate={{ opacity: 1, height: "auto" }}
+    exit={{ opacity: 0, height: 0 }}
+    transition={{ duration: 0.25 }}
+    className="overflow-hidden"
   >
-    <div className="flex items-start justify-between mb-3">
-      <div className="min-w-0 mr-3">
-        <h3 className="text-sm font-semibold text-card-foreground font-display leading-snug truncate">{journey.objective}</h3>
-        <span className="text-xs text-muted-foreground">{journey.domain}</span>
+    <div className="pt-3 mt-3 border-t border-border">
+      <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2">Session Path</p>
+      <div className="space-y-0">
+        {sessions.map((s, i) => {
+          const isClickable = s.status === "completed" || s.status === "current";
+          return (
+            <div
+              key={i}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (isClickable) navigate(s.status === "current" ? "/arena-session" : "/session-summary");
+              }}
+              className={`flex items-start gap-2.5 py-1 ${isClickable ? "cursor-pointer group" : "cursor-default"}`}
+            >
+              {/* Connector line + icon */}
+              <div className="flex flex-col items-center w-4 flex-shrink-0">
+                {s.status === "completed" ? (
+                  <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
+                ) : s.status === "current" ? (
+                  <div className="h-3.5 w-3.5 rounded-full border-2 border-primary bg-primary/20" />
+                ) : (
+                  <div className="h-3.5 w-3.5 rounded-full border-2 border-muted-foreground/30" />
+                )}
+                {i < sessions.length - 1 && (
+                  <div className={`w-px flex-1 min-h-[8px] ${s.status === "completed" ? "bg-primary/40" : "bg-border"}`} />
+                )}
+              </div>
+              {/* Label */}
+              <span className={`text-xs leading-tight -mt-0.5 ${
+                s.status === "completed"
+                  ? "text-muted-foreground group-hover:text-primary transition-colors"
+                  : s.status === "current"
+                  ? "text-foreground font-medium group-hover:text-primary transition-colors"
+                  : "text-muted-foreground/50"
+              }`}>
+                {s.title}
+                {s.status === "current" && <span className="text-primary text-[10px] ml-1.5">(Current)</span>}
+              </span>
+            </div>
+          );
+        })}
       </div>
-      <CircularBadge progress={journey.progress} />
+      <div className="flex items-center gap-3 mt-2 pt-2 border-t border-border/50">
+        {[
+          { icon: "✓", label: "Completed", cls: "text-primary" },
+          { icon: "●", label: "Current", cls: "text-primary" },
+          { icon: "○", label: "Upcoming", cls: "text-muted-foreground/50" },
+        ].map((l) => (
+          <span key={l.label} className="text-[9px] text-muted-foreground flex items-center gap-1">
+            <span className={l.cls}>{l.icon}</span> {l.label}
+          </span>
+        ))}
+      </div>
     </div>
-    <div className="flex items-center gap-4 text-xs text-muted-foreground mb-2">
-      <span>Current <strong className="text-card-foreground">{journey.currentLevel}</strong></span>
-      <span>→</span>
-      <span>Target <strong className="text-primary">{journey.targetLevel}</strong></span>
-    </div>
-    <p className="text-xs text-muted-foreground">Focus: <span className="text-card-foreground">{journey.focusArea}</span></p>
-    {journey.nextSession && (
-      <p className="text-[10px] text-primary mt-2 flex items-center gap-1">
-        <Target className="h-3 w-3" /> Next Session: <span className="font-medium">{journey.nextSession}</span>
-      </p>
-    )}
   </motion.div>
 );
+
+const JourneyCard = ({ journey, index, navigate }: { journey: Journey; index: number; navigate: (path: string) => void }) => {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <motion.div
+      key={journey.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: index * 0.06 }}
+      className="rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/40 hover:shadow-sm"
+    >
+      <div className="cursor-pointer" onClick={() => navigate("/dashboard")}>
+        <div className="flex items-start justify-between mb-3">
+          <div className="min-w-0 mr-3">
+            <h3 className="text-sm font-semibold text-card-foreground font-display leading-snug truncate">{journey.objective}</h3>
+            <span className="text-xs text-muted-foreground">{journey.domain}</span>
+          </div>
+          <CircularBadge progress={journey.progress} />
+        </div>
+        <div className="flex items-center gap-4 text-xs text-muted-foreground mb-2">
+          <span>Current <strong className="text-card-foreground">{journey.currentLevel}</strong></span>
+          <span>→</span>
+          <span>Target <strong className="text-primary">{journey.targetLevel}</strong></span>
+        </div>
+        <p className="text-xs text-muted-foreground">Focus: <span className="text-card-foreground">{journey.focusArea}</span></p>
+        {journey.nextSession && (
+          <p className="text-[10px] text-primary mt-2 flex items-center gap-1">
+            <Target className="h-3 w-3" /> Next Session: <span className="font-medium">{journey.nextSession}</span>
+          </p>
+        )}
+      </div>
+
+      {/* Expand toggle */}
+      <button
+        onClick={(e) => { e.stopPropagation(); setExpanded(!expanded); }}
+        className="mt-3 flex items-center gap-1 text-[10px] uppercase tracking-wider text-muted-foreground hover:text-primary transition-colors"
+      >
+        Session Path
+        <ChevronDown className={`h-3 w-3 transition-transform ${expanded ? "rotate-180" : ""}`} />
+      </button>
+
+      <AnimatePresence>
+        {expanded && <SessionTimeline sessions={journey.sessions} navigate={navigate} />}
+      </AnimatePresence>
+    </motion.div>
+  );
+};
 
 const Sessions = () => {
   const navigate = useNavigate();
@@ -87,7 +217,6 @@ const Sessions = () => {
                 <h2 className="text-xs font-semibold uppercase tracking-wider text-primary">AI Coach</h2>
               </div>
 
-              {/* Mastery Readiness */}
               <div className="rounded-xl border border-border bg-card p-4">
                 <h3 className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-3">Mastery Readiness</h3>
                 <div className="grid grid-cols-2 gap-3">
@@ -105,7 +234,6 @@ const Sessions = () => {
                 </div>
               </div>
 
-              {/* AI Insight Panels */}
               <InsightBanner title="Plateau Detected">
                 Your <span className="text-foreground font-medium">Evidence Evaluation</span> has plateaued over the last 4 sessions.
                 Try a <span className="text-foreground font-medium">Challenge-focused</span> scenario to strengthen this skill.
@@ -125,7 +253,6 @@ const Sessions = () => {
                 </motion.div>
               )}
 
-              {/* Recommended Next */}
               <div className="rounded-xl border border-border bg-card p-4">
                 <h3 className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-3 flex items-center gap-1.5">
                   <Lightbulb className="h-3 w-3 text-primary" /> Recommended Next
@@ -155,7 +282,6 @@ const Sessions = () => {
             {/* RIGHT: Mastery Journey Workspace */}
             <div className="flex-1 min-w-0 space-y-6">
 
-              {/* Mandated Mastery */}
               {assignedJourneys.length > 0 && (
                 <div>
                   <div className="mb-3">
@@ -172,7 +298,6 @@ const Sessions = () => {
                 </div>
               )}
 
-              {/* Self-Initiated Mastery */}
               <div>
                 <div className="mb-3">
                   <h2 className="text-sm font-semibold text-card-foreground">Self-Initiated Mastery</h2>
@@ -182,8 +307,6 @@ const Sessions = () => {
                   {personalJourneys.map((journey, i) => (
                     <JourneyCard key={journey.id} journey={journey} index={i} navigate={navigate} />
                   ))}
-
-                  {/* Start New Card */}
                   <motion.div
                     initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: personalJourneys.length * 0.06 }}
@@ -196,7 +319,6 @@ const Sessions = () => {
                 </div>
               </div>
 
-              {/* Completed Journeys */}
               <Collapsible>
                 <CollapsibleTrigger className="flex items-center justify-between w-full text-sm font-semibold text-muted-foreground hover:text-card-foreground transition-colors group">
                   <span className="flex items-center gap-2">
