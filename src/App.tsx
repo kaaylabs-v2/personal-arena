@@ -45,6 +45,7 @@ const App = () => (
           <Route path="/completion" element={<Completion />} />
           <Route path="/next-mastery" element={<NextMastery />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/starting-point" element={<StartingPoint />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
