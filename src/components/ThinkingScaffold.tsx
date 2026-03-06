@@ -5,6 +5,7 @@ import { InsightBanner } from "@/components/InsightBanner";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import { HelpCircle, Check, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { ScrollHints } from "@/components/ScrollHints";
 
 const STORAGE_KEY = "arena-session-notes";
 
@@ -143,7 +144,7 @@ export const ThinkingScaffold = ({ activeStage }: ThinkingScaffoldProps) => {
         </h3>
       </div>
 
-      <div className="flex-1 overflow-auto">
+      <ScrollHints>
         {/* AI Insight */}
         <AnimatePresence mode="wait">
           <motion.div
@@ -331,7 +332,7 @@ export const ThinkingScaffold = ({ activeStage }: ThinkingScaffoldProps) => {
             </Collapsible>
           </div>
         )}
-      </div>
+      </ScrollHints>
     </div>
   );
 };
