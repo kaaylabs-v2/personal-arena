@@ -8,8 +8,8 @@ interface SessionEntry {
 }
 
 interface SessionPathProps {
-  sessions: SessionEntry[];
-  currentSession: number;
+  sessions?: SessionEntry[];
+  currentSession?: number;
 }
 
 const defaultSessions: SessionEntry[] = [
