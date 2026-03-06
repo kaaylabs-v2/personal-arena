@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Send,
   Pause,
@@ -18,6 +17,7 @@ import {
 import { Layout } from "@/components/Layout";
 import { SessionProgressIndicator } from "@/components/SessionProgressIndicator";
 import { SessionPath } from "@/components/SessionPath";
+import { ThinkingScaffold } from "@/components/ThinkingScaffold";
 
 const promptCategories = [
   { id: "clarify", label: "Clarify", icon: Eye },
@@ -174,27 +174,7 @@ const ArenaSession = () => {
         </div>
 
         {/* RIGHT PANEL — Thinking Scaffold */}
-        <div className="w-80 flex-shrink-0 flex flex-col border-l border-border bg-surface">
-          <div className="px-4 py-4 border-b border-border">
-            <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-medium">Thinking Scaffold</h3>
-          </div>
-          <Tabs defaultValue="assumptions" className="flex-1 flex flex-col">
-            <TabsList className="mx-4 mt-3 bg-muted">
-              <TabsTrigger value="assumptions" className="text-xs">Assumptions</TabsTrigger>
-              <TabsTrigger value="evidence" className="text-xs">Evidence</TabsTrigger>
-              <TabsTrigger value="alternatives" className="text-xs">Alternatives</TabsTrigger>
-              <TabsTrigger value="notes" className="text-xs">Notes</TabsTrigger>
-            </TabsList>
-            {["assumptions", "evidence", "alternatives", "notes"].map((tab) => (
-              <TabsContent key={tab} value={tab} className="flex-1 px-4 py-3">
-                <Textarea
-                  placeholder={`Jot down your ${tab}...`}
-                  className="h-full resize-none bg-card border-border text-sm"
-                />
-              </TabsContent>
-            ))}
-          </Tabs>
-        </div>
+        <ThinkingScaffold activeStage={activeCategory} />
       </div>
     </Layout>
   );
