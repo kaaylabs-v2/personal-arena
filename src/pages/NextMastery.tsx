@@ -8,7 +8,7 @@ const NextMastery = () => {
   const navigate = useNavigate();
 
   return (
-    <Layout>
+    <Layout pageTitle="Next Mastery">
       <div className="max-w-md mx-auto px-6 py-20 text-center">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           <div className="h-14 w-14 rounded-2xl bg-accent flex items-center justify-center mx-auto mb-6">

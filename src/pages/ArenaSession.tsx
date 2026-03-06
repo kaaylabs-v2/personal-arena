@@ -62,8 +62,8 @@ const ArenaSession = () => {
   };
 
   return (
-    <Layout>
-      <div className="flex flex-1 h-[calc(100vh-3.5rem)] overflow-hidden">
+    <Layout pageTitle="Arena Session">
+      <div className="flex flex-1 h-[calc(100vh-2.75rem)] overflow-hidden">
         {/* LEFT PANEL — Scenario */}
         <div className="w-72 flex-shrink-0 border-r border-border bg-surface flex flex-col">
           <div className="px-5 py-4 border-b border-border">

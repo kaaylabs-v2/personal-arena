@@ -7,7 +7,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { useState } from "react";
 import { InsightBanner } from "@/components/InsightBanner";
 import { MasteryCompletion } from "@/components/MasteryCompletion";
-import { PageHeader } from "@/components/PageHeader";
+
 
 const capabilities = [
   { name: "Clarity", progress: 55, type: "strength" },
@@ -35,21 +35,9 @@ const Dashboard = () => {
   const focusAreas = capabilities.filter((c) => c.type === "focus");
 
   return (
-    <Layout>
+    <Layout pageTitle="Journey Dashboard">
       <div className="max-w-5xl mx-auto px-6 py-4">
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-          <PageHeader title="Journey Dashboard" subtitle="Track your active mastery journey progress">
-            <div className="relative h-12 w-12 flex-shrink-0">
-              <svg className="h-12 w-12 -rotate-90" viewBox="0 0 48 48">
-                <circle cx="24" cy="24" r="20" fill="none" stroke="hsl(var(--muted))" strokeWidth="3" />
-                <motion.circle cx="24" cy="24" r="20" fill="none" stroke="hsl(var(--primary))" strokeWidth="3" strokeLinecap="round"
-                  strokeDasharray={2 * Math.PI * 20} initial={{ strokeDashoffset: 2 * Math.PI * 20 }}
-                  animate={{ strokeDashoffset: 2 * Math.PI * 20 * (1 - 0.45) }} transition={{ duration: 1 }}
-                />
-              </svg>
-              <span className="absolute inset-0 flex items-center justify-center text-[10px] font-display font-bold text-primary">45%</span>
-            </div>
-          </PageHeader>
 
           {/* Mastery Completion (conditional) */}
           {showMasteryCompletion && (

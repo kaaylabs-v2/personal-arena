@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BarChart3, Calendar, Clock, Target, TrendingUp } from "lucide-react";
 import { Layout } from "@/components/Layout";
-import { PageHeader } from "@/components/PageHeader";
+
 
 const dimensions = [
   { name: "Clarity of Thinking", current: 2.4, target: 4.0 },
@@ -17,10 +17,9 @@ const MasteryPlan = () => {
   const navigate = useNavigate();
 
   return (
-    <Layout>
+    <Layout pageTitle="Mastery Plan">
       <div className="max-w-2xl mx-auto px-6 py-4">
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-          <PageHeader title="Mastery Plan" subtitle="Based on your baseline assessment, here's your tailored path." />
 
           <div className="grid grid-cols-2 gap-3 mb-8">
             {[

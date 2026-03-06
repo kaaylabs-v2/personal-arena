@@ -5,7 +5,7 @@ import { TrendingUp, Target, Zap, BarChart3 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MasteryCompletion } from "@/components/MasteryCompletion";
-import { PageHeader } from "@/components/PageHeader";
+
 
 const journeys = [
   { id: "all", name: "All Journeys" },
@@ -98,10 +98,10 @@ const Progress = () => {
   const showMasteryCompletion = false;
 
   return (
-    <Layout>
+    <Layout pageTitle="Progress">
       <div className="max-w-5xl mx-auto px-6 py-4">
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-          <PageHeader title="Progress" subtitle="Capability growth across your mastery journeys">
+          <div className="flex items-center justify-end mb-4">
             <Select value={selectedJourney} onValueChange={setSelectedJourney}>
               <SelectTrigger className="w-[180px] h-8 text-xs"><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -110,7 +110,7 @@ const Progress = () => {
                 ))}
               </SelectContent>
             </Select>
-          </PageHeader>
+          </div>
 
           {/* Mastery Completion (conditional) */}
           {showMasteryCompletion && (
