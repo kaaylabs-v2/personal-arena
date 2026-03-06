@@ -83,7 +83,7 @@ const ArenaSession = () => {
               <p className="text-sm leading-relaxed text-surface-foreground/80">{scenario.task}</p>
             </div>
             <div className="pt-2 border-t border-border">
-              <SessionPath sessions={[]} currentSession={3} />
+              <SessionPath currentSession={3} />
             </div>
           </div>
         </div>
