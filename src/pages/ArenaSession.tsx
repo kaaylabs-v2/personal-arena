@@ -177,7 +177,7 @@ const ArenaSession = () => {
               <Button variant="outline" size="sm">
                 <Lightbulb className="h-4 w-4" />
               </Button>
-              <Button variant="outline" size="sm" onClick={() => navigate("/session-summary")}>
+              <Button variant="outline" size="sm" onClick={() => navigate("/session-insight")}>
                 <Pause className="h-4 w-4" />
               </Button>
             </div>
