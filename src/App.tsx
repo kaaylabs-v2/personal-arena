@@ -11,6 +11,7 @@ import MasteryPlan from "./pages/MasteryPlan";
 import Dashboard from "./pages/Dashboard";
 import ArenaSession from "./pages/ArenaSession";
 import SessionSummary from "./pages/SessionSummary";
+import SessionInsight from "./pages/SessionInsight";
 import Completion from "./pages/Completion";
 import Sessions from "./pages/Sessions";
 import Tasks from "./pages/Tasks";
@@ -38,6 +39,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/arena-session" element={<ArenaSession />} />
           <Route path="/session-summary" element={<SessionSummary />} />
+          <Route path="/session-insight" element={<SessionInsight />} />
           <Route path="/sessions" element={<Sessions />} />
           <Route path="/tasks" element={<Tasks />} />
           <Route path="/progress" element={<Progress />} />

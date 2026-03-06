@@ -146,7 +146,7 @@ const ArenaSession = () => {
           {/* Bottom Bar */}
           <div className="p-4 border-t border-border">
             <p className="text-[11px] text-muted-foreground mb-2 italic">
-              Explain how you would approach this situation. Arena will challenge and refine your thinking.
+              Explain your reasoning. Arena will challenge and refine your thinking.
             </p>
             <div className="flex gap-2">
               <Textarea
@@ -177,7 +177,7 @@ const ArenaSession = () => {
               <Button variant="outline" size="sm">
                 <Lightbulb className="h-4 w-4" />
               </Button>
-              <Button variant="outline" size="sm" onClick={() => navigate("/session-summary")}>
+              <Button variant="outline" size="sm" onClick={() => navigate("/session-insight")}>
                 <Pause className="h-4 w-4" />
               </Button>
             </div>
