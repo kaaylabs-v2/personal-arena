@@ -19,6 +19,7 @@ import Profile from "./pages/Profile";
 import Progress from "./pages/Progress";
 import Journal from "./pages/Journal";
 import NotFound from "./pages/NotFound";
+import StartingPoint from "./pages/StartingPoint";
 
 const queryClient = new QueryClient();
 
