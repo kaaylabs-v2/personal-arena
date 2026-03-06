@@ -2,7 +2,8 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { InsightBanner } from "@/components/InsightBanner";
-import { HelpCircle, Check } from "lucide-react";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
+import { HelpCircle, Check, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const STORAGE_KEY = "arena-session-notes";
@@ -79,6 +80,7 @@ interface ThinkingScaffoldProps {
 export const ThinkingScaffold = ({ activeStage }: ThinkingScaffoldProps) => {
   const [notes, setNotes] = useState<Record<string, string>>(loadNotes);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
+  const [summaryOpen, setSummaryOpen] = useState(true);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const savedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -117,6 +119,19 @@ export const ThinkingScaffold = ({ activeStage }: ThinkingScaffoldProps) => {
       if (savedTimerRef.current) clearTimeout(savedTimerRef.current);
     };
   }, []);
+
+  const renderSummaryItems = (text: string): string[] => {
+    return text
+      .split("\n")
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0);
+  };
+
+  const hasSummaryContent =
+    notes.assumptions?.trim() ||
+    notes.evidence?.trim() ||
+    notes.alternatives?.trim() ||
+    notes.notes?.trim();
 
   const current = stageData[activeStage] ?? stageData.clarify;
 
@@ -226,6 +241,96 @@ export const ThinkingScaffold = ({ activeStage }: ThinkingScaffoldProps) => {
             )
           )}
         </Tabs>
+
+        {/* Thinking Summary */}
+        {hasSummaryContent && (
+          <div className="mx-4 border-t border-border mt-4">
+            <Collapsible open={summaryOpen} onOpenChange={setSummaryOpen}>
+              <CollapsibleTrigger className="flex items-center gap-2 py-3 text-xs font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
+                <ChevronDown
+                  className={`h-3.5 w-3.5 transition-transform ${
+                    summaryOpen ? "rotate-180" : ""
+                  }`}
+                />
+                Thinking Summary
+              </CollapsibleTrigger>
+              <CollapsibleContent className="pb-4 space-y-3">
+                {notes.assumptions?.trim() && (
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider font-medium text-primary mb-1.5">
+                      Assumptions
+                    </p>
+                    <ul className="space-y-1">
+                      {renderSummaryItems(notes.assumptions).map((item, i) => (
+                        <li
+                          key={i}
+                          className="text-xs text-muted-foreground leading-relaxed pl-3 relative"
+                        >
+                          <span className="absolute left-0 text-primary">•</span>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {notes.evidence?.trim() && (
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider font-medium text-primary mb-1.5">
+                      Evidence
+                    </p>
+                    <ul className="space-y-1">
+                      {renderSummaryItems(notes.evidence).map((item, i) => (
+                        <li
+                          key={i}
+                          className="text-xs text-muted-foreground leading-relaxed pl-3 relative"
+                        >
+                          <span className="absolute left-0 text-primary">•</span>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {notes.alternatives?.trim() && (
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider font-medium text-primary mb-1.5">
+                      Alternatives
+                    </p>
+                    <ul className="space-y-1">
+                      {renderSummaryItems(notes.alternatives).map((item, i) => (
+                        <li
+                          key={i}
+                          className="text-xs text-muted-foreground leading-relaxed pl-3 relative"
+                        >
+                          <span className="absolute left-0 text-primary">•</span>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {notes.notes?.trim() && (
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider font-medium text-primary mb-1.5">
+                      Additional Notes
+                    </p>
+                    <ul className="space-y-1">
+                      {renderSummaryItems(notes.notes).map((item, i) => (
+                        <li
+                          key={i}
+                          className="text-xs text-muted-foreground leading-relaxed pl-3 relative"
+                        >
+                          <span className="absolute left-0 text-primary">•</span>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </CollapsibleContent>
+            </Collapsible>
+          </div>
+        )}
       </div>
     </div>
   );
