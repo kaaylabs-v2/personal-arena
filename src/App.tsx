@@ -9,6 +9,7 @@ import IntentConfirmation from "./pages/IntentConfirmation";
 import Assessment from "./pages/Assessment";
 import MasteryPlan from "./pages/MasteryPlan";
 import Dashboard from "./pages/Dashboard";
+import JourneyDashboard from "./pages/JourneyDashboard";
 import ArenaSession from "./pages/ArenaSession";
 import SessionSummary from "./pages/SessionSummary";
 import SessionInsight from "./pages/SessionInsight";
@@ -39,6 +40,7 @@ const App = () => (
           <Route path="/assessment" element={<Assessment />} />
           <Route path="/mastery-plan" element={<MasteryPlan />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/journey/:journeyId" element={<JourneyDashboard />} />
           <Route path="/arena-session" element={<ArenaSession />} />
           <Route path="/session-summary" element={<SessionSummary />} />
           <Route path="/session-insight" element={<SessionInsight />} />
