@@ -136,7 +136,7 @@ export const ThinkingScaffold = ({ activeStage }: ThinkingScaffoldProps) => {
   const current = stageData[activeStage] ?? stageData.clarify;
 
   return (
-    <div className="w-80 flex-shrink-0 flex flex-col border-l border-border bg-surface">
+    <div className="h-full flex flex-col border-l border-border bg-surface overflow-hidden">
       <div className="px-4 py-4 border-b border-border">
         <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
           Thinking Scaffold
