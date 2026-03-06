@@ -11,6 +11,7 @@ const stages = [
 
 interface SessionProgressIndicatorProps {
   activeStage: string;
+  onStageClick?: (stageId: string) => void;
   capabilityName?: string;
   focusDimension?: string;
   sessionNumber?: number;
@@ -19,6 +20,7 @@ interface SessionProgressIndicatorProps {
 
 export const SessionProgressIndicator = ({
   activeStage,
+  onStageClick,
   capabilityName,
   focusDimension,
   sessionNumber,
@@ -64,22 +66,26 @@ export const SessionProgressIndicator = ({
           const isCompleted = i < activeIndex;
           const isActive = i === activeIndex;
           const isUpcoming = i > activeIndex;
+          const isClickable = isCompleted && !!onStageClick;
 
           return (
             <div key={stage.id} className="flex items-center gap-0.5">
-              <span
+              <button
+                disabled={!isClickable}
+                onClick={() => isClickable && onStageClick(stage.id)}
                 className={cn(
                   "text-[10px] font-medium px-3 py-1.5 rounded-full transition-all duration-300 flex items-center gap-1.5",
                   isCompleted && "text-primary bg-primary/10 ring-1 ring-primary/20",
+                  isCompleted && isClickable && "hover:bg-primary/20 cursor-pointer",
                   isActive && "text-primary-foreground bg-primary shadow-sm shadow-primary/25 ring-1 ring-primary",
-                  isUpcoming && "text-muted-foreground bg-muted/40"
+                  isUpcoming && "text-muted-foreground bg-muted/40 cursor-default"
                 )}
               >
                 {isCompleted && <Check className="h-3 w-3" />}
                 {isActive && <Circle className="h-2.5 w-2.5 fill-current" />}
                 {isUpcoming && <span className="text-[9px] opacity-50">{stage.step}</span>}
                 {stage.label}
-              </span>
+              </button>
               {i < stages.length - 1 && (
                 <div className={cn(
                   "w-4 h-px mx-0.5 transition-colors duration-300",

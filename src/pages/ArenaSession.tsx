@@ -90,33 +90,18 @@ const ArenaSession = () => {
 
         {/* CENTER PANEL — Conversation */}
         <div className="flex-1 flex flex-col min-w-0">
-          {/* Session Progress Indicator */}
+          {/* Session Progress Indicator — single interactive stepper */}
           <SessionProgressIndicator
             activeStage={activeCategory}
+            onStageClick={(stageId) => setActiveCategory(stageId)}
             capabilityName="Strategic Decision-Making"
             focusDimension="Evidence Use"
             sessionNumber={3}
             totalSessions={12}
           />
 
-          <div className="px-5 py-3 border-b border-border flex items-center justify-between">
+          <div className="px-5 py-3 border-b border-border">
             <h2 className="text-sm font-semibold text-foreground">Arena Dialogue</h2>
-            <div className="flex gap-1.5">
-              {promptCategories.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => setActiveCategory(cat.id)}
-                  className={`text-[11px] px-2.5 py-1 rounded-full flex items-center gap-1 transition-colors ${
-                    activeCategory === cat.id
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-surface text-surface-foreground hover:bg-accent"
-                  }`}
-                >
-                  <cat.icon className="h-3 w-3" />
-                  {cat.label}
-                </button>
-              ))}
-            </div>
           </div>
 
           <div className="flex-1 overflow-auto px-5 py-4 space-y-4">
