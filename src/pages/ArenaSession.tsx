@@ -14,6 +14,7 @@ import {
   RotateCcw,
   Mic,
   MicOff,
+  ChevronDown,
 } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { SessionProgressIndicator } from "@/components/SessionProgressIndicator";
