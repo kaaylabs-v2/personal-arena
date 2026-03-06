@@ -87,7 +87,13 @@ const ArenaSession = () => {
         {/* CENTER PANEL — Conversation */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* Session Progress Indicator */}
-          <SessionProgressIndicator activeStage={activeCategory} />
+          <SessionProgressIndicator
+            activeStage={activeCategory}
+            capabilityName="Strategic Decision-Making"
+            focusDimension="Evidence Use"
+            sessionNumber={3}
+            totalSessions={12}
+          />
 
           <div className="px-5 py-3 border-b border-border flex items-center justify-between">
             <h2 className="text-sm font-semibold text-foreground">Arena Dialogue</h2>
@@ -139,6 +145,9 @@ const ArenaSession = () => {
 
           {/* Bottom Bar */}
           <div className="p-4 border-t border-border">
+            <p className="text-[11px] text-muted-foreground mb-2 italic">
+              Explain how you would approach this situation. Arena will challenge and refine your thinking.
+            </p>
             <div className="flex gap-2">
               <Textarea
                 value={response}
