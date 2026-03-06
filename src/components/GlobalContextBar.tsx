@@ -1,23 +1,28 @@
 import { Search, Bell, User, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 
 export function GlobalContextBar() {
   const navigate = useNavigate();
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
 
   return (
     <header className="h-11 flex items-center border-b border-border px-4 gap-3 bg-background shrink-0">
       <SidebarTrigger />
 
-      {/* Arena label */}
-      <div className="flex items-center gap-1.5">
-        <div className="h-5 w-5 rounded bg-primary flex items-center justify-center">
-          <span className="text-primary-foreground font-display font-bold text-[10px]">A</span>
-        </div>
-        <span className="font-display font-semibold text-foreground text-sm tracking-tight">Arena</span>
-      </div>
-
-      <div className="h-4 w-px bg-border mx-1" />
+      {/* Arena label — only when sidebar is collapsed */}
+      {isCollapsed && (
+        <>
+          <div className="flex items-center gap-1.5">
+            <div className="h-5 w-5 rounded bg-primary flex items-center justify-center">
+              <span className="text-primary-foreground font-display font-bold text-[10px]">A</span>
+            </div>
+            <span className="font-display font-semibold text-foreground text-sm tracking-tight">Arena</span>
+          </div>
+          <div className="h-4 w-px bg-border mx-1" />
+        </>
+      )}
 
       {/* Current journey context */}
       <div className="flex items-center gap-2 text-xs text-muted-foreground min-w-0">
