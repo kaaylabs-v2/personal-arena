@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Save, CheckCircle2, AlertCircle, Target } from "lucide-react";
 import { Layout } from "@/components/Layout";
+import { PageHeader } from "@/components/PageHeader";
 import { useState } from "react";
 
 const rubric = [
@@ -26,10 +27,9 @@ const SessionSummary = () => {
 
   return (
     <Layout>
-      <div className="max-w-2xl mx-auto px-6 py-12">
+      <div className="max-w-2xl mx-auto px-6 py-4">
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-          <h1 className="text-2xl font-display font-bold text-foreground mb-2">Session Summary</h1>
-          <p className="text-sm text-muted-foreground mb-8">Review your session performance and key takeaways.</p>
+          <PageHeader title="Session Summary" subtitle="Review your session performance and key takeaways." />
 
           <div className="space-y-4 mb-8">
             {[

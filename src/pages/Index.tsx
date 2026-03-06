@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { Layout } from "@/components/Layout";
 import { InsightBanner } from "@/components/InsightBanner";
+import { PageHeader } from "@/components/PageHeader";
 
 const subjects = [
   "Leadership",
@@ -89,16 +90,13 @@ const HomePage = () => {
 
   return (
     <Layout>
-      <div className="max-w-5xl mx-auto px-6 py-8">
+      <div className="max-w-5xl mx-auto px-6 py-4">
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
         >
-          <p className="text-muted-foreground text-sm mb-1">Good afternoon,</p>
-          <h1 className="text-2xl font-display font-bold text-foreground mb-6">
-            Your Mastery Dashboard
-          </h1>
+          <PageHeader title="Dashboard" subtitle="AI insights and recommendations for your mastery journey" />
 
           {/* AI Insight Panel */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
