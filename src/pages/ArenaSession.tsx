@@ -1,34 +1,19 @@
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useRef, useEffect } from "react";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
-import {
-  Send,
-  Pause,
-  Lightbulb,
-  Mic,
-  MicOff,
-  Sparkles,
-} from "lucide-react";
+import { Send, Pause, Lightbulb, Mic, MicOff } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { SessionProgressIndicator } from "@/components/SessionProgressIndicator";
 import { SessionPath } from "@/components/SessionPath";
 import { ThinkingScaffold } from "@/components/ThinkingScaffold";
 import { ScrollHints } from "@/components/ScrollHints";
-import { ArenaGuidanceHint } from "@/components/ArenaGuidanceHint";
 import { ArenaDebrief } from "@/components/ArenaDebrief";
-import { ScoreUpdateBadge, type ScoreDimensions, type ReasoningScoreData } from "@/components/ReasoningScore";
-
-type MessageRole = "arena" | "learner" | "insight";
-
-interface ChatMessage {
-  role: MessageRole;
-  category: string;
-  text: string;
-  scoreDelta?: { total: number; dimensions: Partial<ScoreDimensions> };
-}
+import { FocusSkillBadge } from "@/components/arena/FocusSkillBadge";
+import { ChatMessageItem, type ChatMessageData } from "@/components/arena/ChatMessage";
+import type { ScoreDimensions, ReasoningScoreData } from "@/components/ReasoningScore";
 
 const scenario = {
   title: "Distributed Team Communication",
@@ -41,29 +26,40 @@ const scenario = {
 
 const stageSequence = ["clarify", "challenge", "evidence", "alternative", "reflect"];
 
-const arenaResponses: Record<string, { text: string; insight?: string; scoreDelta?: { total: number; dimensions: Partial<ScoreDimensions> } }> = {
+// Context-aware follow-ups that reference prior responses
+const arenaResponses: Record<string, {
+  text: string;
+  contextAwarePrefix?: string;
+  insight?: string;
+  scoreDelta?: { total: number; dimensions: Partial<ScoreDimensions> };
+}> = {
   clarify: {
-    text: "Interesting. But couldn't too much structure stifle creative problem-solving in your team? How would you balance this?",
+    text: "But couldn't too much structure stifle creative problem-solving in your team? How would you balance this?",
+    contextAwarePrefix: "You've outlined your view on structured communication.",
     insight: "You defined the problem with precision. Good use of scope narrowing.",
     scoreDelta: { total: 5, dimensions: { clarity: 4, strategicFraming: 1 } },
   },
   challenge: {
     text: "You've defended your position well. Now, what concrete evidence from past sprints supports your communication approach?",
+    contextAwarePrefix: "Earlier you suggested a specific communication cadence.",
     insight: "Your reasoning is becoming more nuanced. You're starting to acknowledge trade-offs, which strengthens your argument.",
     scoreDelta: { total: 6, dimensions: { tradeoffThinking: 3, clarity: 2, strategicFraming: 1 } },
   },
   evidence: {
     text: "Good data points. But is there an entirely different approach you haven't considered? What if the problem isn't communication at all?",
-    insight: "Strong evidence cited. You referenced concrete sprint data to back your claim.",
+    contextAwarePrefix: "You referenced concrete sprint data to back your claim.",
+    insight: "Strong evidence cited. Now strengthen your reasoning by considering whether the data supports alternative explanations.",
     scoreDelta: { total: 4, dimensions: { evidenceUse: 3, clarity: 1 } },
   },
   alternative: {
     text: "You've explored multiple angles. Now step back — how has your thinking evolved since the start of this session? What would you change?",
-    insight: "Strong alternative thinking. You identified a structural root cause that most people overlook. Consider how this reframes the original problem.",
+    contextAwarePrefix: "You identified a structural root cause that most people overlook.",
+    insight: "Strong alternative thinking. Consider how this reframes the original problem and what second-order effects might emerge.",
     scoreDelta: { total: 7, dimensions: { tradeoffThinking: 3, strategicFraming: 3, evidenceUse: 1 } },
   },
   reflect: {
-    text: "Excellent reflection. You've demonstrated growth in your reasoning. Let's wrap up this session.",
+    text: "Excellent reflection. You've demonstrated meaningful growth in your reasoning across this session.",
+    contextAwarePrefix: "Looking back at how your thinking has evolved through this dialogue,",
     insight: "You connected your final reflection back to the original problem framing — a sign of mature strategic thinking.",
     scoreDelta: { total: 6, dimensions: { strategicFraming: 3, clarity: 1, tradeoffThinking: 2 } },
   },
@@ -79,19 +75,27 @@ const initialScore: ReasoningScoreData = {
 const ArenaSession = () => {
   const navigate = useNavigate();
   const { sessionId } = useParams<{ sessionId: string }>();
+  const [searchParams] = useSearchParams();
+  const focusSkill = searchParams.get("focus") || scenario.focusDimension;
   const [response, setResponse] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const [activeCategory, setActiveCategory] = useState("clarify");
   const [stageIndex, setStageIndex] = useState(0);
   const [sessionComplete, setSessionComplete] = useState(false);
   const [reasoningScore, setReasoningScore] = useState<ReasoningScoreData>(initialScore);
-  const [messages, setMessages] = useState<ChatMessage[]>([
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  const [messages, setMessages] = useState<ChatMessageData[]>([
     {
       role: "arena",
       category: "clarify",
       text: "You've stated that distributed teams need more structured communication. Can you clarify what 'structured' means to you in practice?",
     },
   ]);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const applyScoreDelta = (delta: { total: number; dimensions: Partial<ScoreDimensions> }) => {
     setReasoningScore((prev) => ({
@@ -109,14 +113,15 @@ const ArenaSession = () => {
   const handleSubmit = () => {
     if (!response.trim()) return;
 
+    const arenaReply = arenaResponses[activeCategory] || arenaResponses.clarify;
     const nextStageIndex = Math.min(stageIndex + 1, stageSequence.length - 1);
     const nextStage = stageSequence[nextStageIndex];
-    const arenaReply = arenaResponses[activeCategory] || arenaResponses.clarify;
 
-    const newMessages: ChatMessage[] = [
+    const newMessages: ChatMessageData[] = [
       { role: "learner", category: "", text: response },
     ];
 
+    // Inline insight with score
     if (arenaReply.insight && arenaReply.scoreDelta) {
       applyScoreDelta(arenaReply.scoreDelta);
       newMessages.push({
@@ -128,10 +133,12 @@ const ArenaSession = () => {
     }
 
     if (activeCategory === "reflect") {
+      // Final arena message
+      const prefix = arenaReply.contextAwarePrefix ? `${arenaReply.contextAwarePrefix} ` : "";
       newMessages.push({
         role: "arena",
         category: "reflect",
-        text: arenaReply.text,
+        text: `${prefix}${arenaReply.text}`,
       });
       setMessages((prev) => [...prev, ...newMessages]);
       setResponse("");
@@ -139,10 +146,21 @@ const ArenaSession = () => {
       return;
     }
 
+    // Stage transition banner
+    newMessages.push({
+      role: "stage-transition",
+      category: "",
+      text: "",
+      completedStage: activeCategory,
+      nextStage,
+    });
+
+    // Context-aware arena follow-up
+    const prefix = arenaReply.contextAwarePrefix ? `${arenaReply.contextAwarePrefix} ${arenaReply.text}` : arenaReply.text;
     newMessages.push({
       role: "arena",
       category: nextStage,
-      text: arenaReply.text,
+      text: prefix,
     });
 
     setMessages((prev) => [...prev, ...newMessages]);
@@ -166,9 +184,7 @@ const ArenaSession = () => {
                 <span className="text-[10px] font-medium uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full">
                   {scenario.skillFocus}
                 </span>
-                <span className="text-[10px] font-medium uppercase tracking-wider text-accent-foreground bg-accent px-2 py-0.5 rounded-full">
-                  {scenario.focusDimension}
-                </span>
+                <FocusSkillBadge skill={focusSkill} />
               </div>
             </div>
             <div>
@@ -193,74 +209,30 @@ const ArenaSession = () => {
                 activeStage={activeCategory}
                 onStageClick={(stageId) => {
                   const idx = stageSequence.indexOf(stageId);
-                  if (idx <= stageIndex) {
-                    setActiveCategory(stageId);
-                  }
+                  if (idx <= stageIndex) setActiveCategory(stageId);
                 }}
                 capabilityName={scenario.skillFocus}
-                focusDimension={scenario.focusDimension}
+                focusDimension={focusSkill}
                 sessionNumber={3}
                 totalSessions={12}
                 reasoningScore={reasoningScore}
               />
 
               {sessionComplete ? (
-                <ArenaDebrief onClose={() => navigate("/dashboard")} reasoningScore={reasoningScore} />
+                <ArenaDebrief onClose={() => navigate("/dashboard")} reasoningScore={reasoningScore} focusSkill={focusSkill} />
               ) : (
                 <>
-                  <div className="px-5 py-3 border-b border-border">
+                  <div className="px-5 py-3 border-b border-border flex items-center justify-between">
                     <h2 className="text-sm font-semibold text-foreground">Arena Dialogue</h2>
                   </div>
 
                   <div className="flex-1 overflow-auto px-5 py-4 space-y-4">
                     <AnimatePresence initial={false}>
                       {messages.map((msg, i) => (
-                        <motion.div
-                          key={i}
-                          initial={{ opacity: 0, y: 6 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className={`max-w-[85%] ${msg.role === "learner" ? "ml-auto" : ""}`}
-                        >
-                          {msg.role === "insight" ? (
-                            <div className="flex items-start gap-2 rounded-xl px-4 py-3 bg-primary/5 border border-primary/15">
-                              <Sparkles className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
-                              <div>
-                                <span className="text-[10px] uppercase tracking-wider text-primary font-medium block mb-0.5">
-                                  Real-Time Insight
-                                </span>
-                                <p className="text-sm leading-relaxed text-foreground/80">{msg.text}</p>
-                                {msg.scoreDelta && (
-                                  <ScoreUpdateBadge
-                                    totalDelta={msg.scoreDelta.total}
-                                    dimensionDeltas={msg.scoreDelta.dimensions}
-                                  />
-                                )}
-                              </div>
-                            </div>
-                          ) : (
-                            <>
-                              {msg.category && msg.role === "arena" && (
-                                <span className="text-[10px] uppercase tracking-wider text-primary font-medium mb-1 block">
-                                  {msg.category}
-                                </span>
-                              )}
-                              <div
-                                className={`rounded-xl px-4 py-3 text-sm leading-relaxed ${
-                                  msg.role === "learner"
-                                    ? "bg-primary text-primary-foreground"
-                                    : "bg-surface text-surface-foreground"
-                                }`}
-                              >
-                                {msg.text}
-                              </div>
-                              {msg.role === "arena" && msg.category && (
-                                <ArenaGuidanceHint stage={msg.category} />
-                              )}
-                            </>
-                          )}
-                        </motion.div>
+                        <ChatMessageItem key={i} msg={msg} />
                       ))}
                     </AnimatePresence>
+                    <div ref={chatEndRef} />
                   </div>
 
                   <div className="p-4 border-t border-border">
