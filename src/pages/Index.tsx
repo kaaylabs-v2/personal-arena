@@ -48,9 +48,9 @@ interface DashboardData {
 
 const dashboardByProgram: Record<string, DashboardData> = {
   "p1": {
-    insight: { label: "Evidence Use", text: "Your Evidence Use capability has plateaued for the last three sessions. Try a challenge scenario to break through." },
+    insight: { label: "Show Your Work", text: "Your Show Your Work capability has plateaued for the last three sessions. Try a challenge scenario to break through." },
     secondaryInsight: "Clarity improved 12% over the last 2 weeks. You're approaching Level 3 mastery in Strategic Leadership.",
-    recommended: { title: "Scenario: Conflicting Stakeholder Priorities", subtitle: "Challenge Mode · ~20 min · Targets Evidence Use", link: "/arena-session" },
+    recommended: { title: "Scenario: Conflicting Stakeholder Priorities", subtitle: "Challenge Mode · ~20 min · Targets Show Your Work", link: "/arena-session" },
     mandated: [
       { id: "a1", name: "Strategic Decision Making for Senior Leaders", domain: "Leadership", currentLevel: 1.6, targetLevel: 4.0, progress: 18, focusArea: "Evidence-based reasoning", program: "Leadership Development" },
       { id: "a2", name: "Cross-Functional Stakeholder Alignment", domain: "Communication", currentLevel: 2.0, targetLevel: 3.5, progress: 35, focusArea: "Influence without authority", program: "Leadership Development" },

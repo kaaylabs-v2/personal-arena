@@ -21,7 +21,7 @@ const progressByProgram: Record<string, ProgressProgramData> = {
     growthData: [{ week: "W1", level: 2.2 }, { week: "W2", level: 2.4 }, { week: "W3", level: 2.5 }, { week: "W4", level: 2.8 }, { week: "W5", level: 2.9 }, { week: "W6", level: 3.1 }],
     outcomes: { current: 3.1, target: 4.0, time: "6.5h", est: "~8w" },
     strengths: [{ name: "Clarity", level: 3.4 }, { name: "Reflection", level: 3.1 }, { name: "Active Listening", level: 3.0 }],
-    focusAreas: [{ name: "Evidence Use", level: 2.3 }, { name: "Reasoning", level: 2.1 }, { name: "Alternatives", level: 1.8 }],
+    focusAreas: [{ name: "Show Your Work", level: 2.3 }, { name: "Reasoning", level: 2.1 }, { name: "Alternatives", level: 1.8 }],
     journeyComparison: [{ name: "Team Leadership", current: 3.1, target: 4.0, color: "hsl(var(--primary))" }, { name: "Strategic Thinking", current: 1.8, target: 3.0, color: "hsl(38, 92%, 50%)" }],
   },
   "p-algebra": {
