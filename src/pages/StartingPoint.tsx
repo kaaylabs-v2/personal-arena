@@ -15,6 +15,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { Layout } from "@/components/Layout";
+import { useLearner } from "@/contexts/LearnerContext";
 
 type DimScore = { score: number; label: string };
 type Scores = Record<string, DimScore>;
@@ -30,11 +31,13 @@ const DIMENSION_ICONS: Record<string, React.ElementType> = {
 const StartingPoint = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { activeProgram } = useLearner();
   const { scores, topic, intent } = (location.state as {
     scores?: Scores;
     topic?: string;
     intent?: string;
   }) || {};
+  const activeTopic = activeProgram.name || topic || intent || "Leadership";
 
   if (!scores) {
     return (

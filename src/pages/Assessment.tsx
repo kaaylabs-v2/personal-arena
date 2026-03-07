@@ -139,7 +139,7 @@ const Assessment = () => {
   const location = useLocation();
   const { activeProgram } = useLearner();
   const { intent, type } = (location.state as { intent?: string; type?: string }) || {};
-  const topic = intent || activeProgram.name || "Leadership";
+  const topic = activeProgram.name || intent || "Leadership";
 
   const [step, setStep] = useState<Step>({ kind: "intro" });
   const [scenarioAnswer, setScenarioAnswer] = useState("");
@@ -237,7 +237,7 @@ const Assessment = () => {
                 {step.kind === "intro" ? "Introduction" : step.kind === "scenario" ? "Scenario Response" : `Follow-up ${(step as any).index + 1} of ${FOLLOWUP_QUESTIONS.length}`}
               </p>
               <p className="text-[10px] text-muted-foreground">
-                Step {currentStepNum} of {totalSteps}
+                {topic} · Step {currentStepNum} of {totalSteps}
               </p>
             </div>
             <Progress value={progress} className="h-1" />
@@ -443,7 +443,7 @@ const Assessment = () => {
                   Analyzing Your Thinking
                 </h2>
                 <p className="text-sm text-muted-foreground">
-                  Evaluating responses across capability dimensions
+                  Evaluating {topic} responses across capability dimensions
                 </p>
               </div>
 
