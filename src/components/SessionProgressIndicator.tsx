@@ -5,7 +5,7 @@ import { ReasoningScoreIndicator, type ReasoningScoreData } from "@/components/R
 const stages = [
   { id: "clarify", label: "Clarify", step: 1 },
   { id: "challenge", label: "Challenge", step: 2 },
-  { id: "evidence", label: "Evidence", step: 3 },
+  { id: "evidence", label: "Show Your Work", step: 3 },
   { id: "alternative", label: "Alternatives", step: 4 },
   { id: "reflect", label: "Reflect", step: 5 },
 ];
