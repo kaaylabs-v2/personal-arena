@@ -14,14 +14,52 @@ import { ArenaDebrief } from "@/components/ArenaDebrief";
 import { FocusSkillBadge } from "@/components/arena/FocusSkillBadge";
 import { ChatMessageItem, type ChatMessageData } from "@/components/arena/ChatMessage";
 import type { ScoreDimensions, ReasoningScoreData } from "@/components/ReasoningScore";
+import { useLearner } from "@/contexts/LearnerContext";
 
-const scenario = {
-  title: "Distributed Team Communication",
-  skillFocus: "Strategic Decision-Making",
-  focusDimension: "Evidence Use",
-  context:
-    "You lead a product team of 12 people spread across 4 time zones. Your team has been missing sprint commitments for the last 3 cycles. Stakeholders are escalating concerns about predictability. Your team reports feeling both over-managed and under-informed.",
-  task: "Determine a communication strategy that improves delivery predictability without reducing team autonomy.",
+const scenariosByProgram: Record<string, {
+  title: string;
+  skillFocus: string;
+  focusDimension: string;
+  context: string;
+  task: string;
+  openingPrompt: string;
+}> = {
+  "p1": {
+    title: "Distributed Team Communication",
+    skillFocus: "Strategic Decision-Making",
+    focusDimension: "Evidence Use",
+    context:
+      "You lead a product team of 12 people spread across 4 time zones. Your team has been missing sprint commitments for the last 3 cycles. Stakeholders are escalating concerns about predictability. Your team reports feeling both over-managed and under-informed.",
+    task: "Determine a communication strategy that improves delivery predictability without reducing team autonomy.",
+    openingPrompt: "You've stated that distributed teams need more structured communication. Can you clarify what 'structured' means to you in practice?",
+  },
+  "p-algebra": {
+    title: "Word Problem Translation Breakdown",
+    skillFocus: "Algebraic Reasoning",
+    focusDimension: "Equation Setup",
+    context:
+      "You're solving a word problem test and keep making setup errors before calculations even begin. You can solve equations, but translating scenarios into the right equation is causing lost points.",
+    task: "Create a repeatable setup strategy for translating word problems into equations accurately under time pressure.",
+    openingPrompt: "Before solving anything, what exact steps will you use to identify knowns, unknowns, and relationships in a word problem?",
+  },
+  "p-calculus": {
+    title: "Optimization Constraint Failure",
+    skillFocus: "Derivative Application",
+    focusDimension: "Optimization Problems",
+    context:
+      "In your last quiz, you spent most of your time differentiating correctly but lost marks because your optimization model and constraint equation were incomplete.",
+    task: "Design a problem setup workflow that ensures constraints, objective function, and variable definitions are correct before differentiation.",
+    openingPrompt: "When approaching an optimization problem, how do you decide what variable to optimize and what constraints to write first?",
+  },
+  "p-insurance": {
+    title: "Price Objection Live Call",
+    skillFocus: "Value Framing",
+    focusDimension: "Handling Price Objections",
+    context:
+      "A client says your premium is too expensive and is considering a cheaper competitor. You previously lost similar deals by leading with features instead of relevance.",
+    task: "Respond with a value-focused structure that reframes price concerns and builds trust without sounding pushy.",
+    openingPrompt: "How would you open this objection response so the client feels heard before you present value?",
+  },
 };
 
 const stageSequence = ["clarify", "challenge", "evidence", "alternative", "reflect"];
@@ -76,6 +114,8 @@ const ArenaSession = () => {
   const navigate = useNavigate();
   const { sessionId } = useParams<{ sessionId: string }>();
   const [searchParams] = useSearchParams();
+  const { activeProgram } = useLearner();
+  const scenario = scenariosByProgram[activeProgram.id] || scenariosByProgram["p1"];
   const focusSkill = searchParams.get("focus") || scenario.focusDimension;
   const [response, setResponse] = useState("");
   const [isRecording, setIsRecording] = useState(false);
@@ -89,9 +129,25 @@ const ArenaSession = () => {
     {
       role: "arena",
       category: "clarify",
-      text: "You've stated that distributed teams need more structured communication. Can you clarify what 'structured' means to you in practice?",
+      text: scenario.openingPrompt,
     },
   ]);
+
+  useEffect(() => {
+    setResponse("");
+    setIsRecording(false);
+    setActiveCategory("clarify");
+    setStageIndex(0);
+    setSessionComplete(false);
+    setReasoningScore(initialScore);
+    setMessages([
+      {
+        role: "arena",
+        category: "clarify",
+        text: scenario.openingPrompt,
+      },
+    ]);
+  }, [activeProgram.id, scenario.openingPrompt]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });

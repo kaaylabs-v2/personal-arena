@@ -32,139 +32,10 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-// --- Mock Data ---
+import { useLearner } from "@/contexts/LearnerContext";
 
-const radarData = [
-  { dimension: "Clarity", score: 3.4, fullMark: 5 },
-  { dimension: "Evidence", score: 2.8, fullMark: 5 },
-  { dimension: "Tradeoffs", score: 3.0, fullMark: 5 },
-  { dimension: "Stakeholders", score: 2.6, fullMark: 5 },
-  { dimension: "Strategy", score: 3.2, fullMark: 5 },
-  { dimension: "Communication", score: 3.1, fullMark: 5 },
-];
-
-const aiInsights = [
-  {
-    id: "1",
-    type: "plateau" as const,
-    title: "Plateau detected",
-    description:
-      "Your Evidence Evaluation skill has plateaued over the last 4 sessions.",
-    action: "Run Evidence Evaluation challenge",
-    actionRoute: "/arena-session",
-  },
-  {
-    id: "2",
-    type: "improvement" as const,
-    title: "Improvement trend",
-    description:
-      "Your clarity score improved by 12% over the last two weeks.",
-    action: "Continue Clarity training",
-    actionRoute: "/arena-session",
-  },
-  {
-    id: "3",
-    type: "recommendation" as const,
-    title: "Recommendation",
-    description:
-      "Try a Challenge Mode scenario focused on stakeholder conflict.",
-    action: "Start Stakeholder Scenario",
-    actionRoute: "/arena-session",
-  },
-];
-
-const activeJourneys = [
-  {
-    id: "j1",
-    title: "Strategic Decision Making for Senior Leaders",
-    currentLevel: 1.6,
-    targetLevel: 4.0,
-    progress: 18,
-    nextSession: "Evidence Mapping",
-    category: "Decision Making",
-  },
-  {
-    id: "j2",
-    title: "Stakeholder Communication Mastery",
-    currentLevel: 2.2,
-    targetLevel: 4.0,
-    progress: 42,
-    nextSession: "Conflict Resolution Briefing",
-    category: "Communication",
-  },
-  {
-    id: "j3",
-    title: "Risk Assessment & Mitigation",
-    currentLevel: 1.0,
-    targetLevel: 3.5,
-    progress: 8,
-    nextSession: "Risk Identification Basics",
-    category: "Strategic Framing",
-  },
-];
-
-const thinkingPatterns = [
-  {
-    id: "1",
-    type: "caution",
-    label: "Assumption Bias",
-    description:
-      "You tend to jump to solutions before clarifying assumptions.",
-    suggestion: "Practice structured assumption mapping before each decision.",
-  },
-  {
-    id: "2",
-    type: "caution",
-    label: "Stakeholder Challenge",
-    description: "You rarely challenge stakeholder narratives.",
-    suggestion:
-      "Use the 'Devil's Advocate' framework in your next stakeholder scenario.",
-  },
-  {
-    id: "3",
-    type: "strength",
-    label: "Evidence Discipline",
-    description:
-      "You consistently evaluate evidence before making decisions.",
-    suggestion: "Build on this strength by tackling ambiguous evidence scenarios.",
-  },
-];
-
-const recommendedScenarios = [
-  {
-    id: "s1",
-    title: "Conflicting Stakeholder Priorities",
-    strengthens: "Stakeholder awareness",
-    difficulty: "Advanced",
-  },
-  {
-    id: "s2",
-    title: "Evidence Mapping Scenario",
-    strengthens: "Evidence evaluation",
-    difficulty: "Intermediate",
-  },
-  {
-    id: "s3",
-    title: "Resource Tradeoff Simulation",
-    strengthens: "Strategic prioritization",
-    difficulty: "Advanced",
-  },
-];
-
-const timeline = [
-  { week: "Week 1", label: "Decision Clarity Training", scoreGain: 0.3, completed: true },
-  { week: "Week 2", label: "Stakeholder Conflict Simulation", scoreGain: 0.2, completed: true },
-  { week: "Week 3", label: "Evidence Evaluation Challenge", scoreGain: 0.4, completed: true },
-  { week: "Week 4", label: "Integrated Scenario", scoreGain: null, completed: false },
-];
-
-const metrics = {
-  sessionsCompleted: 24,
-  averageScore: 3.2,
-  strongestSkill: "Clarity",
-  weakestSkill: "Evidence Evaluation",
-  currentLevel: 3.1,
-};
+const getDomainAverage = (current: number, target: number) =>
+  +Math.min((current / Math.max(target, 0.1)) * 5, 5).toFixed(1);
 
 // --- Helpers ---
 
@@ -207,8 +78,104 @@ function InsightIcon({ type }: { type: string }) {
 
 export default function CommandCenter() {
   const navigate = useNavigate();
+  const { activeProgram } = useLearner();
 
-  const overallProgress = ((metrics.currentLevel / 4.0) * 100);
+  const radarData = activeProgram.domains.slice(0, 6).map((domain) => ({
+    dimension: domain.domain_name.split(" ")[0],
+    score: getDomainAverage(
+      domain.capabilities.reduce((sum, c) => sum + c.current_level, 0) / Math.max(domain.capabilities.length, 1),
+      domain.capabilities.reduce((sum, c) => sum + c.target_level, 0) / Math.max(domain.capabilities.length, 1)
+    ),
+    fullMark: 5,
+  }));
+
+  const weakestSkill = [...activeProgram.focusSkills].sort((a, b) => a.progress - b.progress)[0];
+  const strongestSkill = [...activeProgram.focusSkills].sort((a, b) => b.progress - a.progress)[0];
+
+  const aiInsights = [
+    {
+      id: "1",
+      type: "plateau" as const,
+      title: "Plateau detected",
+      description: `Your ${weakestSkill?.name || "focus skill"} needs concentrated practice this week.`,
+      action: `Run ${weakestSkill?.name || "focus"} challenge`,
+      actionRoute: "/arena-session",
+    },
+    {
+      id: "2",
+      type: "improvement" as const,
+      title: "Improvement trend",
+      description: `Your ${strongestSkill?.name || "strongest skill"} is trending upward. Keep reinforcing it.`,
+      action: `Continue ${strongestSkill?.name || "skill"} training`,
+      actionRoute: "/arena-session",
+    },
+    {
+      id: "3",
+      type: "recommendation" as const,
+      title: "Recommendation",
+      description: `Run a scenario tied to ${activeProgram.focusSessions[0]?.relatedSkill || "your current focus"}.`,
+      action: `Start ${activeProgram.focusSessions[0]?.title || "recommended scenario"}`,
+      actionRoute: "/arena-session",
+    },
+  ];
+
+  const activeJourneys = activeProgram.focusSkills.slice(0, 3).map((skill) => ({
+    id: skill.id,
+    title: `${skill.name} Mastery`,
+    currentLevel: skill.current_level,
+    targetLevel: skill.target_level,
+    progress: skill.progress,
+    nextSession: activeProgram.focusSessions.find((s) => s.relatedSkill === skill.name)?.title || activeProgram.focusSessions[0]?.title || "Targeted Practice",
+    category: skill.domain,
+  }));
+
+  const thinkingPatterns = [
+    {
+      id: "1",
+      type: "caution",
+      label: "Primary Gap",
+      description: `${weakestSkill?.name || "A core skill"} is below target and needs deliberate reps.`,
+      suggestion: `Prioritize scenarios that directly train ${weakestSkill?.name || "this capability"}.`,
+    },
+    {
+      id: "2",
+      type: "caution",
+      label: "Leverage Domain",
+      description: `Your ${weakestSkill?.domain || "focus domain"} domain has the biggest opportunity this cycle.`,
+      suggestion: "Add one extra focused session before your next review.",
+    },
+    {
+      id: "3",
+      type: "strength",
+      label: "Momentum",
+      description: `${strongestSkill?.name || "One of your skills"} shows stable upward momentum.`,
+      suggestion: "Use it as an anchor while improving weaker dimensions.",
+    },
+  ];
+
+  const recommendedScenarios = activeProgram.focusSessions.slice(0, 3).map((session, index) => ({
+    id: session.id || `scenario-${index}`,
+    title: session.title,
+    strengthens: session.relatedSkill,
+    difficulty: index === 0 ? "Advanced" : index === 1 ? "Intermediate" : "Foundational",
+  }));
+
+  const timeline = [
+    { week: "Week 1", label: `${activeProgram.domains[0]?.domain_name || "Core"} foundations`, scoreGain: 0.2, completed: true },
+    { week: "Week 2", label: `${activeProgram.domains[1]?.domain_name || "Applied"} scenario`, scoreGain: 0.3, completed: true },
+    { week: "Week 3", label: `${weakestSkill?.name || "Focus skill"} drill`, scoreGain: 0.4, completed: true },
+    { week: "Week 4", label: "Integrated scenario", scoreGain: null, completed: false },
+  ];
+
+  const metrics = {
+    sessionsCompleted: activeProgram.domains.length * 4 + activeProgram.focusSkills.length,
+    averageScore: +(radarData.reduce((sum, d) => sum + d.score, 0) / Math.max(radarData.length, 1)).toFixed(1),
+    strongestSkill: strongestSkill?.name || "—",
+    weakestSkill: weakestSkill?.name || "—",
+    currentLevel: activeProgram.current_level,
+  };
+
+  const overallProgress = (metrics.currentLevel / Math.max(activeProgram.target_level, 0.1)) * 100;
 
   return (
     <Layout pageTitle="Command Center">
@@ -218,12 +185,12 @@ export default function CommandCenter() {
           <div className="flex items-start justify-between">
             <div>
               <h1 className="text-lg font-display font-semibold text-foreground">Command Center</h1>
-              <p className="text-xs text-muted-foreground mt-0.5">Strategic Leadership Track</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{activeProgram.name} · {activeProgram.targetLearner}</p>
             </div>
             <div className="flex items-center gap-4 text-xs">
               <div className="text-right">
                 <p className="text-muted-foreground">Current Level</p>
-                <p className="font-semibold text-foreground">{metrics.currentLevel} <span className="text-muted-foreground font-normal">→ 4.0</span></p>
+                <p className="font-semibold text-foreground">{metrics.currentLevel} <span className="text-muted-foreground font-normal">→ {activeProgram.target_level}</span></p>
               </div>
               <CircularProgress value={overallProgress} size={44} stroke={3.5} />
               <div className="flex items-center gap-1 text-success text-xs font-medium">
