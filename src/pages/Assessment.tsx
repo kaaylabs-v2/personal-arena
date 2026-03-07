@@ -24,7 +24,7 @@ import { useLearner } from "@/contexts/LearnerContext";
 /* ── capability dimensions with icons ── */
 const DIMENSIONS = [
   { key: "Clarity", icon: Eye, description: "How clearly you frame problems and articulate your thinking" },
-  { key: "Reasoning", icon: Lightbulb, description: "The logical structure and depth of your arguments" },
+  { key: "Think It Through", icon: Lightbulb, description: "How well you logically connect ideas and think through a problem before reaching a conclusion" },
   { key: "Show Your Work", icon: Search, description: "How you support your answers with steps, examples, facts, or logical justification" },
   { key: "Alternatives Exploration", icon: GitFork, description: "Your ability to consider multiple paths forward" },
   { key: "Reflection", icon: RotateCcw, description: "How well you examine your own assumptions and biases" },
@@ -121,7 +121,7 @@ function evaluateResponses(
   const seed = _answers.reduce((a, b) => a + b.length, 0);
   const raw: Record<string, number> = {
     Clarity: 2.2 + (seed % 15) / 10,
-    Reasoning: 1.8 + (seed % 12) / 10,
+    "Think It Through": 1.8 + (seed % 12) / 10,
     "Show Your Work": 1.5 + (seed % 10) / 10,
     "Alternatives Exploration": 2.0 + (seed % 13) / 10,
     Reflection: 1.6 + (seed % 11) / 10,
