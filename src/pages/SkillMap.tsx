@@ -163,6 +163,36 @@ const strategicLeadershipDomains: Domain[] = [
   },
 ];
 
+const programs: MasteryProgram[] = [
+  {
+    id: "p1",
+    name: "Strategic Leadership",
+    description: "Capability development across 5 dimensions",
+    current_level: 3.1,
+    target_level: 4.0,
+    dimension_count: 5,
+    domains: strategicLeadershipDomains,
+  },
+  {
+    id: "p2",
+    name: "Sales Mastery",
+    description: "Core selling and client engagement capabilities",
+    current_level: 2.4,
+    target_level: 4.0,
+    dimension_count: 4,
+    domains: [],
+  },
+  {
+    id: "p3",
+    name: "Product Strategy",
+    description: "Product thinking, roadmapping, and prioritization",
+    current_level: 1.8,
+    target_level: 3.5,
+    dimension_count: 3,
+    domains: [],
+  },
+];
+
 // --- Helpers ---
 
 function getDomainProgress(domain: Domain): number {
