@@ -7,7 +7,7 @@ import { Layout } from "@/components/Layout";
 const insight = {
   sessionTitle: "Distributed Team Communication",
   capabilityName: "Strategic Decision-Making",
-  focusDimension: "Evidence Use",
+  focusDimension: "Show Your Work",
   sessionNumber: 3,
   totalSessions: 12,
   strengthObserved: "Clear problem framing with strong stakeholder awareness. You identified the tension between structure and autonomy early.",

@@ -102,7 +102,7 @@ const journeyDatabase: Record<string, JourneyData> = {
   "2": {
     id: "2", objective: "Make Data-Driven Decisions Under Uncertainty", domain: "Decision Making",
     currentLevel: 2.1, targetLevel: 3.5, baselineLevel: 1.8, progress: 22,
-    focusArea: "Evidence evaluation", nextSession: "Uncertainty Quantification", estimatedWeeks: 12,
+    focusArea: "Show Your Work", nextSession: "Uncertainty Quantification", estimatedWeeks: 12,
     capabilities: [
       { name: "Data Literacy", progress: 40, type: "strength" },
       { name: "Statistical Reasoning", progress: 35, type: "strength" },

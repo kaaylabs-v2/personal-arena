@@ -62,15 +62,15 @@ const journeyDataByProgram: Record<string, ProgramJourneyData> = {
     ],
     personal: [
       { id: "1", objective: "Lead Distributed Teams Effectively", domain: "Leadership", currentLevel: 2.2, targetLevel: 4.0, progress: 45, focusArea: "Cross-team alignment", nextSession: "Distributed Team Communication", sessions: makeSessions(["Communication Cadence", "Async Decision Protocols", "Distributed Team Communication", "Stakeholder Escalation", "Evidence Mapping", "Conflicting Priorities", "Resource Trade-offs", "Risk Communication", "Cross-team Alignment", "Executive Summary Framing", "Adaptive Messaging", "Integrated Scenario"], 2) },
-      { id: "2", objective: "Make Data-Driven Decisions Under Uncertainty", domain: "Decision Making", currentLevel: 1.8, targetLevel: 3.5, progress: 22, focusArea: "Evidence evaluation", nextSession: null, sessions: makeSessions(["Data Literacy Foundations", "Statistical Reasoning", "Uncertainty Quantification", "Bayesian Thinking", "Decision Under Ambiguity", "Evidence Synthesis", "Integrated Analysis"], 1) },
+      { id: "2", objective: "Make Data-Driven Decisions Under Uncertainty", domain: "Decision Making", currentLevel: 1.8, targetLevel: 3.5, progress: 22, focusArea: "Show Your Work", nextSession: null, sessions: makeSessions(["Data Literacy Foundations", "Statistical Reasoning", "Uncertainty Quantification", "Bayesian Thinking", "Decision Under Ambiguity", "Evidence Synthesis", "Integrated Analysis"], 1) },
       { id: "3", objective: "Present Strategy to Senior Stakeholders", domain: "Communication", currentLevel: 2.5, targetLevel: 4.0, progress: 60, focusArea: "Narrative structure", nextSession: "Board Presentation Drill", sessions: makeSessions(["Narrative Foundations", "Data Storytelling", "Audience Calibration", "Board Presentation Drill", "Objection Handling", "Executive Presence", "High-Stakes Pitch"], 3) },
     ],
     completed: [{ id: "c1", objective: "Active Listening in 1:1 Meetings", domain: "Communication", levelAchieved: 3.8, completedDate: "Jan 15, 2026" }],
     insightTitle: "Plateau Detected",
-    insightText: 'Your <span class="text-foreground font-medium">Evidence Evaluation</span> has plateaued over the last 4 sessions. Try a <span class="text-foreground font-medium">Challenge-focused</span> scenario.',
+    insightText: 'Your <span class="text-foreground font-medium">Show Your Work</span> has plateaued over the last 4 sessions. Try a <span class="text-foreground font-medium">Challenge-focused</span> scenario.',
     recommendations: [
       { icon: Shield, text: "Scenario: Conflicting Stakeholder Priorities", sub: "Challenge Mode", link: "/arena-session" },
-      { icon: Target, text: "Challenge Mode: Evidence Evaluation", sub: "Strengthen weak dimension", link: "/arena-session" },
+      { icon: Target, text: "Challenge Mode: Show Your Work", sub: "Strengthen weak dimension", link: "/arena-session" },
       { icon: BookOpen, text: "Reflect on: Feb 19 decision journal entry", sub: "Revisit flagged", link: "/journal" },
     ],
     readiness: [
