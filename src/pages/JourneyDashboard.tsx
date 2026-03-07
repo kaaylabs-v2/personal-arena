@@ -83,7 +83,7 @@ const journeyDatabase: Record<string, JourneyData> = {
       { name: "Clarity", progress: 55, type: "strength" },
       { name: "Reflection", progress: 48, type: "strength" },
       { name: "Show Your Work", progress: 42, type: "focus" },
-      { name: "Reasoning", progress: 38, type: "focus" },
+      { name: "Think It Through", progress: 38, type: "focus" },
       { name: "Alternatives", progress: 30, type: "focus" },
     ],
     milestones: [

@@ -22,7 +22,7 @@ type Scores = Record<string, DimScore>;
 
 const DIMENSION_ICONS: Record<string, React.ElementType> = {
   Clarity: Eye,
-  Reasoning: Lightbulb,
+  "Think It Through": Lightbulb,
   "Show Your Work": Search,
   "Alternatives Exploration": GitFork,
   Reflection: RotateCcw,

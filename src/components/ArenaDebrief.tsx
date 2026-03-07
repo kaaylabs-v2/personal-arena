@@ -76,7 +76,7 @@ export const ArenaDebrief = ({ onClose, reasoningScore, focusSkill }: ArenaDebri
           >
             <div className="flex items-center justify-between mb-4">
               <p className="text-[10px] uppercase tracking-wider text-primary font-medium flex items-center gap-1.5">
-                <Brain className="h-3 w-3" /> Reasoning Score
+                <Brain className="h-3 w-3" /> Think It Through Score
               </p>
               <motion.span
                 initial={{ scale: 0.8, opacity: 0 }}

@@ -36,7 +36,7 @@ export const ReasoningScoreIndicator = ({ score, compact = true }: ReasoningScor
       <div className="flex items-center gap-1.5">
         <Brain className="h-3.5 w-3.5 text-primary" />
         <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
-          Reasoning Score
+          Think It Through Score
         </span>
       </div>
       <div className="flex items-center gap-2 min-w-[120px]">
@@ -80,7 +80,7 @@ export const ScoreUpdateBadge = ({ totalDelta, dimensionDeltas }: ScoreUpdateToa
     >
       {totalDelta > 0 && (
         <span className="text-[10px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-          Reasoning Score +{totalDelta}
+          Think It Through Score +{totalDelta}
         </span>
       )}
       {entries.map(([key, val]) => (
