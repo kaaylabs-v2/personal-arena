@@ -375,3 +375,22 @@ export function getIndicatorColor(status: SkillStatus): string {
     case "stable": return "bg-muted-foreground/30";
   }
 }
+
+// ─── Learner Profiles ───
+
+export interface LearnerProfile {
+  id: string;
+  name: string;
+  role: string;
+  avatar: string;
+  enrolledProgramIds: string[];
+}
+
+export const learners: LearnerProfile[] = [
+  { id: "l1", name: "Emma", role: "School Student", avatar: "E", enrolledProgramIds: ["p-algebra"] },
+  { id: "l2", name: "Ravi", role: "College Student", avatar: "R", enrolledProgramIds: ["p-calculus"] },
+  { id: "l3", name: "Maria", role: "Product Manager", avatar: "M", enrolledProgramIds: ["p1"] },
+  { id: "l4", name: "David", role: "Sales Associate", avatar: "D", enrolledProgramIds: ["p-insurance"] },
+];
+
+export const defaultLearner = learners[2]; // Maria as default
