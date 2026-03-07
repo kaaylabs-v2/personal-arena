@@ -17,6 +17,7 @@ interface SessionProgressIndicatorProps {
   focusDimension?: string;
   sessionNumber?: number;
   totalSessions?: number;
+  reasoningScore?: ReasoningScoreData;
 }
 
 export const SessionProgressIndicator = ({
