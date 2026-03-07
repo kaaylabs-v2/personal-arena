@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Check, Circle } from "lucide-react";
+import { ReasoningScoreIndicator, type ReasoningScoreData } from "@/components/ReasoningScore";
 
 const stages = [
   { id: "clarify", label: "Clarify", step: 1 },
@@ -16,6 +17,7 @@ interface SessionProgressIndicatorProps {
   focusDimension?: string;
   sessionNumber?: number;
   totalSessions?: number;
+  reasoningScore?: ReasoningScoreData;
 }
 
 export const SessionProgressIndicator = ({
@@ -25,6 +27,7 @@ export const SessionProgressIndicator = ({
   focusDimension,
   sessionNumber,
   totalSessions,
+  reasoningScore,
 }: SessionProgressIndicatorProps) => {
   const activeIndex = stages.findIndex((s) => s.id === activeStage);
   const progress = ((activeIndex + 1) / stages.length) * 100;
@@ -45,11 +48,14 @@ export const SessionProgressIndicator = ({
             </span>
           )}
         </div>
-        {sessionNumber && totalSessions && (
-          <span className="text-[11px] text-muted-foreground font-medium">
-            Session {sessionNumber} of {totalSessions}
-          </span>
-        )}
+        <div className="flex items-center gap-4">
+          {reasoningScore && <ReasoningScoreIndicator score={reasoningScore} />}
+          {sessionNumber && totalSessions && (
+            <span className="text-[11px] text-muted-foreground font-medium">
+              Session {sessionNumber} of {totalSessions}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Progress bar */}

@@ -8,14 +8,9 @@ import {
   Send,
   Pause,
   Lightbulb,
-  Eye,
-  Shield,
-  Shuffle,
-  RotateCcw,
   Mic,
   MicOff,
   Sparkles,
-  CheckCircle,
 } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { SessionProgressIndicator } from "@/components/SessionProgressIndicator";
@@ -24,6 +19,7 @@ import { ThinkingScaffold } from "@/components/ThinkingScaffold";
 import { ScrollHints } from "@/components/ScrollHints";
 import { ArenaGuidanceHint } from "@/components/ArenaGuidanceHint";
 import { ArenaDebrief } from "@/components/ArenaDebrief";
+import { ScoreUpdateBadge, type ScoreDimensions, type ReasoningScoreData } from "@/components/ReasoningScore";
 
 type MessageRole = "arena" | "learner" | "insight";
 
@@ -31,6 +27,7 @@ interface ChatMessage {
   role: MessageRole;
   category: string;
   text: string;
+  scoreDelta?: { total: number; dimensions: Partial<ScoreDimensions> };
 }
 
 const scenario = {
@@ -44,24 +41,39 @@ const scenario = {
 
 const stageSequence = ["clarify", "challenge", "evidence", "alternative", "reflect"];
 
-const arenaResponses: Record<string, { text: string; insight?: string }> = {
+const arenaResponses: Record<string, { text: string; insight?: string; scoreDelta?: { total: number; dimensions: Partial<ScoreDimensions> } }> = {
   clarify: {
     text: "Interesting. But couldn't too much structure stifle creative problem-solving in your team? How would you balance this?",
+    insight: "You defined the problem with precision. Good use of scope narrowing.",
+    scoreDelta: { total: 5, dimensions: { clarity: 4, strategicFraming: 1 } },
   },
   challenge: {
     text: "You've defended your position well. Now, what concrete evidence from past sprints supports your communication approach?",
     insight: "Your reasoning is becoming more nuanced. You're starting to acknowledge trade-offs, which strengthens your argument.",
+    scoreDelta: { total: 6, dimensions: { tradeoffThinking: 3, clarity: 2, strategicFraming: 1 } },
   },
   evidence: {
     text: "Good data points. But is there an entirely different approach you haven't considered? What if the problem isn't communication at all?",
+    insight: "Strong evidence cited. You referenced concrete sprint data to back your claim.",
+    scoreDelta: { total: 4, dimensions: { evidenceUse: 3, clarity: 1 } },
   },
   alternative: {
     text: "You've explored multiple angles. Now step back — how has your thinking evolved since the start of this session? What would you change?",
     insight: "Strong alternative thinking. You identified a structural root cause that most people overlook. Consider how this reframes the original problem.",
+    scoreDelta: { total: 7, dimensions: { tradeoffThinking: 3, strategicFraming: 3, evidenceUse: 1 } },
   },
   reflect: {
     text: "Excellent reflection. You've demonstrated growth in your reasoning. Let's wrap up this session.",
+    insight: "You connected your final reflection back to the original problem framing — a sign of mature strategic thinking.",
+    scoreDelta: { total: 6, dimensions: { strategicFraming: 3, clarity: 1, tradeoffThinking: 2 } },
   },
+};
+
+const initialScore: ReasoningScoreData = {
+  total: 44,
+  max: 100,
+  dimensions: { clarity: 10, evidenceUse: 8, tradeoffThinking: 12, strategicFraming: 14 },
+  dimensionMax: 25,
 };
 
 const ArenaSession = () => {
@@ -72,6 +84,7 @@ const ArenaSession = () => {
   const [activeCategory, setActiveCategory] = useState("clarify");
   const [stageIndex, setStageIndex] = useState(0);
   const [sessionComplete, setSessionComplete] = useState(false);
+  const [reasoningScore, setReasoningScore] = useState<ReasoningScoreData>(initialScore);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: "arena",
@@ -79,6 +92,19 @@ const ArenaSession = () => {
       text: "You've stated that distributed teams need more structured communication. Can you clarify what 'structured' means to you in practice?",
     },
   ]);
+
+  const applyScoreDelta = (delta: { total: number; dimensions: Partial<ScoreDimensions> }) => {
+    setReasoningScore((prev) => ({
+      ...prev,
+      total: Math.min(prev.total + delta.total, prev.max),
+      dimensions: {
+        clarity: Math.min(prev.dimensions.clarity + (delta.dimensions.clarity || 0), prev.dimensionMax),
+        evidenceUse: Math.min(prev.dimensions.evidenceUse + (delta.dimensions.evidenceUse || 0), prev.dimensionMax),
+        tradeoffThinking: Math.min(prev.dimensions.tradeoffThinking + (delta.dimensions.tradeoffThinking || 0), prev.dimensionMax),
+        strategicFraming: Math.min(prev.dimensions.strategicFraming + (delta.dimensions.strategicFraming || 0), prev.dimensionMax),
+      },
+    }));
+  };
 
   const handleSubmit = () => {
     if (!response.trim()) return;
@@ -91,16 +117,16 @@ const ArenaSession = () => {
       { role: "learner", category: "", text: response },
     ];
 
-    // Add real-time insight if available for this stage
-    if (arenaReply.insight) {
+    if (arenaReply.insight && arenaReply.scoreDelta) {
+      applyScoreDelta(arenaReply.scoreDelta);
       newMessages.push({
         role: "insight",
         category: activeCategory,
         text: arenaReply.insight,
+        scoreDelta: arenaReply.scoreDelta,
       });
     }
 
-    // Check if session is ending
     if (activeCategory === "reflect") {
       newMessages.push({
         role: "arena",
@@ -175,10 +201,11 @@ const ArenaSession = () => {
                 focusDimension={scenario.focusDimension}
                 sessionNumber={3}
                 totalSessions={12}
+                reasoningScore={reasoningScore}
               />
 
               {sessionComplete ? (
-                <ArenaDebrief onClose={() => navigate("/dashboard")} />
+                <ArenaDebrief onClose={() => navigate("/dashboard")} reasoningScore={reasoningScore} />
               ) : (
                 <>
                   <div className="px-5 py-3 border-b border-border">
@@ -194,7 +221,6 @@ const ArenaSession = () => {
                           animate={{ opacity: 1, y: 0 }}
                           className={`max-w-[85%] ${msg.role === "learner" ? "ml-auto" : ""}`}
                         >
-                          {/* Insight message type */}
                           {msg.role === "insight" ? (
                             <div className="flex items-start gap-2 rounded-xl px-4 py-3 bg-primary/5 border border-primary/15">
                               <Sparkles className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
@@ -203,6 +229,12 @@ const ArenaSession = () => {
                                   Real-Time Insight
                                 </span>
                                 <p className="text-sm leading-relaxed text-foreground/80">{msg.text}</p>
+                                {msg.scoreDelta && (
+                                  <ScoreUpdateBadge
+                                    totalDelta={msg.scoreDelta.total}
+                                    dimensionDeltas={msg.scoreDelta.dimensions}
+                                  />
+                                )}
                               </div>
                             </div>
                           ) : (
@@ -221,7 +253,6 @@ const ArenaSession = () => {
                               >
                                 {msg.text}
                               </div>
-                              {/* Guidance hint below arena messages */}
                               {msg.role === "arena" && msg.category && (
                                 <ArenaGuidanceHint stage={msg.category} />
                               )}
