@@ -62,12 +62,22 @@ interface Domain {
   capabilities: Capability[];
 }
 
+interface MasteryProgram {
+  id: string;
+  name: string;
+  description: string;
+  current_level: number;
+  target_level: number;
+  dimension_count: number;
+  domains: Domain[];
+}
+
 // --- Mock Data ---
 
 const GAP_THRESHOLD = 50;
 const CRITICAL_THRESHOLD = 40;
 
-const domains: Domain[] = [
+const strategicLeadershipDomains: Domain[] = [
   {
     domain_id: "d1",
     domain_name: "Decision Making",
