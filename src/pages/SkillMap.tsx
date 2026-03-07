@@ -477,35 +477,34 @@ const SkillMap = () => {
 
   return (
     <Layout pageTitle="Skill Map">
-      <div className="max-w-6xl mx-auto px-6 py-4">
+      <div className="max-w-6xl mx-auto px-6 py-4 space-y-4">
         {/* Program Selector + Context */}
-        <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
-          <div className="flex items-center gap-4 flex-wrap">
-            <div className="flex items-center gap-2">
-              <GraduationCap className="h-4 w-4 text-muted-foreground" />
-              <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">Program</span>
-            </div>
-            <Select value={selectedProgramId} onValueChange={handleProgramChange}>
-              <SelectTrigger className="w-[220px] h-9 text-sm font-semibold">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {programs.map((p) => (
-                  <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        <div className="flex items-center gap-4 flex-wrap rounded-xl border border-border bg-card p-4">
+          <div className="flex items-center gap-2">
+            <GraduationCap className="h-4 w-4 text-primary" />
+            <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">Program</span>
           </div>
-          <p className="text-xs text-muted-foreground mt-1.5 ml-6">
+          <Select value={selectedProgramId} onValueChange={handleProgramChange}>
+            <SelectTrigger className="w-[220px] h-9 text-sm font-semibold border-primary/20">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {programs.map((p) => (
+                <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <div className="h-4 w-px bg-border mx-1" />
+          <p className="text-xs text-muted-foreground">
             {selectedProgram.description}
             <span className="mx-2 text-border">·</span>
             <span className="font-medium text-foreground">Level {selectedProgram.current_level}</span>
             <span className="text-muted-foreground"> → {selectedProgram.target_level}</span>
           </p>
-        </motion.div>
+        </div>
 
         {/* AI Insight Banner */}
-        <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="mb-5">
+        <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
           <InsightBanner title="AI Insight">
             <p>Your <strong>Evidence Evaluation</strong> and <strong>Data-Driven Judgment</strong> capabilities need attention — both are below the mastery threshold.</p>
             <div className="flex flex-wrap gap-1.5 mt-2">
