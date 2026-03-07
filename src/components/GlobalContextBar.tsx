@@ -1,6 +1,7 @@
 import { Search, Bell, User, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import { MasteryJourneyIndicator } from "@/components/MasteryJourneyIndicator";
 
 interface GlobalContextBarProps {
   pageTitle?: string;
