@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Layout } from "@/components/Layout";
+import { useLearner } from "@/contexts/LearnerContext";
 
 const subjects = [
   "Leadership", "Product Management", "AI Strategy", "Data Analysis",
@@ -36,18 +37,68 @@ const exampleObjectives = [
   "Resolve stakeholder conflicts", "Present strategy effectively",
 ];
 
-const mandatedJourneys = [
-  { id: "a1", name: "Strategic Decision Making for Senior Leaders", domain: "Leadership", currentLevel: 1.6, targetLevel: 4.0, progress: 18, focusArea: "Evidence-based reasoning", program: "Leadership Development" },
-  { id: "a2", name: "Cross-Functional Stakeholder Alignment", domain: "Communication", currentLevel: 2.0, targetLevel: 3.5, progress: 35, focusArea: "Influence without authority", program: "Leadership Development" },
-];
+// Per-program dashboard data
+interface DashboardData {
+  insight: { label: string; text: string };
+  secondaryInsight: string;
+  recommended: { title: string; subtitle: string; link: string };
+  mandated: { id: string; name: string; domain: string; currentLevel: number; targetLevel: number; progress: number; focusArea: string; program: string }[];
+  selfInitiated: { id: string; name: string; domain: string; currentLevel: number; targetLevel: number; progress: number }[];
+}
 
-const selfInitiatedJourneys = [
-  { id: "1", name: "Strategic Leadership", domain: "Leadership", currentLevel: 3.1, targetLevel: 4.0, progress: 62 },
-  { id: "2", name: "Evidence-Based Decision Making", domain: "Decision Making", currentLevel: 2.4, targetLevel: 3.5, progress: 38 },
-  { id: "3", name: "Stakeholder Communication", domain: "Communication", currentLevel: 1.8, targetLevel: 3.0, progress: 22 },
-];
-
-const hasMandated = mandatedJourneys.length > 0;
+const dashboardByProgram: Record<string, DashboardData> = {
+  "p1": {
+    insight: { label: "Evidence Use", text: "Your Evidence Use capability has plateaued for the last three sessions. Try a challenge scenario to break through." },
+    secondaryInsight: "Clarity improved 12% over the last 2 weeks. You're approaching Level 3 mastery in Strategic Leadership.",
+    recommended: { title: "Scenario: Conflicting Stakeholder Priorities", subtitle: "Challenge Mode · ~20 min · Targets Evidence Use", link: "/arena-session" },
+    mandated: [
+      { id: "a1", name: "Strategic Decision Making for Senior Leaders", domain: "Leadership", currentLevel: 1.6, targetLevel: 4.0, progress: 18, focusArea: "Evidence-based reasoning", program: "Leadership Development" },
+      { id: "a2", name: "Cross-Functional Stakeholder Alignment", domain: "Communication", currentLevel: 2.0, targetLevel: 3.5, progress: 35, focusArea: "Influence without authority", program: "Leadership Development" },
+    ],
+    selfInitiated: [
+      { id: "1", name: "Strategic Leadership", domain: "Leadership", currentLevel: 3.1, targetLevel: 4.0, progress: 62 },
+      { id: "2", name: "Evidence-Based Decision Making", domain: "Decision Making", currentLevel: 2.4, targetLevel: 3.5, progress: 38 },
+      { id: "3", name: "Stakeholder Communication", domain: "Communication", currentLevel: 1.8, targetLevel: 3.0, progress: 22 },
+    ],
+  },
+  "p-algebra": {
+    insight: { label: "Word Problem Translation", text: "Your Word Problem Translation is declining. Practice converting real-world scenarios into algebraic equations." },
+    secondaryInsight: "Pattern Recognition improved 8% this week. You're building strong algebraic reasoning foundations.",
+    recommended: { title: "Word Problem Reasoning Scenario", subtitle: "Practice Mode · ~15 min · Targets Translation Skills", link: "/arena/session/word-problem-scenario" },
+    mandated: [
+      { id: "alg-m1", name: "Build Equation Solving Foundations", domain: "Algebra", currentLevel: 2.0, targetLevel: 4.0, progress: 30, focusArea: "Linear equations", program: "Math Department" },
+    ],
+    selfInitiated: [
+      { id: "alg-1", name: "Master Word Problem Translation", domain: "Communication", currentLevel: 1.5, targetLevel: 4.0, progress: 25 },
+      { id: "alg-2", name: "Recognize and Extend Patterns", domain: "Pattern Recognition", currentLevel: 2.5, targetLevel: 4.0, progress: 50 },
+    ],
+  },
+  "p-calculus": {
+    insight: { label: "Chain Rule", text: "Your Chain Rule Application is a critical gap. Focus on composite function differentiation this week." },
+    secondaryInsight: "Limit Reasoning is solid at Level 2.8. Build on that foundation to strengthen derivative techniques.",
+    recommended: { title: "Chain Rule Scenario", subtitle: "Practice Mode · ~20 min · Targets Chain Rule Application", link: "/arena/session/chain-rule-scenario" },
+    mandated: [
+      { id: "calc-m1", name: "Master Derivative Techniques", domain: "Calculus", currentLevel: 1.5, targetLevel: 4.0, progress: 20, focusArea: "Chain rule and implicit differentiation", program: "Professor Chen" },
+    ],
+    selfInitiated: [
+      { id: "calc-1", name: "Solve Optimization Problems", domain: "Applications", currentLevel: 1.2, targetLevel: 4.0, progress: 15 },
+      { id: "calc-2", name: "Interpret Graphs Using Calculus", domain: "Analysis", currentLevel: 2.0, targetLevel: 3.5, progress: 45 },
+    ],
+  },
+  "p-insurance": {
+    insight: { label: "Price Objection Handling", text: "Your Handling Price Objections is a critical gap. Practice reframing cost concerns with empathy and evidence." },
+    secondaryInsight: "Ethical Sales Communication is your strongest skill at Level 3.2. Use that trust-building strength in objection scenarios.",
+    recommended: { title: "Customer Objection Simulation", subtitle: "Practice Mode · ~20 min · Targets Objection Handling", link: "/arena/session/customer-objection-sim" },
+    mandated: [
+      { id: "ins-m1", name: "Handle Customer Objections Effectively", domain: "Sales", currentLevel: 1.4, targetLevel: 4.0, progress: 18, focusArea: "Price objection reframing", program: "Sales Director" },
+      { id: "ins-m2", name: "Regulatory Compliance in Sales", domain: "Compliance", currentLevel: 2.6, targetLevel: 4.0, progress: 42, focusArea: "Disclosure requirements", program: "Compliance Team" },
+    ],
+    selfInitiated: [
+      { id: "ins-1", name: "Communicate Risk Effectively", domain: "Communication", currentLevel: 1.6, targetLevel: 3.5, progress: 30 },
+      { id: "ins-2", name: "Structure Policies for Client Needs", domain: "Product Knowledge", currentLevel: 2.2, targetLevel: 4.0, progress: 38 },
+    ],
+  },
+};
 
 const CircularBadge = ({ progress }: { progress: number }) => {
   const r = 18;
@@ -65,7 +116,7 @@ const CircularBadge = ({ progress }: { progress: number }) => {
   );
 };
 
-const MandatedJourneyCard = ({ journey, onClick }: { journey: typeof mandatedJourneys[0]; onClick: () => void }) => (
+const MandatedJourneyCard = ({ journey, onClick }: { journey: DashboardData["mandated"][0]; onClick: () => void }) => (
   <motion.div
     initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.3 }}
@@ -96,7 +147,7 @@ const MandatedJourneyCard = ({ journey, onClick }: { journey: typeof mandatedJou
   </motion.div>
 );
 
-const SelfInitiatedJourneyCard = ({ journey, onClick }: { journey: typeof selfInitiatedJourneys[0]; onClick: () => void }) => (
+const SelfInitiatedJourneyCard = ({ journey, onClick }: { journey: DashboardData["selfInitiated"][0]; onClick: () => void }) => (
   <motion.div
     initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.3 }}
@@ -120,6 +171,10 @@ const SelfInitiatedJourneyCard = ({ journey, onClick }: { journey: typeof selfIn
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const { activeProgram, activeLearner } = useLearner();
+  const data = dashboardByProgram[activeProgram.id] || dashboardByProgram["p1"];
+  const hasMandated = data.mandated.length > 0;
+
   const [objective, setObjective] = useState("");
   const [subject, setSubject] = useState("");
   const [specificChoice, setSpecificChoice] = useState<"general" | "specific" | null>(null);
@@ -141,7 +196,7 @@ const HomePage = () => {
   return (
     <Layout pageTitle="Dashboard">
       <div className="max-w-5xl mx-auto px-6 py-4">
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} key={activeProgram.id}>
 
           {/* Primary Arena Insight */}
           <motion.div
@@ -153,8 +208,7 @@ const HomePage = () => {
               <div className="flex-1 min-w-0">
                 <p className="text-[10px] uppercase tracking-wider text-primary font-semibold mb-1">Arena Insight</p>
                 <p className="text-sm text-foreground leading-relaxed">
-                  Your <span className="font-semibold">Evidence Use</span> capability has plateaued for the last three sessions.
-                  Try a challenge scenario to break through.
+                  Your <span className="font-semibold">{data.insight.label}</span> {data.insight.text.split(data.insight.label).pop()}
                 </p>
               </div>
             </div>
@@ -167,8 +221,7 @@ const HomePage = () => {
           >
             <TrendingUp className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
             <p className="text-xs text-muted-foreground leading-relaxed">
-              <span className="text-foreground font-medium">Clarity</span> improved 12% over the last 2 weeks.
-              You're approaching Level 3 mastery in Strategic Leadership.
+              {data.secondaryInsight}
             </p>
           </motion.div>
 
@@ -180,13 +233,13 @@ const HomePage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-card-foreground mb-0.5">
-                  Scenario: Conflicting Stakeholder Priorities
+                  {data.recommended.title}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Challenge Mode · ~20 min · Targets Evidence Use
+                  {data.recommended.subtitle}
                 </p>
               </div>
-              <Button size="sm" onClick={() => navigate("/arena-session")}>
+              <Button size="sm" onClick={() => navigate(data.recommended.link)}>
                 <Shield className="mr-1.5 h-3.5 w-3.5" /> Start
               </Button>
             </div>
@@ -202,7 +255,7 @@ const HomePage = () => {
                 <p className="text-xs text-muted-foreground mt-0.5">Capabilities required by your organization</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {mandatedJourneys.map((j) => (
+                {data.mandated.map((j) => (
                   <MandatedJourneyCard key={j.id} journey={j} onClick={() => navigate("/dashboard")} />
                 ))}
               </div>
@@ -224,7 +277,7 @@ const HomePage = () => {
             </div>
             <p className="text-xs text-muted-foreground mb-3">Capabilities you choose to develop on your own</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {selfInitiatedJourneys.map((j) => (
+              {data.selfInitiated.map((j) => (
                 <SelfInitiatedJourneyCard key={j.id} journey={j} onClick={() => navigate("/dashboard")} />
               ))}
             </div>

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
 import { learners, programs, defaultLearner, type LearnerProfile, type MasteryProgram } from "@/data/programs";
 
 interface LearnerContextValue {
@@ -12,16 +12,20 @@ const LearnerContext = createContext<LearnerContextValue | null>(null);
 
 export function LearnerProvider({ children }: { children: ReactNode }) {
   const [activeLearner, setActiveLearnerState] = useState<LearnerProfile>(defaultLearner);
-  const defaultProgramId = activeLearner.enrolledProgramIds[0] || programs[0].id;
-  const [activeProgramId, setActiveProgramId] = useState<string>(defaultProgramId);
+  const [activeProgramId, setActiveProgramIdState] = useState<string>(
+    defaultLearner.enrolledProgramIds[0] || programs[0].id
+  );
 
   const activeProgram = programs.find((p) => p.id === activeProgramId) || programs[0];
 
-  const setActiveLearner = (learner: LearnerProfile) => {
+  const setActiveLearner = useCallback((learner: LearnerProfile) => {
     setActiveLearnerState(learner);
-    // Auto-switch to learner's first enrolled program
-    setActiveProgramId(learner.enrolledProgramIds[0] || programs[0].id);
-  };
+    setActiveProgramIdState(learner.enrolledProgramIds[0] || programs[0].id);
+  }, []);
+
+  const setActiveProgramId = useCallback((id: string) => {
+    setActiveProgramIdState(id);
+  }, []);
 
   return (
     <LearnerContext.Provider value={{ activeLearner, setActiveLearner, activeProgram, setActiveProgramId }}>
