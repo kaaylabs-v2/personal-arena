@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Check, Circle } from "lucide-react";
+import { ReasoningScoreIndicator, type ReasoningScoreData } from "@/components/ReasoningScore";
 
 const stages = [
   { id: "clarify", label: "Clarify", step: 1 },
