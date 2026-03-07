@@ -1,6 +1,7 @@
 import { Search, Bell, User, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import { MasteryJourneyIndicator } from "@/components/MasteryJourneyIndicator";
 
 interface GlobalContextBarProps {
   pageTitle?: string;
@@ -41,6 +42,9 @@ export function GlobalContextBar({ pageTitle }: GlobalContextBarProps) {
           <TrendingUp className="h-3 w-3" /> Rising
         </span>
       </div>
+
+      <div className="h-4 w-px bg-border mx-0.5 shrink-0" />
+      <MasteryJourneyIndicator />
 
       <div className="flex-1" />
 
