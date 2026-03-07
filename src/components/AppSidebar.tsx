@@ -1,4 +1,4 @@
-import { Home, Target, Map, Gauge, ListTodo, TrendingUp, BookOpen, User } from "lucide-react";
+import { Home, Target, Map, Gauge, ListTodo, TrendingUp, BookOpen, User, Crosshair } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
   Sidebar,
@@ -13,6 +13,7 @@ import {
 
 const navItems = [
   { title: "Home", url: "/", icon: Home },
+  { title: "Focus", url: "/focus", icon: Crosshair },
   { title: "Arena Sessions", url: "/sessions", icon: Target },
   { title: "Skill Map", url: "/skill-map", icon: Map },
   { title: "Command Center", url: "/command-center", icon: Gauge },

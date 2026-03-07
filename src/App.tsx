@@ -24,6 +24,7 @@ import NotFound from "./pages/NotFound";
 import StartingPoint from "./pages/StartingPoint";
 import SkillMap from "./pages/SkillMap";
 import CommandCenter from "./pages/CommandCenter";
+import Focus from "./pages/Focus";
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,7 @@ const App = () => (
           <Route path="/starting-point" element={<StartingPoint />} />
           <Route path="/skill-map" element={<SkillMap />} />
           <Route path="/command-center" element={<CommandCenter />} />
+          <Route path="/focus" element={<Focus />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
