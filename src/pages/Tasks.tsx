@@ -129,8 +129,10 @@ const TaskRow = ({ task, index }: { task: PracticeTask; index: number }) => {
 };
 
 const Tasks = () => {
+  const { activeProgram } = useLearner();
   const [tab, setTab] = useState<"today" | "upcoming">("today");
-  const tasks = tab === "today" ? todayTasks : upcomingTasks;
+  const data = tasksByProgram[activeProgram.id] || tasksByProgram["p1"];
+  const tasks = tab === "today" ? data.today : data.upcoming;
 
   return (
     <Layout pageTitle="Practice">
