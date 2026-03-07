@@ -134,6 +134,22 @@ const ArenaSession = () => {
   ]);
 
   useEffect(() => {
+    setResponse("");
+    setIsRecording(false);
+    setActiveCategory("clarify");
+    setStageIndex(0);
+    setSessionComplete(false);
+    setReasoningScore(initialScore);
+    setMessages([
+      {
+        role: "arena",
+        category: "clarify",
+        text: scenario.openingPrompt,
+      },
+    ]);
+  }, [activeProgram.id, scenario.openingPrompt]);
+
+  useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
