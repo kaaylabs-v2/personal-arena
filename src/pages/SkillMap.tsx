@@ -477,7 +477,7 @@ const SkillMap = () => {
 
   return (
     <Layout pageTitle="Skill Map">
-      <div className="max-w-6xl mx-auto px-6 py-4">
+      <div className="max-w-6xl mx-auto px-6 py-4 space-y-4">
         {/* Program Selector + Context */}
         <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
           <div className="flex items-center gap-4 flex-wrap">
