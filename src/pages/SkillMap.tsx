@@ -163,6 +163,79 @@ const strategicLeadershipDomains: Domain[] = [
   },
 ];
 
+const salesMasteryDomains: Domain[] = [
+  {
+    domain_id: "sd1",
+    domain_name: "Client Discovery",
+    description: "Uncovering client needs, pain points, and decision drivers",
+    capabilities: [
+      { capability_id: "sc1", domain_id: "sd1", capability_name: "Needs Analysis", description: "Identifying explicit and latent client needs through structured questioning.", current_level: 3.2, target_level: 4.5, trend: "improving", recommended_sessions: [{ id: "discovery-call-sim", title: "Discovery Call Simulation" }], past_sessions: [{ title: "Open-Ended Questioning" }] },
+      { capability_id: "sc2", domain_id: "sd1", capability_name: "Active Listening", description: "Demonstrating attentive listening and reflecting back key themes to build trust.", current_level: 3.5, target_level: 4.0, trend: "stable", recommended_sessions: [], past_sessions: [{ title: "Mirror & Match" }] },
+      { capability_id: "sc3", domain_id: "sd1", capability_name: "Pain Point Mapping", description: "Connecting surface-level complaints to deeper business challenges.", current_level: 2.1, target_level: 4.0, trend: "declining", recommended_sessions: [{ id: "pain-point-drill", title: "Pain Point Drill" }], past_sessions: [] },
+    ],
+  },
+  {
+    domain_id: "sd2",
+    domain_name: "Negotiation & Closing",
+    description: "Managing objections, structuring deals, and closing with confidence",
+    capabilities: [
+      { capability_id: "sc4", domain_id: "sd2", capability_name: "Objection Handling", description: "Responding to buyer resistance with empathy and evidence-based reframes.", current_level: 2.0, target_level: 4.0, trend: "improving", recommended_sessions: [{ id: "objection-roleplay", title: "Objection Roleplay" }, { id: "reframe-practice", title: "Reframe Practice" }], past_sessions: [{ title: "Common Objections" }] },
+      { capability_id: "sc5", domain_id: "sd2", capability_name: "Deal Structuring", description: "Creating mutually beneficial deal terms that align with client and company goals.", current_level: 1.8, target_level: 3.5, trend: "stable", recommended_sessions: [{ id: "deal-anatomy", title: "Deal Anatomy Workshop" }], past_sessions: [] },
+      { capability_id: "sc6", domain_id: "sd2", capability_name: "Closing Techniques", description: "Recognizing buying signals and guiding prospects to a confident decision.", current_level: 2.5, target_level: 4.0, trend: "improving", recommended_sessions: [], past_sessions: [{ title: "Trial Close Practice" }] },
+    ],
+  },
+  {
+    domain_id: "sd3",
+    domain_name: "Relationship Management",
+    description: "Building long-term trust and expanding client accounts",
+    capabilities: [
+      { capability_id: "sc7", domain_id: "sd3", capability_name: "Account Planning", description: "Developing strategic plans to grow and retain key accounts.", current_level: 2.8, target_level: 4.0, trend: "stable", recommended_sessions: [], past_sessions: [{ title: "Account Review" }] },
+      { capability_id: "sc8", domain_id: "sd3", capability_name: "Trust Building", description: "Establishing credibility and rapport through consistent, value-driven interactions.", current_level: 3.0, target_level: 4.0, trend: "improving", recommended_sessions: [], past_sessions: [{ title: "Value-First Outreach" }, { title: "Follow-Up Cadence" }] },
+    ],
+  },
+  {
+    domain_id: "sd4",
+    domain_name: "Pipeline Management",
+    description: "Forecasting, prioritization, and deal velocity optimization",
+    capabilities: [
+      { capability_id: "sc9", domain_id: "sd4", capability_name: "Forecast Accuracy", description: "Predicting deal outcomes and revenue with reliable methods.", current_level: 1.6, target_level: 3.5, trend: "declining", recommended_sessions: [{ id: "forecast-calibration", title: "Forecast Calibration" }], past_sessions: [] },
+      { capability_id: "sc10", domain_id: "sd4", capability_name: "Deal Prioritization", description: "Focusing effort on high-probability, high-value opportunities.", current_level: 2.4, target_level: 4.0, trend: "stable", recommended_sessions: [], past_sessions: [{ title: "Pipeline Scoring" }] },
+    ],
+  },
+];
+
+const productStrategyDomains: Domain[] = [
+  {
+    domain_id: "pd1",
+    domain_name: "Product Thinking",
+    description: "Framing problems, identifying opportunities, and defining product value",
+    capabilities: [
+      { capability_id: "pc1", domain_id: "pd1", capability_name: "Problem Framing", description: "Defining the right problem to solve before jumping to solutions.", current_level: 2.5, target_level: 4.0, trend: "improving", recommended_sessions: [{ id: "problem-definition-lab", title: "Problem Definition Lab" }], past_sessions: [{ title: "Jobs to Be Done" }] },
+      { capability_id: "pc2", domain_id: "pd1", capability_name: "Opportunity Assessment", description: "Evaluating market signals and user data to identify high-impact opportunities.", current_level: 1.9, target_level: 3.5, trend: "stable", recommended_sessions: [{ id: "opportunity-scoring", title: "Opportunity Scoring" }], past_sessions: [] },
+      { capability_id: "pc3", domain_id: "pd1", capability_name: "Value Proposition Design", description: "Articulating why a product matters to its target audience.", current_level: 2.2, target_level: 4.0, trend: "declining", recommended_sessions: [{ id: "value-prop-canvas", title: "Value Prop Canvas" }], past_sessions: [{ title: "Messaging Workshop" }] },
+    ],
+  },
+  {
+    domain_id: "pd2",
+    domain_name: "Roadmap & Prioritization",
+    description: "Sequencing work, managing tradeoffs, and communicating plans",
+    capabilities: [
+      { capability_id: "pc4", domain_id: "pd2", capability_name: "Roadmap Communication", description: "Presenting product plans clearly to stakeholders with appropriate detail.", current_level: 2.0, target_level: 3.5, trend: "improving", recommended_sessions: [], past_sessions: [{ title: "Roadmap Review" }] },
+      { capability_id: "pc5", domain_id: "pd2", capability_name: "Feature Prioritization", description: "Using frameworks to sequence features based on impact and effort.", current_level: 1.5, target_level: 3.5, trend: "declining", recommended_sessions: [{ id: "rice-framework", title: "RICE Framework Drill" }, { id: "prioritization-debate", title: "Prioritization Debate" }], past_sessions: [] },
+    ],
+  },
+  {
+    domain_id: "pd3",
+    domain_name: "Data & Experimentation",
+    description: "Using metrics, experiments, and user research to guide decisions",
+    capabilities: [
+      { capability_id: "pc6", domain_id: "pd3", capability_name: "Metric Definition", description: "Choosing the right success metrics and leading indicators for product goals.", current_level: 1.7, target_level: 3.5, trend: "stable", recommended_sessions: [{ id: "north-star-metric", title: "North Star Metric Workshop" }], past_sessions: [] },
+      { capability_id: "pc7", domain_id: "pd3", capability_name: "Experiment Design", description: "Structuring A/B tests and pilots to validate hypotheses efficiently.", current_level: 1.4, target_level: 3.5, trend: "improving", recommended_sessions: [{ id: "ab-test-design", title: "A/B Test Design" }], past_sessions: [] },
+      { capability_id: "pc8", domain_id: "pd3", capability_name: "User Research Synthesis", description: "Extracting actionable insights from qualitative and quantitative research.", current_level: 2.3, target_level: 4.0, trend: "stable", recommended_sessions: [], past_sessions: [{ title: "Interview Analysis" }, { title: "Survey Insights" }] },
+    ],
+  },
+];
+
 const programs: MasteryProgram[] = [
   {
     id: "p1",
@@ -180,7 +253,7 @@ const programs: MasteryProgram[] = [
     current_level: 2.4,
     target_level: 4.0,
     dimension_count: 4,
-    domains: [],
+    domains: salesMasteryDomains,
   },
   {
     id: "p3",
@@ -189,7 +262,7 @@ const programs: MasteryProgram[] = [
     current_level: 1.8,
     target_level: 3.5,
     dimension_count: 3,
-    domains: [],
+    domains: productStrategyDomains,
   },
 ];
 
