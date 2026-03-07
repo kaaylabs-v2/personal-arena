@@ -504,7 +504,7 @@ const SkillMap = () => {
         </div>
 
         {/* AI Insight Banner */}
-        <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="mb-5">
+        <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
           <InsightBanner title="AI Insight">
             <p>Your <strong>Evidence Evaluation</strong> and <strong>Data-Driven Judgment</strong> capabilities need attention — both are below the mastery threshold.</p>
             <div className="flex flex-wrap gap-1.5 mt-2">
