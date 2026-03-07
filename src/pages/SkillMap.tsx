@@ -436,12 +436,15 @@ function SkillRow({ capability, navigate, capRef }: { capability: Capability; na
 
 // --- Page ---
 
-const allCapabilityNames = domains.flatMap((d) => d.capabilities.map((c) => c.capability_name));
-
 const SkillMap = () => {
   const navigate = useNavigate();
-  const [selectedDomainId, setSelectedDomainId] = useState<string>(domains[0].domain_id);
+  const [selectedProgramId, setSelectedProgramId] = useState<string>(programs[0].id);
+  const selectedProgram = programs.find((p) => p.id === selectedProgramId) || programs[0];
+  const domains = selectedProgram.domains;
 
+  const [selectedDomainId, setSelectedDomainId] = useState<string>(domains[0]?.domain_id || "");
+
+  const allCapabilityNames = domains.flatMap((d) => d.capabilities.map((c) => c.capability_name));
   const capRefs = useRef<Record<string, React.RefObject<HTMLDivElement>>>(
     Object.fromEntries(allCapabilityNames.map((name) => [name, { current: null } as React.RefObject<HTMLDivElement>]))
   ).current;
@@ -460,13 +463,47 @@ const SkillMap = () => {
         setTimeout(() => ref.current?.classList.remove("ring-2", "ring-primary/50"), 2000);
       }
     }, 350);
-  }, [capRefs]);
+  }, [capRefs, domains]);
+
+  const handleProgramChange = (programId: string) => {
+    setSelectedProgramId(programId);
+    const program = programs.find((p) => p.id === programId);
+    if (program && program.domains.length > 0) {
+      setSelectedDomainId(program.domains[0].domain_id);
+    }
+  };
 
   const insightCapabilities = ["Evidence Evaluation", "Data-Driven Judgment", "Context Setting"];
 
   return (
     <Layout pageTitle="Skill Map">
       <div className="max-w-6xl mx-auto px-6 py-4">
+        {/* Program Selector + Context */}
+        <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
+          <div className="flex items-center gap-4 flex-wrap">
+            <div className="flex items-center gap-2">
+              <GraduationCap className="h-4 w-4 text-muted-foreground" />
+              <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">Program</span>
+            </div>
+            <Select value={selectedProgramId} onValueChange={handleProgramChange}>
+              <SelectTrigger className="w-[220px] h-9 text-sm font-semibold">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {programs.map((p) => (
+                  <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1.5 ml-6">
+            {selectedProgram.description}
+            <span className="mx-2 text-border">·</span>
+            <span className="font-medium text-foreground">Level {selectedProgram.current_level}</span>
+            <span className="text-muted-foreground"> → {selectedProgram.target_level}</span>
+          </p>
+        </motion.div>
+
         {/* AI Insight Banner */}
         <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="mb-5">
           <InsightBanner title="AI Insight">
@@ -484,68 +521,105 @@ const SkillMap = () => {
         {/* Two-column layout */}
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(300px,35%)_1fr] gap-6">
           {/* Left Column — Capability Dimensions */}
-          <div className="space-y-2">
-            <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium mb-2 px-1">
-              Capability Dimensions
-            </p>
-            {domains.map((domain, i) => (
-              <motion.div
-                key={domain.domain_id}
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.05, duration: 0.25 }}
-              >
-                <DimensionItem
-                  domain={domain}
-                  isSelected={selectedDomainId === domain.domain_id}
-                  onClick={() => setSelectedDomainId(domain.domain_id)}
-                />
-              </motion.div>
-            ))}
+          <div className="flex flex-col">
+            <div className="space-y-2 flex-1">
+              <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium mb-2 px-1">
+                Capability Dimensions
+              </p>
+              {domains.map((domain, i) => (
+                <motion.div
+                  key={domain.domain_id}
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.05, duration: 0.25 }}
+                >
+                  <DimensionItem
+                    domain={domain}
+                    isSelected={selectedDomainId === domain.domain_id}
+                    onClick={() => setSelectedDomainId(domain.domain_id)}
+                  />
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Active Programs */}
+            <div className="mt-6 pt-4 border-t border-border">
+              <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium mb-2.5 px-1">
+                Your Active Programs
+              </p>
+              <div className="space-y-1">
+                {programs.map((program) => (
+                  <button
+                    key={program.id}
+                    onClick={() => handleProgramChange(program.id)}
+                    className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-left text-sm transition-colors ${
+                      selectedProgramId === program.id
+                        ? "bg-accent text-accent-foreground font-medium"
+                        : "text-muted-foreground hover:bg-muted/40 hover:text-foreground"
+                    }`}
+                  >
+                    <GraduationCap className="h-3.5 w-3.5 shrink-0" />
+                    <span className="flex-1 truncate">{program.name}</span>
+                    <ChevronRight className="h-3 w-3 shrink-0 opacity-50" />
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Right Column — Skill Details */}
-          <div className="min-w-0">
-            {/* Dimension Summary Header */}
-            <div className="mb-4 p-4 rounded-xl bg-card border border-border">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h2 className="text-base font-bold text-card-foreground">{selectedDomain.domain_name}</h2>
-                  <p className="text-xs text-muted-foreground mt-0.5">{selectedDomain.description}</p>
-                </div>
-                <div className="flex items-center gap-4 shrink-0">
-                  <div className="text-right">
-                    <p className="text-lg font-bold text-foreground tabular-nums">{getDomainProgress(selectedDomain)}%</p>
-                    <p className="text-[10px] text-muted-foreground">Capability Strength</p>
+          {selectedDomain && (
+            <div className="min-w-0">
+              {/* Dimension Summary Header */}
+              <div className="mb-4 p-4 rounded-xl bg-card border border-border">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-1">
+                      {selectedProgram.name} Progress
+                    </p>
+                    <h2 className="text-base font-bold text-card-foreground">{selectedDomain.domain_name}</h2>
+                    <p className="text-xs text-muted-foreground mt-0.5">{selectedDomain.description}</p>
                   </div>
-                  <div className="text-right">
-                    <p className="text-lg font-bold text-foreground tabular-nums">{selectedDomain.capabilities.length}</p>
-                    <p className="text-[10px] text-muted-foreground">Skills</p>
+                  <div className="flex items-center gap-4 shrink-0">
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-foreground tabular-nums">{getDomainProgress(selectedDomain)}%</p>
+                      <p className="text-[10px] text-muted-foreground">Capability Strength</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-foreground tabular-nums">{selectedDomain.capabilities.length}</p>
+                      <p className="text-[10px] text-muted-foreground">Skills</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={selectedDomain.domain_id}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.25 }}
-                className="space-y-2.5"
-              >
-                {selectedDomain.capabilities.map((cap) => (
-                  <SkillRow
-                    key={cap.capability_id}
-                    capability={cap}
-                    navigate={navigate}
-                    capRef={capRefs[cap.capability_name] as React.RefObject<HTMLDivElement>}
-                  />
-                ))}
-              </motion.div>
-            </AnimatePresence>
-          </div>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={selectedDomain.domain_id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.25 }}
+                  className="space-y-2.5"
+                >
+                  {selectedDomain.capabilities.map((cap) => (
+                    <SkillRow
+                      key={cap.capability_id}
+                      capability={cap}
+                      navigate={navigate}
+                      capRef={capRefs[cap.capability_name] as React.RefObject<HTMLDivElement>}
+                    />
+                  ))}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          )}
+
+          {!selectedDomain && (
+            <div className="flex items-center justify-center min-h-[200px] text-muted-foreground text-sm">
+              No dimensions available for this program yet.
+            </div>
+          )}
         </div>
       </div>
     </Layout>
