@@ -149,14 +149,12 @@ const Tasks = () => {
 
         {/* Plateau Detection */}
         <InsightBanner title="Plateau Detected" className="mb-4">
-          Your <span className="text-foreground font-medium">Evidence Evaluation</span> has plateaued over the last 4 sessions.
-          Try a <span className="text-foreground font-medium">Challenge-focused</span> scenario to strengthen this skill.
+          {data.insights.plateau}
         </InsightBanner>
 
         {/* Capability Imbalance */}
         <InsightBanner title="Capability Imbalance" className="mb-6">
-          Your reasoning clarity is strong, but <span className="text-foreground font-medium">alternatives generation</span> is lagging.
-          Suggested focus: <span className="text-foreground font-medium">Explore Alternatives</span>.
+          {data.insights.imbalance}
         </InsightBanner>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-8">
@@ -172,7 +170,7 @@ const Tasks = () => {
           </CollapsibleTrigger>
           <CollapsibleContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              {completedTasks.map((task, i) => (
+              {data.completed.map((task, i) => (
                 <TaskRow key={task.id} task={task} index={i} />
               ))}
             </div>
