@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, AlertCircle, TrendingUp, ArrowRight, RotateCcw, Brain } from "lucide-react";
+import { CheckCircle2, AlertCircle, TrendingUp, ArrowRight, RotateCcw, Brain, Target, Map } from "lucide-react";
 import { ReasoningBreakdown, type ReasoningScoreData } from "@/components/ReasoningScore";
 
 const debrief = {
@@ -30,9 +30,10 @@ const debrief = {
 interface ArenaDebriefProps {
   onClose: () => void;
   reasoningScore?: ReasoningScoreData;
+  focusSkill?: string;
 }
 
-export const ArenaDebrief = ({ onClose, reasoningScore }: ArenaDebriefProps) => {
+export const ArenaDebrief = ({ onClose, reasoningScore, focusSkill }: ArenaDebriefProps) => {
   const navigate = useNavigate();
 
   return (
@@ -47,6 +48,23 @@ export const ArenaDebrief = ({ onClose, reasoningScore }: ArenaDebriefProps) => 
           <h2 className="text-lg font-display font-semibold text-foreground">Reflection Debrief</h2>
           <p className="text-xs text-muted-foreground mt-1">Here's how your reasoning performed across this session.</p>
         </div>
+
+        {/* Focus Skill Progress */}
+        {focusSkill && (
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.03 }}
+            className="rounded-xl border border-accent bg-accent/30 p-4 flex items-center gap-3"
+          >
+            <Target className="h-4 w-4 text-primary shrink-0" />
+            <div className="flex-1">
+              <p className="text-[10px] uppercase tracking-wider text-primary font-medium mb-0.5">Focus Skill Progress</p>
+              <p className="text-sm font-semibold text-foreground">{focusSkill}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">+3% improvement this session — on track for mastery</p>
+            </div>
+          </motion.div>
+        )}
 
         {/* Reasoning Score Breakdown */}
         {reasoningScore && (
@@ -114,7 +132,7 @@ export const ArenaDebrief = ({ onClose, reasoningScore }: ArenaDebriefProps) => 
           </ul>
         </motion.div>
 
-        {/* Skill Improvements */}
+        {/* Skill Impact */}
         <motion.div
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
@@ -122,7 +140,7 @@ export const ArenaDebrief = ({ onClose, reasoningScore }: ArenaDebriefProps) => 
           className="rounded-xl border border-border bg-card p-4"
         >
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2 flex items-center gap-1.5">
-            <TrendingUp className="h-3 w-3 text-primary" /> Skill Improvements
+            <TrendingUp className="h-3 w-3 text-primary" /> Skill Impact
           </p>
           <div className="flex flex-wrap gap-2">
             {debrief.skillImprovements.map((s) => (
@@ -148,13 +166,16 @@ export const ArenaDebrief = ({ onClose, reasoningScore }: ArenaDebriefProps) => 
           </p>
           <p className="text-sm font-semibold text-card-foreground font-display">{debrief.nextSession.title}</p>
           <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{debrief.nextSession.description}</p>
-          <p className="text-[10px] text-primary font-medium mt-2">Focus: {debrief.nextSession.focusSkill}</p>
+          <p className="text-[10px] text-primary font-medium mt-2">Improves: {debrief.nextSession.focusSkill}</p>
         </motion.div>
 
         {/* Actions */}
         <div className="flex gap-3 pt-2">
           <Button variant="outline" onClick={() => navigate("/session-summary")} className="flex-1">
             <RotateCcw className="mr-2 h-4 w-4" /> Full Summary
+          </Button>
+          <Button variant="outline" onClick={() => navigate("/skill-map")} className="flex-1">
+            <Map className="mr-2 h-4 w-4" /> Skill Map
           </Button>
           <Button onClick={() => navigate("/dashboard")} className="flex-1">
             Continue <ArrowRight className="ml-2 h-4 w-4" />
