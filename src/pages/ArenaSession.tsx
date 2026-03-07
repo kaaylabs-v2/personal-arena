@@ -23,6 +23,7 @@ const scenariosByProgram: Record<string, {
   context: string;
   task: string;
   openingPrompt: string;
+  sessionPath: { number: number; title: string; status: "completed" | "current" | "upcoming" }[];
 }> = {
   "p1": {
     title: "Distributed Team Communication",
