@@ -125,10 +125,13 @@ function SessionCard({ session, navigate }: { session: FocusSession; navigate: R
 
 // --- Page ---
 
+import { useLearner } from "@/contexts/LearnerContext";
+
 const Focus = () => {
   const navigate = useNavigate();
-  const [selectedProgramId, setSelectedProgramId] = useState<string>(programs[0].id);
-  const selectedProgram = programs.find((p) => p.id === selectedProgramId) || programs[0];
+  const { activeProgram, setActiveProgramId } = useLearner();
+  const selectedProgramId = activeProgram.id;
+  const selectedProgram = activeProgram;
 
   return (
     <Layout pageTitle="Focus">
@@ -137,7 +140,7 @@ const Focus = () => {
         <div className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3">
           <GraduationCap className="h-4 w-4 text-primary shrink-0" />
           <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium shrink-0">Program</span>
-          <Select value={selectedProgramId} onValueChange={setSelectedProgramId}>
+          <Select value={selectedProgramId} onValueChange={setActiveProgramId}>
             <SelectTrigger className="w-[220px] h-8 text-sm font-semibold border-primary/20">
               <SelectValue />
             </SelectTrigger>
