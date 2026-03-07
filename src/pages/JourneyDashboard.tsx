@@ -255,9 +255,11 @@ const defaultJourneyByProgram: Record<string, string> = {
 const JourneyDashboard = () => {
   const navigate = useNavigate();
   const { journeyId } = useParams<{ journeyId: string }>();
+  const { activeProgram } = useLearner();
   const [detailsOpen, setDetailsOpen] = useState(false);
 
-  const journey = journeyDatabase[journeyId || ""] || journeyDatabase["1"];
+  const fallbackJourneyId = defaultJourneyByProgram[activeProgram.id] || "1";
+  const journey = journeyDatabase[journeyId || ""] || journeyDatabase[fallbackJourneyId] || journeyDatabase["1"];
 
   const strengths = journey.capabilities.filter((c) => c.type === "strength");
   const focusAreas = journey.capabilities.filter((c) => c.type === "focus");
