@@ -12,6 +12,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   TrendingUp,
   TrendingDown,
   Minus,
@@ -19,6 +26,8 @@ import {
   ArrowRight,
   Info,
   Clock,
+  GraduationCap,
+  ChevronRight,
 } from "lucide-react";
 
 // --- Data Model ---
