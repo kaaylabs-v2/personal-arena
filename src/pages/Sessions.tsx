@@ -250,7 +250,7 @@ const Sessions = () => {
         <div className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 mb-4">
           <GraduationCap className="h-4 w-4 text-primary shrink-0" />
           <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium shrink-0">Program</span>
-          <Select value={selectedProgramId} onValueChange={setSelectedProgramId}>
+          <Select value={selectedProgramId} onValueChange={setActiveProgramId}>
             <SelectTrigger className="w-[220px] h-8 text-sm font-semibold border-primary/20">
               <SelectValue />
             </SelectTrigger>
