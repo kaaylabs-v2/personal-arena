@@ -234,10 +234,13 @@ const JourneyCard = ({ journey, index, navigate }: { journey: Journey; index: nu
 
 // ─── Page ───
 
+import { useLearner } from "@/contexts/LearnerContext";
+
 const Sessions = () => {
   const navigate = useNavigate();
-  const [selectedProgramId, setSelectedProgramId] = useState<string>(programs[0].id);
-  const selectedProgram = programs.find((p) => p.id === selectedProgramId) || programs[0];
+  const { activeProgram, setActiveProgramId } = useLearner();
+  const selectedProgramId = activeProgram.id;
+  const selectedProgram = activeProgram;
   const data = journeyDataByProgram[selectedProgramId] || journeyDataByProgram["p1"];
 
   return (

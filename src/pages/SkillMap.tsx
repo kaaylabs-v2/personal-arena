@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Layout } from "@/components/Layout";
@@ -229,13 +229,20 @@ function SkillRow({ capability, navigate, capRef }: { capability: Capability; na
 
 // --- Page ---
 
+import { useLearner } from "@/contexts/LearnerContext";
+
 const SkillMap = () => {
   const navigate = useNavigate();
-  const [selectedProgramId, setSelectedProgramId] = useState<string>(programs[0].id);
-  const selectedProgram = programs.find((p) => p.id === selectedProgramId) || programs[0];
+  const { activeProgram, setActiveProgramId } = useLearner();
+  const selectedProgramId = activeProgram.id;
+  const selectedProgram = activeProgram;
   const domains = selectedProgram.domains;
 
   const [selectedDomainId, setSelectedDomainId] = useState<string>(domains[0]?.domain_id || "");
+
+  useEffect(() => {
+    setSelectedDomainId(domains[0]?.domain_id || "");
+  }, [activeProgram.id]);
 
   const allCapabilityNames = domains.flatMap((d) => d.capabilities.map((c) => c.capability_name));
   const capRefs = useRef<Record<string, React.RefObject<HTMLDivElement>>>(
@@ -259,11 +266,7 @@ const SkillMap = () => {
   }, [capRefs, domains]);
 
   const handleProgramChange = (programId: string) => {
-    setSelectedProgramId(programId);
-    const program = programs.find((p) => p.id === programId);
-    if (program && program.domains.length > 0) {
-      setSelectedDomainId(program.domains[0].domain_id);
-    }
+    setActiveProgramId(programId);
   };
 
   // Dynamic insight capabilities: pick top 3 weakest skills

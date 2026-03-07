@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -6,11 +5,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Layout } from "@/components/Layout";
-import { learners, programs, type LearnerProfile } from "@/data/programs";
-import { GraduationCap, User } from "lucide-react";
+import { learners, programs } from "@/data/programs";
+import { useLearner } from "@/contexts/LearnerContext";
+import { GraduationCap } from "lucide-react";
 
 const Profile = () => {
-  const [activeLearner, setActiveLearner] = useState<LearnerProfile>(learners[2]);
+  const { activeLearner, setActiveLearner } = useLearner();
   const enrolledPrograms = programs.filter((p) => activeLearner.enrolledProgramIds.includes(p.id));
 
   return (
