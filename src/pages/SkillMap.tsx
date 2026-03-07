@@ -261,6 +261,26 @@ function DimensionItem({ domain, isSelected, onClick }: { domain: Domain; isSele
 }
 
 // Right column skill row
+function TrendMicroViz({ trend }: { trend: Trend }) {
+  const bars: Record<Trend, number[]> = {
+    improving: [2, 3, 4, 5, 6],
+    stable: [4, 4, 4, 4, 4],
+    declining: [6, 5, 4, 3, 2],
+  };
+  const color: Record<Trend, string> = {
+    improving: "bg-[hsl(var(--success))]",
+    stable: "bg-muted-foreground/40",
+    declining: "bg-destructive",
+  };
+  return (
+    <div className="flex items-end gap-[2px] h-3">
+      {bars[trend].map((h, i) => (
+        <div key={i} className={`w-[3px] rounded-sm ${color[trend]}`} style={{ height: `${(h / 6) * 100}%` }} />
+      ))}
+    </div>
+  );
+}
+
 function SkillRow({ capability, navigate, capRef }: { capability: Capability; navigate: ReturnType<typeof useNavigate>; capRef?: React.RefObject<HTMLDivElement> }) {
   const progress = getCapabilityProgress(capability);
   const status = getSkillStatus(progress, capability.trend);
@@ -275,16 +295,16 @@ function SkillRow({ capability, navigate, capRef }: { capability: Capability; na
       transition={{ duration: 0.2 }}
       className={`relative rounded-lg border overflow-hidden transition-all ${
         status === "critical"
-          ? "border-destructive/40 bg-destructive/[0.04]"
+          ? "border-destructive/50 bg-destructive/[0.06]"
           : status === "attention"
-          ? "border-[hsl(var(--warning))]/30 bg-[hsl(var(--warning))]/[0.03]"
+          ? "border-[hsl(var(--warning))]/40 bg-[hsl(var(--warning))]/[0.05]"
           : "border-border bg-card"
       }`}
     >
       {/* Left status indicator bar */}
-      <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l ${getIndicatorColor(status)}`} />
+      <div className={`absolute left-0 top-0 bottom-0 w-1.5 rounded-l ${getIndicatorColor(status)}`} />
 
-      <div className="pl-5 pr-4 py-3.5 space-y-2.5">
+      <div className="pl-6 pr-4 py-4 space-y-3">
         {/* Header row */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
@@ -292,10 +312,14 @@ function SkillRow({ capability, navigate, capRef }: { capability: Capability; na
               <p className={`text-sm font-semibold ${isWeak ? "text-foreground" : "text-card-foreground"}`}>
                 {capability.capability_name}
               </p>
-              {isWeak && <AlertTriangle className="h-3.5 w-3.5 text-destructive shrink-0" />}
               <Badge variant="outline" className={`text-[9px] px-1.5 py-0 h-4 font-medium ${badge.cls}`}>
                 {badge.label}
               </Badge>
+              {isWeak && (
+                <span className="text-[10px] font-medium text-destructive flex items-center gap-1">
+                  🎯 Focus Skill
+                </span>
+              )}
               <TooltipProvider delayDuration={200}>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -307,24 +331,24 @@ function SkillRow({ capability, navigate, capRef }: { capability: Capability; na
                 </Tooltip>
               </TooltipProvider>
             </div>
-            <div className="flex items-center gap-3 mt-1">
+            {/* Status + Level + Trend row */}
+            <div className="flex items-center gap-3 mt-1.5">
               <span className="text-[11px] text-muted-foreground">
                 Level {capability.current_level} → {capability.target_level}
               </span>
               <TrendLabel trend={capability.trend} />
+              <TrendMicroViz trend={capability.trend} />
             </div>
           </div>
           <span className="text-lg font-bold text-foreground tabular-nums shrink-0">{progress}%</span>
         </div>
 
         {/* Progress bar */}
-        <div>
-          <Progress value={progress} className="h-2" />
-        </div>
+        <Progress value={progress} className="h-2" />
 
         {/* Recommended Practice for weak skills */}
         {isWeak && capability.recommended_sessions.length > 0 && (
-          <div className="pt-1">
+          <div className="pt-0.5">
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-1.5 flex items-center gap-1">
               <Play className="h-2.5 w-2.5" /> Recommended Practice
             </p>
@@ -344,7 +368,7 @@ function SkillRow({ capability, navigate, capRef }: { capability: Capability; na
 
         {/* Past sessions */}
         {capability.past_sessions.length > 0 && (
-          <div className="pt-1">
+          <div className="pt-0.5">
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-1 flex items-center gap-1">
               <Clock className="h-2.5 w-2.5" /> Recent Sessions
             </p>
@@ -410,7 +434,7 @@ const SkillMap = () => {
         </motion.div>
 
         {/* Two-column layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(300px,35%)_1fr] gap-6">
           {/* Left Column — Capability Dimensions */}
           <div className="space-y-2">
             <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium mb-2 px-1">
@@ -434,14 +458,24 @@ const SkillMap = () => {
 
           {/* Right Column — Skill Details */}
           <div className="min-w-0">
-            <div className="flex items-center justify-between mb-3 px-1">
-              <div>
-                <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">
-                  Skills — {selectedDomain.domain_name}
-                </p>
-                <p className="text-xs text-muted-foreground mt-0.5">{selectedDomain.description}</p>
+            {/* Dimension Summary Header */}
+            <div className="mb-4 p-4 rounded-xl bg-card border border-border">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h2 className="text-base font-bold text-card-foreground">{selectedDomain.domain_name}</h2>
+                  <p className="text-xs text-muted-foreground mt-0.5">{selectedDomain.description}</p>
+                </div>
+                <div className="flex items-center gap-4 shrink-0">
+                  <div className="text-right">
+                    <p className="text-lg font-bold text-foreground tabular-nums">{getDomainProgress(selectedDomain)}%</p>
+                    <p className="text-[10px] text-muted-foreground">Capability Strength</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-lg font-bold text-foreground tabular-nums">{selectedDomain.capabilities.length}</p>
+                    <p className="text-[10px] text-muted-foreground">Skills</p>
+                  </div>
+                </div>
               </div>
-              <span className="text-xs text-muted-foreground">{selectedDomain.capabilities.length} skills</span>
             </div>
 
             <AnimatePresence mode="wait">
