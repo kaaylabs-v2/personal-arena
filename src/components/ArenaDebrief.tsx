@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, AlertCircle, TrendingUp, ArrowRight, RotateCcw } from "lucide-react";
+import { CheckCircle2, AlertCircle, TrendingUp, ArrowRight, RotateCcw, Brain } from "lucide-react";
+import { ReasoningBreakdown, type ReasoningScoreData } from "@/components/ReasoningScore";
 
 const debrief = {
   strengths: [
@@ -14,11 +15,10 @@ const debrief = {
     "Strengthen evidence with concrete data references",
     "Consider second-order effects of proposed changes",
   ],
-  scores: [
-    { dimension: "Clarity", previous: 2.8, current: 3.2, max: 5 },
-    { dimension: "Evidence Use", previous: 2.5, current: 3.0, max: 5 },
-    { dimension: "Alternatives", previous: 2.2, current: 2.6, max: 5 },
-    { dimension: "Reflection", previous: 2.9, current: 3.1, max: 5 },
+  skillImprovements: [
+    { skill: "Evidence Evaluation", delta: 3 },
+    { skill: "Strategic Framing", delta: 2 },
+    { skill: "Stakeholder Analysis", delta: 1 },
   ],
   nextSession: {
     title: "Conflicting Stakeholder Priorities",
@@ -29,9 +29,10 @@ const debrief = {
 
 interface ArenaDebriefProps {
   onClose: () => void;
+  reasoningScore?: ReasoningScoreData;
 }
 
-export const ArenaDebrief = ({ onClose }: ArenaDebriefProps) => {
+export const ArenaDebrief = ({ onClose, reasoningScore }: ArenaDebriefProps) => {
   const navigate = useNavigate();
 
   return (
@@ -46,6 +47,32 @@ export const ArenaDebrief = ({ onClose }: ArenaDebriefProps) => {
           <h2 className="text-lg font-display font-semibold text-foreground">Reflection Debrief</h2>
           <p className="text-xs text-muted-foreground mt-1">Here's how your reasoning performed across this session.</p>
         </div>
+
+        {/* Reasoning Score Breakdown */}
+        {reasoningScore && (
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 }}
+            className="rounded-xl border border-primary/20 bg-primary/5 p-5"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-[10px] uppercase tracking-wider text-primary font-medium flex items-center gap-1.5">
+                <Brain className="h-3 w-3" /> Reasoning Score
+              </p>
+              <motion.span
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="text-xl font-display font-bold text-foreground tabular-nums"
+              >
+                {reasoningScore.total}
+                <span className="text-sm text-muted-foreground font-normal"> / {reasoningScore.max}</span>
+              </motion.span>
+            </div>
+            <ReasoningBreakdown score={reasoningScore} />
+          </motion.div>
+        )}
 
         {/* Strengths */}
         <motion.div
@@ -87,41 +114,25 @@ export const ArenaDebrief = ({ onClose }: ArenaDebriefProps) => {
           </ul>
         </motion.div>
 
-        {/* Score Updates */}
+        {/* Skill Improvements */}
         <motion.div
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="rounded-xl border border-primary/20 bg-primary/5 p-5"
+          className="rounded-xl border border-border bg-card p-4"
         >
-          <p className="text-[10px] uppercase tracking-wider text-primary font-medium mb-3 flex items-center gap-1.5">
-            <TrendingUp className="h-3 w-3" /> Skill Score Updates
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2 flex items-center gap-1.5">
+            <TrendingUp className="h-3 w-3 text-primary" /> Skill Improvements
           </p>
-          <div className="space-y-3">
-            {debrief.scores.map((s) => {
-              const delta = s.current - s.previous;
-              return (
-                <div key={s.dimension}>
-                  <div className="flex justify-between text-xs mb-1">
-                    <span className="text-foreground font-medium">{s.dimension}</span>
-                    <span className="text-muted-foreground">
-                      {s.current}/{s.max}
-                      {delta > 0 && (
-                        <span className="text-primary ml-1.5">+{delta.toFixed(1)}</span>
-                      )}
-                    </span>
-                  </div>
-                  <div className="h-1.5 rounded-full bg-muted overflow-hidden">
-                    <motion.div
-                      initial={{ width: `${(s.previous / s.max) * 100}%` }}
-                      animate={{ width: `${(s.current / s.max) * 100}%` }}
-                      transition={{ delay: 0.5, duration: 0.6 }}
-                      className="h-full rounded-full bg-primary"
-                    />
-                  </div>
-                </div>
-              );
-            })}
+          <div className="flex flex-wrap gap-2">
+            {debrief.skillImprovements.map((s) => (
+              <span
+                key={s.skill}
+                className="text-xs font-medium text-primary bg-primary/10 px-2.5 py-1 rounded-full"
+              >
+                {s.skill} +{s.delta}%
+              </span>
+            ))}
           </div>
         </motion.div>
 
