@@ -4,7 +4,7 @@ import { CheckCircle2, ArrowRight } from "lucide-react";
 const stageLabels: Record<string, string> = {
   clarify: "Clarify",
   challenge: "Challenge",
-  evidence: "Evidence",
+  evidence: "Show Your Work",
   alternative: "Alternatives",
   reflect: "Reflect",
 };

@@ -200,7 +200,7 @@ export const ThinkingScaffold = ({ activeStage }: ThinkingScaffoldProps) => {
               Assumptions
             </TabsTrigger>
             <TabsTrigger value="evidence" className="text-xs">
-              Evidence
+              Show Your Work
             </TabsTrigger>
             <TabsTrigger value="alternatives" className="text-xs">
               Alternatives
