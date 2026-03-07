@@ -29,291 +29,19 @@ import {
   GraduationCap,
   ChevronRight,
 } from "lucide-react";
-
-// --- Data Model ---
-
-type Trend = "improving" | "declining" | "stable";
-
-interface RecommendedSession {
-  id: string;
-  title: string;
-}
-
-interface PastSession {
-  title: string;
-}
-
-interface Capability {
-  capability_id: string;
-  domain_id: string;
-  capability_name: string;
-  description: string;
-  current_level: number;
-  target_level: number;
-  trend: Trend;
-  recommended_sessions: RecommendedSession[];
-  past_sessions: PastSession[];
-}
-
-interface Domain {
-  domain_id: string;
-  domain_name: string;
-  description: string;
-  capabilities: Capability[];
-}
-
-interface MasteryProgram {
-  id: string;
-  name: string;
-  description: string;
-  current_level: number;
-  target_level: number;
-  dimension_count: number;
-  domains: Domain[];
-}
-
-// --- Mock Data ---
-
-const GAP_THRESHOLD = 50;
-const CRITICAL_THRESHOLD = 40;
-
-const strategicLeadershipDomains: Domain[] = [
-  {
-    domain_id: "d1",
-    domain_name: "Decision Making",
-    description: "Structured reasoning and evidence-based judgment",
-    capabilities: [
-      {
-        capability_id: "c1", domain_id: "d1", capability_name: "Evidence Evaluation",
-        description: "Ability to support decisions with data and distinguish assumptions from evidence.",
-        current_level: 1.8, target_level: 4.0, trend: "improving",
-        recommended_sessions: [
-          { id: "conflicting-stakeholder-scenario", title: "Conflicting Stakeholder Scenario" },
-          { id: "executive-escalation-analysis", title: "Executive Escalation Analysis" },
-        ],
-        past_sessions: [{ title: "Distributed Team Communication" }, { title: "Executive Escalation" }],
-      },
-      {
-        capability_id: "c2", domain_id: "d1", capability_name: "Tradeoff Analysis",
-        description: "Evaluating competing priorities and making balanced decisions under constraints.",
-        current_level: 2.6, target_level: 4.0, trend: "stable",
-        recommended_sessions: [{ id: "resource-allocation-challenge", title: "Resource Allocation Challenge" }],
-        past_sessions: [{ title: "Identifying Tradeoffs" }, { title: "Stakeholder Conflict Scenario" }],
-      },
-      {
-        capability_id: "c3", domain_id: "d1", capability_name: "Risk Framing",
-        description: "Identifying, assessing, and communicating risk to inform strategic choices.",
-        current_level: 2.0, target_level: 4.0, trend: "improving",
-        recommended_sessions: [{ id: "probability-estimation-drill", title: "Probability Estimation Drill" }],
-        past_sessions: [{ title: "Risk Identification" }],
-      },
-      {
-        capability_id: "c4", domain_id: "d1", capability_name: "Strategic Prioritization",
-        description: "Aligning competing demands with strategic objectives to maximize impact.",
-        current_level: 3.2, target_level: 4.5, trend: "improving",
-        recommended_sessions: [{ id: "portfolio-balancing", title: "Portfolio Balancing" }],
-        past_sessions: [{ title: "Urgency vs Importance" }, { title: "MoSCoW Method" }],
-      },
-      {
-        capability_id: "c5", domain_id: "d1", capability_name: "Data-Driven Judgment",
-        description: "Using quantitative and qualitative data to ground decisions and reduce bias.",
-        current_level: 1.4, target_level: 4.0, trend: "declining",
-        recommended_sessions: [{ id: "reading-dashboards", title: "Reading Dashboards" }, { id: "bias-in-data", title: "Bias in Data" }],
-        past_sessions: [],
-      },
-    ],
-  },
-  {
-    domain_id: "d2",
-    domain_name: "Stakeholder Leadership",
-    description: "Influence, alignment, and managing complex stakeholder dynamics",
-    capabilities: [
-      { capability_id: "c6", domain_id: "d2", capability_name: "Stakeholder Mapping", description: "Identifying key stakeholders, their interests, and influence on outcomes.", current_level: 3.0, target_level: 4.5, trend: "stable", recommended_sessions: [{ id: "coalition-building", title: "Coalition Building" }], past_sessions: [{ title: "Mapping Stakeholders" }, { title: "Interest Analysis" }] },
-      { capability_id: "c7", domain_id: "d2", capability_name: "Conflict Resolution", description: "Navigating disagreements and finding constructive paths forward.", current_level: 2.2, target_level: 4.0, trend: "stable", recommended_sessions: [], past_sessions: [] },
-      { capability_id: "c8", domain_id: "d2", capability_name: "Executive Communication", description: "Presenting ideas clearly and persuasively to senior leaders.", current_level: 2.8, target_level: 4.5, trend: "improving", recommended_sessions: [], past_sessions: [] },
-    ],
-  },
-  {
-    domain_id: "d3",
-    domain_name: "Organizational Thinking",
-    description: "Systems perspective and cross-functional awareness",
-    capabilities: [
-      { capability_id: "c9", domain_id: "d3", capability_name: "Systems Thinking", description: "Understanding interdependencies and second-order effects across the organization.", current_level: 2.1, target_level: 4.0, trend: "stable", recommended_sessions: [], past_sessions: [] },
-      { capability_id: "c10", domain_id: "d3", capability_name: "Cross-Functional Alignment", description: "Building shared understanding and coordinated action across teams.", current_level: 2.5, target_level: 4.0, trend: "improving", recommended_sessions: [], past_sessions: [] },
-      { capability_id: "c11", domain_id: "d3", capability_name: "Change Navigation", description: "Leading through uncertainty and helping teams adapt to shifting contexts.", current_level: 1.9, target_level: 3.5, trend: "declining", recommended_sessions: [], past_sessions: [] },
-    ],
-  },
-  {
-    domain_id: "d4",
-    domain_name: "Communication Leadership",
-    description: "Clarity, persuasion, and adaptive messaging",
-    capabilities: [
-      { capability_id: "c12", domain_id: "d4", capability_name: "Adaptive Messaging", description: "Tailoring communication style and content to different audiences and contexts.", current_level: 3.4, target_level: 4.5, trend: "improving", recommended_sessions: [], past_sessions: [] },
-      { capability_id: "c13", domain_id: "d4", capability_name: "Narrative Framing", description: "Structuring compelling narratives that drive alignment and action.", current_level: 2.7, target_level: 4.0, trend: "stable", recommended_sessions: [], past_sessions: [] },
-    ],
-  },
-  {
-    domain_id: "d5",
-    domain_name: "Strategic Framing",
-    description: "Vision articulation and strategic context setting",
-    capabilities: [
-      { capability_id: "c14", domain_id: "d5", capability_name: "Vision Articulation", description: "Crafting and communicating a clear, inspiring vision that guides strategic direction.", current_level: 2.0, target_level: 4.0, trend: "stable", recommended_sessions: [], past_sessions: [] },
-      { capability_id: "c15", domain_id: "d5", capability_name: "Context Setting", description: "Establishing the strategic landscape so teams can make informed decisions independently.", current_level: 2.3, target_level: 4.0, trend: "declining", recommended_sessions: [], past_sessions: [] },
-    ],
-  },
-];
-
-const salesMasteryDomains: Domain[] = [
-  {
-    domain_id: "sd1",
-    domain_name: "Client Discovery",
-    description: "Uncovering client needs, pain points, and decision drivers",
-    capabilities: [
-      { capability_id: "sc1", domain_id: "sd1", capability_name: "Needs Analysis", description: "Identifying explicit and latent client needs through structured questioning.", current_level: 3.2, target_level: 4.5, trend: "improving", recommended_sessions: [{ id: "discovery-call-sim", title: "Discovery Call Simulation" }], past_sessions: [{ title: "Open-Ended Questioning" }] },
-      { capability_id: "sc2", domain_id: "sd1", capability_name: "Active Listening", description: "Demonstrating attentive listening and reflecting back key themes to build trust.", current_level: 3.5, target_level: 4.0, trend: "stable", recommended_sessions: [], past_sessions: [{ title: "Mirror & Match" }] },
-      { capability_id: "sc3", domain_id: "sd1", capability_name: "Pain Point Mapping", description: "Connecting surface-level complaints to deeper business challenges.", current_level: 2.1, target_level: 4.0, trend: "declining", recommended_sessions: [{ id: "pain-point-drill", title: "Pain Point Drill" }], past_sessions: [] },
-    ],
-  },
-  {
-    domain_id: "sd2",
-    domain_name: "Negotiation & Closing",
-    description: "Managing objections, structuring deals, and closing with confidence",
-    capabilities: [
-      { capability_id: "sc4", domain_id: "sd2", capability_name: "Objection Handling", description: "Responding to buyer resistance with empathy and evidence-based reframes.", current_level: 2.0, target_level: 4.0, trend: "improving", recommended_sessions: [{ id: "objection-roleplay", title: "Objection Roleplay" }, { id: "reframe-practice", title: "Reframe Practice" }], past_sessions: [{ title: "Common Objections" }] },
-      { capability_id: "sc5", domain_id: "sd2", capability_name: "Deal Structuring", description: "Creating mutually beneficial deal terms that align with client and company goals.", current_level: 1.8, target_level: 3.5, trend: "stable", recommended_sessions: [{ id: "deal-anatomy", title: "Deal Anatomy Workshop" }], past_sessions: [] },
-      { capability_id: "sc6", domain_id: "sd2", capability_name: "Closing Techniques", description: "Recognizing buying signals and guiding prospects to a confident decision.", current_level: 2.5, target_level: 4.0, trend: "improving", recommended_sessions: [], past_sessions: [{ title: "Trial Close Practice" }] },
-    ],
-  },
-  {
-    domain_id: "sd3",
-    domain_name: "Relationship Management",
-    description: "Building long-term trust and expanding client accounts",
-    capabilities: [
-      { capability_id: "sc7", domain_id: "sd3", capability_name: "Account Planning", description: "Developing strategic plans to grow and retain key accounts.", current_level: 2.8, target_level: 4.0, trend: "stable", recommended_sessions: [], past_sessions: [{ title: "Account Review" }] },
-      { capability_id: "sc8", domain_id: "sd3", capability_name: "Trust Building", description: "Establishing credibility and rapport through consistent, value-driven interactions.", current_level: 3.0, target_level: 4.0, trend: "improving", recommended_sessions: [], past_sessions: [{ title: "Value-First Outreach" }, { title: "Follow-Up Cadence" }] },
-    ],
-  },
-  {
-    domain_id: "sd4",
-    domain_name: "Pipeline Management",
-    description: "Forecasting, prioritization, and deal velocity optimization",
-    capabilities: [
-      { capability_id: "sc9", domain_id: "sd4", capability_name: "Forecast Accuracy", description: "Predicting deal outcomes and revenue with reliable methods.", current_level: 1.6, target_level: 3.5, trend: "declining", recommended_sessions: [{ id: "forecast-calibration", title: "Forecast Calibration" }], past_sessions: [] },
-      { capability_id: "sc10", domain_id: "sd4", capability_name: "Deal Prioritization", description: "Focusing effort on high-probability, high-value opportunities.", current_level: 2.4, target_level: 4.0, trend: "stable", recommended_sessions: [], past_sessions: [{ title: "Pipeline Scoring" }] },
-    ],
-  },
-];
-
-const productStrategyDomains: Domain[] = [
-  {
-    domain_id: "pd1",
-    domain_name: "Product Thinking",
-    description: "Framing problems, identifying opportunities, and defining product value",
-    capabilities: [
-      { capability_id: "pc1", domain_id: "pd1", capability_name: "Problem Framing", description: "Defining the right problem to solve before jumping to solutions.", current_level: 2.5, target_level: 4.0, trend: "improving", recommended_sessions: [{ id: "problem-definition-lab", title: "Problem Definition Lab" }], past_sessions: [{ title: "Jobs to Be Done" }] },
-      { capability_id: "pc2", domain_id: "pd1", capability_name: "Opportunity Assessment", description: "Evaluating market signals and user data to identify high-impact opportunities.", current_level: 1.9, target_level: 3.5, trend: "stable", recommended_sessions: [{ id: "opportunity-scoring", title: "Opportunity Scoring" }], past_sessions: [] },
-      { capability_id: "pc3", domain_id: "pd1", capability_name: "Value Proposition Design", description: "Articulating why a product matters to its target audience.", current_level: 2.2, target_level: 4.0, trend: "declining", recommended_sessions: [{ id: "value-prop-canvas", title: "Value Prop Canvas" }], past_sessions: [{ title: "Messaging Workshop" }] },
-    ],
-  },
-  {
-    domain_id: "pd2",
-    domain_name: "Roadmap & Prioritization",
-    description: "Sequencing work, managing tradeoffs, and communicating plans",
-    capabilities: [
-      { capability_id: "pc4", domain_id: "pd2", capability_name: "Roadmap Communication", description: "Presenting product plans clearly to stakeholders with appropriate detail.", current_level: 2.0, target_level: 3.5, trend: "improving", recommended_sessions: [], past_sessions: [{ title: "Roadmap Review" }] },
-      { capability_id: "pc5", domain_id: "pd2", capability_name: "Feature Prioritization", description: "Using frameworks to sequence features based on impact and effort.", current_level: 1.5, target_level: 3.5, trend: "declining", recommended_sessions: [{ id: "rice-framework", title: "RICE Framework Drill" }, { id: "prioritization-debate", title: "Prioritization Debate" }], past_sessions: [] },
-    ],
-  },
-  {
-    domain_id: "pd3",
-    domain_name: "Data & Experimentation",
-    description: "Using metrics, experiments, and user research to guide decisions",
-    capabilities: [
-      { capability_id: "pc6", domain_id: "pd3", capability_name: "Metric Definition", description: "Choosing the right success metrics and leading indicators for product goals.", current_level: 1.7, target_level: 3.5, trend: "stable", recommended_sessions: [{ id: "north-star-metric", title: "North Star Metric Workshop" }], past_sessions: [] },
-      { capability_id: "pc7", domain_id: "pd3", capability_name: "Experiment Design", description: "Structuring A/B tests and pilots to validate hypotheses efficiently.", current_level: 1.4, target_level: 3.5, trend: "improving", recommended_sessions: [{ id: "ab-test-design", title: "A/B Test Design" }], past_sessions: [] },
-      { capability_id: "pc8", domain_id: "pd3", capability_name: "User Research Synthesis", description: "Extracting actionable insights from qualitative and quantitative research.", current_level: 2.3, target_level: 4.0, trend: "stable", recommended_sessions: [], past_sessions: [{ title: "Interview Analysis" }, { title: "Survey Insights" }] },
-    ],
-  },
-];
-
-const programs: MasteryProgram[] = [
-  {
-    id: "p1",
-    name: "Strategic Leadership",
-    description: "Capability development across 5 dimensions",
-    current_level: 3.1,
-    target_level: 4.0,
-    dimension_count: 5,
-    domains: strategicLeadershipDomains,
-  },
-  {
-    id: "p2",
-    name: "Sales Mastery",
-    description: "Core selling and client engagement capabilities",
-    current_level: 2.4,
-    target_level: 4.0,
-    dimension_count: 4,
-    domains: salesMasteryDomains,
-  },
-  {
-    id: "p3",
-    name: "Product Strategy",
-    description: "Product thinking, roadmapping, and prioritization",
-    current_level: 1.8,
-    target_level: 3.5,
-    dimension_count: 3,
-    domains: productStrategyDomains,
-  },
-];
-
-// --- Helpers ---
-
-function getDomainProgress(domain: Domain): number {
-  const caps = domain.capabilities;
-  if (caps.length === 0) return 0;
-  return Math.round(caps.reduce((sum, c) => sum + (c.current_level / c.target_level) * 100, 0) / caps.length);
-}
-
-function getDomainLevel(domain: Domain): number {
-  const caps = domain.capabilities;
-  if (caps.length === 0) return 0;
-  return +(caps.reduce((s, c) => s + c.current_level, 0) / caps.length).toFixed(1);
-}
-
-function getCapabilityProgress(cap: Capability): number {
-  return Math.round((cap.current_level / cap.target_level) * 100);
-}
-
-type SkillStatus = "critical" | "attention" | "healthy" | "stable";
-
-function getSkillStatus(progress: number, trend: Trend): SkillStatus {
-  if (progress < CRITICAL_THRESHOLD) return "critical";
-  if (progress < GAP_THRESHOLD) return "attention";
-  if (trend === "improving" || progress >= 70) return "healthy";
-  return "stable";
-}
-
-function getStatusBadge(status: SkillStatus) {
-  switch (status) {
-    case "critical":
-      return { label: "Critical Gap", cls: "bg-destructive/15 text-destructive border-destructive/20" };
-    case "attention":
-      return { label: "Needs Attention", cls: "bg-[hsl(var(--warning))]/15 text-[hsl(var(--warning))] border-[hsl(var(--warning))]/20" };
-    case "healthy":
-      return { label: "Healthy", cls: "bg-[hsl(var(--success))]/15 text-[hsl(var(--success))] border-[hsl(var(--success))]/20" };
-    case "stable":
-      return { label: "Stable", cls: "bg-muted text-muted-foreground border-border" };
-  }
-}
-
-function getIndicatorColor(status: SkillStatus): string {
-  switch (status) {
-    case "critical": return "bg-destructive";
-    case "attention": return "bg-[hsl(var(--warning))]";
-    case "healthy": return "bg-[hsl(var(--success))]";
-    case "stable": return "bg-muted-foreground/30";
-  }
-}
+import {
+  programs,
+  getDomainProgress,
+  getDomainLevel,
+  getCapabilityProgress,
+  getSkillStatus,
+  getStatusBadge,
+  getIndicatorColor,
+  GAP_THRESHOLD,
+  type Domain,
+  type Capability,
+  type Trend,
+} from "@/data/programs";
 
 // --- Sub-Components ---
 
@@ -346,7 +74,6 @@ function CircularProgress({ value, size = 44, strokeWidth = 3.5 }: { value: numb
   );
 }
 
-// Left column dimension item
 function DimensionItem({ domain, isSelected, onClick }: { domain: Domain; isSelected: boolean; onClick: () => void }) {
   const progress = getDomainProgress(domain);
   const avgLevel = getDomainLevel(domain);
@@ -381,7 +108,6 @@ function DimensionItem({ domain, isSelected, onClick }: { domain: Domain; isSele
   );
 }
 
-// Right column skill row
 function TrendMicroViz({ trend }: { trend: Trend }) {
   const bars: Record<Trend, number[]> = {
     improving: [2, 3, 4, 5, 6],
@@ -422,11 +148,9 @@ function SkillRow({ capability, navigate, capRef }: { capability: Capability; na
           : "border-border bg-card"
       }`}
     >
-      {/* Left status indicator bar */}
       <div className={`absolute left-0 top-0 bottom-0 w-1.5 rounded-l ${getIndicatorColor(status)}`} />
 
       <div className="pl-6 pr-4 py-4 space-y-3">
-        {/* Header row */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
@@ -452,7 +176,6 @@ function SkillRow({ capability, navigate, capRef }: { capability: Capability; na
                 </Tooltip>
               </TooltipProvider>
             </div>
-            {/* Status + Level + Trend row */}
             <div className="flex items-center gap-3 mt-1.5">
               <span className="text-[11px] text-muted-foreground">
                 Level {capability.current_level} → {capability.target_level}
@@ -464,10 +187,8 @@ function SkillRow({ capability, navigate, capRef }: { capability: Capability; na
           <span className="text-lg font-bold text-foreground tabular-nums shrink-0">{progress}%</span>
         </div>
 
-        {/* Progress bar */}
         <Progress value={progress} className="h-2" />
 
-        {/* Recommended Practice for weak skills */}
         {isWeak && capability.recommended_sessions.length > 0 && (
           <div className="pt-0.5">
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-1.5 flex items-center gap-1">
@@ -487,7 +208,6 @@ function SkillRow({ capability, navigate, capRef }: { capability: Capability; na
           </div>
         )}
 
-        {/* Past sessions */}
         {capability.past_sessions.length > 0 && (
           <div className="pt-0.5">
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-1 flex items-center gap-1">
@@ -546,7 +266,13 @@ const SkillMap = () => {
     }
   };
 
-  const insightCapabilities = ["Evidence Evaluation", "Data-Driven Judgment", "Context Setting"];
+  // Dynamic insight capabilities: pick top 3 weakest skills
+  const weakSkills = domains
+    .flatMap((d) => d.capabilities)
+    .filter((c) => getCapabilityProgress(c) < GAP_THRESHOLD)
+    .sort((a, b) => getCapabilityProgress(a) - getCapabilityProgress(b))
+    .slice(0, 3)
+    .map((c) => c.capability_name);
 
   return (
     <Layout pageTitle="Skill Map">
@@ -563,7 +289,10 @@ const SkillMap = () => {
             </SelectTrigger>
             <SelectContent>
               {programs.map((p) => (
-                <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                <SelectItem key={p.id} value={p.id}>
+                  {p.name}
+                  <span className="text-muted-foreground text-[10px] ml-2">· {p.targetLearner}</span>
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -579,20 +308,22 @@ const SkillMap = () => {
         {/* AI Insight Banner */}
         <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
           <InsightBanner title="AI Insight">
-            <p>Your <strong>Evidence Evaluation</strong> and <strong>Data-Driven Judgment</strong> capabilities need attention — both are below the mastery threshold.</p>
-            <div className="flex flex-wrap gap-1.5 mt-2">
-              {insightCapabilities.map((r) => (
-                <button key={r} onClick={() => scrollToCapability(r)} className="text-[10px] px-2 py-1 rounded-full bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors cursor-pointer">
-                  {r}
-                </button>
-              ))}
-            </div>
+            <p dangerouslySetInnerHTML={{ __html: selectedProgram.insightText }} />
+            {weakSkills.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {weakSkills.map((r) => (
+                  <button key={r} onClick={() => scrollToCapability(r)} className="text-[10px] px-2 py-1 rounded-full bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors cursor-pointer">
+                    {r}
+                  </button>
+                ))}
+              </div>
+            )}
           </InsightBanner>
         </motion.div>
 
         {/* Two-column layout */}
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(300px,35%)_1fr] gap-6">
-          {/* Left Column — Capability Dimensions */}
+          {/* Left Column */}
           <div className="flex flex-col">
             <div className="space-y-2 flex-1">
               <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium mb-2 px-1">
@@ -614,7 +345,6 @@ const SkillMap = () => {
               ))}
             </div>
 
-            {/* Active Programs */}
             <div className="mt-6 pt-4 border-t border-border">
               <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium mb-2.5 px-1">
                 Your Active Programs
@@ -639,10 +369,9 @@ const SkillMap = () => {
             </div>
           </div>
 
-          {/* Right Column — Skill Details */}
+          {/* Right Column */}
           {selectedDomain && (
             <div className="min-w-0">
-              {/* Dimension Summary Header */}
               <div className="mb-4 p-4 rounded-xl bg-card border border-border">
                 <div className="flex items-start justify-between gap-4">
                   <div>
