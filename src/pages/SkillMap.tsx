@@ -18,7 +18,6 @@ import {
   Play,
   ArrowRight,
   Info,
-  AlertTriangle,
   Clock,
 } from "lucide-react";
 
