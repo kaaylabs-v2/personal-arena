@@ -28,7 +28,7 @@ const dashboardData: Record<string, DashboardProgramData> = {
     targetOutcome: "Lead distributed teams effectively",
     baseline: 2.2, current: 3.1, targetLevel: 4.0, timeEst: "~8 weeks",
     insightText: <>Your thinking clarity is strong, but <span className="text-foreground font-medium">alternatives generation</span> is lagging. Suggested focus: <span className="text-foreground font-medium">Explore Alternatives</span>.</>,
-    strengths: [{ name: "Clarity", progress: 55 }, { name: "Reflection", progress: 48 }],
+    strengths: [{ name: "Clarity", progress: 55 }, { name: "Learn From It", progress: 48 }],
     focusAreas: [{ name: "Show Your Work", progress: 42 }, { name: "Think It Through", progress: 38 }, { name: "Alternatives", progress: 30 }],
     milestones: [{ label: "Clarifying complex problems", done: true }, { label: "Structuring decisions", done: true }, { label: "Evaluating evidence", done: false }, { label: "Handling stakeholder conflict", done: false }],
     nextSession: { title: "Scenario: Resolving Cross-Team Conflict", subtitle: "Practice Session · ~20 min", link: "/arena-session" },

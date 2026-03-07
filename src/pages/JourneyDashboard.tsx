@@ -81,7 +81,7 @@ const journeyDatabase: Record<string, JourneyData> = {
     focusArea: "Cross-team alignment", nextSession: "Distributed Team Communication", estimatedWeeks: 8,
     capabilities: [
       { name: "Clarity", progress: 55, type: "strength" },
-      { name: "Reflection", progress: 48, type: "strength" },
+      { name: "Learn From It", progress: 48, type: "strength" },
       { name: "Show Your Work", progress: 42, type: "focus" },
       { name: "Think It Through", progress: 38, type: "focus" },
       { name: "Alternatives", progress: 30, type: "focus" },

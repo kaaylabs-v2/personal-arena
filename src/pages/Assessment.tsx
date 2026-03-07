@@ -27,7 +27,7 @@ const DIMENSIONS = [
   { key: "Think It Through", icon: Lightbulb, description: "How well you logically connect ideas and think through a problem before reaching a conclusion" },
   { key: "Show Your Work", icon: Search, description: "How you support your answers with steps, examples, facts, or logical justification" },
   { key: "Alternatives Exploration", icon: GitFork, description: "Your ability to consider multiple paths forward" },
-  { key: "Reflection", icon: RotateCcw, description: "How well you examine your own assumptions and biases" },
+  { key: "Learn From It", icon: RotateCcw, description: "How well you reconsider your reasoning, identify weaknesses, and improve after feedback" },
 ] as const;
 
 type Dimension = (typeof DIMENSIONS)[number]["key"];
@@ -54,7 +54,7 @@ const FOLLOWUP_QUESTIONS = [
   {
     question: "Looking back at your answer, what assumptions might you be making?",
     probe: "Arena is assessing your capacity for self-reflection",
-    dimension: "Reflection",
+    dimension: "Learn From It",
   },
 ];
 
@@ -124,7 +124,7 @@ function evaluateResponses(
     "Think It Through": 1.8 + (seed % 12) / 10,
     "Show Your Work": 1.5 + (seed % 10) / 10,
     "Alternatives Exploration": 2.0 + (seed % 13) / 10,
-    Reflection: 1.6 + (seed % 11) / 10,
+    "Learn From It": 1.6 + (seed % 11) / 10,
   };
   const result: Record<string, { score: number; label: string }> = {};
   for (const [k, v] of Object.entries(raw)) {

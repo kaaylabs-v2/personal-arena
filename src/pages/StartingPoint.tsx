@@ -25,7 +25,7 @@ const DIMENSION_ICONS: Record<string, React.ElementType> = {
   "Think It Through": Lightbulb,
   "Show Your Work": Search,
   "Alternatives Exploration": GitFork,
-  Reflection: RotateCcw,
+  "Learn From It": RotateCcw,
 };
 
 const StartingPoint = () => {
