@@ -7,6 +7,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { useState } from "react";
 import { InsightBanner } from "@/components/InsightBanner";
 import { MasteryCompletion } from "@/components/MasteryCompletion";
+import { useLearner } from "@/contexts/LearnerContext";
 
 interface JourneyData {
   id: string;
@@ -146,6 +147,109 @@ const journeyDatabase: Record<string, JourneyData> = {
       { icon: BookOpen, text: "Review: Presentation feedback notes", sub: "Reflection", action: "/journal" },
     ],
   },
+  "alg-a1": {
+    id: "alg-a1", objective: "Build Equation Solving Foundations", domain: "Algebra",
+    currentLevel: 2.1, targetLevel: 4.0, baselineLevel: 2.0, progress: 30,
+    focusArea: "Linear equations", nextSession: "Multi-Step Equations", estimatedWeeks: 6,
+    capabilities: [
+      { name: "Variable Fluency", progress: 58, type: "strength" },
+      { name: "Equation Balance", progress: 51, type: "strength" },
+      { name: "Multi-Step Solving", progress: 34, type: "focus" },
+      { name: "Solution Checking", progress: 29, type: "focus" },
+      { name: "Error Detection", progress: 24, type: "focus" },
+    ],
+    milestones: [
+      { label: "Master one-step equations", done: true },
+      { label: "Master two-step equations", done: true },
+      { label: "Solve multi-step equations", done: false },
+      { label: "Verify under time pressure", done: false },
+    ],
+    insight: { title: "Capability Imbalance", message: "Your equation fluency is improving, but", highlight: "verification discipline is still inconsistent." },
+    recommendations: [
+      { icon: Shield, text: "Scenario: Multi-Step Equation Sprint", sub: "Challenge Mode", action: "/arena-session" },
+      { icon: Target, text: "Practice: Solution Check Drill", sub: "Reduce sign errors", action: "/arena-session" },
+      { icon: BookOpen, text: "Reflect on: skipped checking errors", sub: "Revisit flagged", action: "/journal" },
+    ],
+  },
+  "alg-1": {
+    id: "alg-1", objective: "Master Word Problem Translation", domain: "Mathematical Communication",
+    currentLevel: 1.9, targetLevel: 4.0, baselineLevel: 1.5, progress: 25,
+    focusArea: "Translating scenarios to algebra", nextSession: "Word Problem Reasoning Scenario", estimatedWeeks: 7,
+    capabilities: [
+      { name: "Unknown Identification", progress: 46, type: "strength" },
+      { name: "Relationship Mapping", progress: 41, type: "strength" },
+      { name: "Equation Setup", progress: 28, type: "focus" },
+      { name: "Constraint Framing", progress: 23, type: "focus" },
+      { name: "Units Checking", progress: 20, type: "focus" },
+    ],
+    milestones: [
+      { label: "Identify unknowns reliably", done: true },
+      { label: "Translate short prompts", done: true },
+      { label: "Handle multi-step word problems", done: false },
+      { label: "Set up equations under time limit", done: false },
+    ],
+    insight: { title: "Translation Gap", message: "You can solve equations, but", highlight: "scenario-to-equation translation remains the bottleneck." },
+    recommendations: [
+      { icon: Shield, text: "Scenario: Word Problem Reasoning", sub: "Core practice", action: "/arena-session" },
+      { icon: Target, text: "Challenge: Equation Setup Lab", sub: "Structure first", action: "/arena-session" },
+      { icon: BookOpen, text: "Review: word problem journal notes", sub: "Reflection", action: "/journal" },
+    ],
+  },
+  "calc-a1": {
+    id: "calc-a1", objective: "Master Derivative Techniques", domain: "Calculus",
+    currentLevel: 1.9, targetLevel: 4.0, baselineLevel: 1.5, progress: 20,
+    focusArea: "Chain rule and implicit differentiation", nextSession: "Chain Rule Scenario", estimatedWeeks: 8,
+    capabilities: [
+      { name: "Power Rule", progress: 60, type: "strength" },
+      { name: "Product/Quotient", progress: 44, type: "strength" },
+      { name: "Chain Rule", progress: 30, type: "focus" },
+      { name: "Implicit Differentiation", progress: 25, type: "focus" },
+      { name: "Mixed Rule Selection", progress: 19, type: "focus" },
+    ],
+    milestones: [
+      { label: "Review core derivative rules", done: true },
+      { label: "Apply product & quotient rules", done: true },
+      { label: "Apply chain rule in mixed sets", done: false },
+      { label: "Use implicit differentiation confidently", done: false },
+    ],
+    insight: { title: "Rule Selection Gap", message: "Procedural differentiation is improving, but", highlight: "chain-rule recognition in mixed problems is lagging." },
+    recommendations: [
+      { icon: Shield, text: "Scenario: Chain Rule Mixer", sub: "Challenge Mode", action: "/arena-session" },
+      { icon: Target, text: "Practice: Implicit Diff Drill", sub: "Technique fluency", action: "/arena-session" },
+      { icon: BookOpen, text: "Review: derivative error log", sub: "Reflection", action: "/journal" },
+    ],
+  },
+  "ins-a1": {
+    id: "ins-a1", objective: "Handle Customer Objections Effectively", domain: "Sales",
+    currentLevel: 1.8, targetLevel: 4.0, baselineLevel: 1.4, progress: 18,
+    focusArea: "Price objection reframing", nextSession: "Customer Objection Simulation", estimatedWeeks: 7,
+    capabilities: [
+      { name: "Empathy Opening", progress: 49, type: "strength" },
+      { name: "Need Discovery", progress: 43, type: "strength" },
+      { name: "Price Reframing", progress: 26, type: "focus" },
+      { name: "Value Contrast", progress: 22, type: "focus" },
+      { name: "Closing Confidence", progress: 18, type: "focus" },
+    ],
+    milestones: [
+      { label: "Understand common objections", done: true },
+      { label: "Use empathetic acknowledgment", done: true },
+      { label: "Reframe price with value", done: false },
+      { label: "Close with confidence", done: false },
+    ],
+    insight: { title: "Objection Handling Gap", message: "Your rapport is strong, but", highlight: "price objection reframing needs structured repetition." },
+    recommendations: [
+      { icon: Shield, text: "Scenario: Customer Objection Simulation", sub: "Challenge Mode", action: "/arena-session" },
+      { icon: Target, text: "Practice: Price Reframe Script", sub: "Value articulation", action: "/arena-session" },
+      { icon: BookOpen, text: "Reflect on: lost sale opening", sub: "Revisit flagged", action: "/journal" },
+    ],
+  },
+};
+
+const defaultJourneyByProgram: Record<string, string> = {
+  "p1": "1",
+  "p-algebra": "alg-a1",
+  "p-calculus": "calc-a1",
+  "p-insurance": "ins-a1",
 };
 
 const JourneyDashboard = () => {
