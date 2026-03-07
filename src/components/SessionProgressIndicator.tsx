@@ -7,7 +7,7 @@ const stages = [
   { id: "challenge", label: "Challenge", step: 2 },
   { id: "evidence", label: "Show Your Work", step: 3 },
   { id: "alternative", label: "Alternatives", step: 4 },
-  { id: "reflect", label: "Reflect", step: 5 },
+  { id: "reflect", label: "Learn From It", step: 5 },
 ];
 
 interface SessionProgressIndicatorProps {
