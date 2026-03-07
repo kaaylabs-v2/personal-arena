@@ -114,6 +114,8 @@ const ArenaSession = () => {
   const navigate = useNavigate();
   const { sessionId } = useParams<{ sessionId: string }>();
   const [searchParams] = useSearchParams();
+  const { activeProgram } = useLearner();
+  const scenario = scenariosByProgram[activeProgram.id] || scenariosByProgram["p1"];
   const focusSkill = searchParams.get("focus") || scenario.focusDimension;
   const [response, setResponse] = useState("");
   const [isRecording, setIsRecording] = useState(false);
@@ -127,7 +129,7 @@ const ArenaSession = () => {
     {
       role: "arena",
       category: "clarify",
-      text: "You've stated that distributed teams need more structured communication. Can you clarify what 'structured' means to you in practice?",
+      text: scenario.openingPrompt,
     },
   ]);
 
