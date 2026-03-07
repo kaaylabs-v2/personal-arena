@@ -43,6 +43,9 @@ export function GlobalContextBar({ pageTitle }: GlobalContextBarProps) {
         </span>
       </div>
 
+      <div className="h-4 w-px bg-border mx-0.5 shrink-0" />
+      <MasteryJourneyIndicator />
+
       <div className="flex-1" />
 
       {/* Right actions */}
