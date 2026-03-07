@@ -16,7 +16,7 @@ const debrief = {
     "Consider second-order effects of proposed changes",
   ],
   skillImprovements: [
-    { skill: "Evidence Evaluation", delta: 3 },
+    { skill: "Show Your Work", delta: 3 },
     { skill: "Strategic Framing", delta: 2 },
     { skill: "Stakeholder Analysis", delta: 1 },
   ],

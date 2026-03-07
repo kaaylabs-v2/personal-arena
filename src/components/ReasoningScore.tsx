@@ -18,7 +18,7 @@ export interface ReasoningScoreData {
 
 const dimensionLabels: Record<keyof ScoreDimensions, string> = {
   clarity: "Clarity",
-  evidenceUse: "Evidence Use",
+  evidenceUse: "Show Your Work",
   tradeoffThinking: "Tradeoff Thinking",
   strategicFraming: "Strategic Framing",
 };

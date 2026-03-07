@@ -70,7 +70,7 @@ const strategicLeadershipDomains: Domain[] = [
     domain_id: "d1", domain_name: "Decision Making",
     description: "Structured reasoning and evidence-based judgment",
     capabilities: [
-      { capability_id: "c1", domain_id: "d1", capability_name: "Evidence Evaluation", description: "Ability to support decisions with data and distinguish assumptions from evidence.", current_level: 1.8, target_level: 4.0, trend: "improving", recommended_sessions: [{ id: "conflicting-stakeholder-scenario", title: "Conflicting Stakeholder Scenario" }, { id: "executive-escalation-analysis", title: "Executive Escalation Analysis" }], past_sessions: [{ title: "Distributed Team Communication" }, { title: "Executive Escalation" }] },
+      { capability_id: "c1", domain_id: "d1", capability_name: "Show Your Work", description: "Ability to support decisions with steps, examples, facts, or logical justification.", current_level: 1.8, target_level: 4.0, trend: "improving", recommended_sessions: [{ id: "conflicting-stakeholder-scenario", title: "Conflicting Stakeholder Scenario" }, { id: "executive-escalation-analysis", title: "Executive Escalation Analysis" }], past_sessions: [{ title: "Distributed Team Communication" }, { title: "Executive Escalation" }] },
       { capability_id: "c2", domain_id: "d1", capability_name: "Tradeoff Analysis", description: "Evaluating competing priorities and making balanced decisions under constraints.", current_level: 2.6, target_level: 4.0, trend: "stable", recommended_sessions: [{ id: "resource-allocation-challenge", title: "Resource Allocation Challenge" }], past_sessions: [{ title: "Identifying Tradeoffs" }, { title: "Stakeholder Conflict Scenario" }] },
       { capability_id: "c3", domain_id: "d1", capability_name: "Risk Framing", description: "Identifying, assessing, and communicating risk to inform strategic choices.", current_level: 2.0, target_level: 4.0, trend: "improving", recommended_sessions: [{ id: "probability-estimation-drill", title: "Probability Estimation Drill" }], past_sessions: [{ title: "Risk Identification" }] },
       { capability_id: "c4", domain_id: "d1", capability_name: "Strategic Prioritization", description: "Aligning competing demands with strategic objectives to maximize impact.", current_level: 3.2, target_level: 4.5, trend: "improving", recommended_sessions: [{ id: "portfolio-balancing", title: "Portfolio Balancing" }], past_sessions: [{ title: "Urgency vs Importance" }, { title: "MoSCoW Method" }] },
@@ -264,15 +264,15 @@ export const programs: MasteryProgram[] = [
     domains: strategicLeadershipDomains,
     focusSkills: [
       { id: "c5", name: "Data-Driven Judgment", domain: "Decision Making", current_level: 1.4, target_level: 4.0, progress: 35, status: "critical", trend: "declining" },
-      { id: "c1", name: "Evidence Evaluation", domain: "Decision Making", current_level: 1.8, target_level: 4.0, progress: 45, status: "attention", trend: "improving" },
+      { id: "c1", name: "Show Your Work", domain: "Decision Making", current_level: 1.8, target_level: 4.0, progress: 45, status: "attention", trend: "improving" },
       { id: "c15", name: "Context Setting", domain: "Strategic Framing", current_level: 2.3, target_level: 4.0, progress: 58, status: "attention", trend: "declining" },
     ],
     focusSessions: [
       { id: "reading-dashboards", title: "Reading Dashboards", description: "Interpret data dashboards to identify patterns and draw evidence-based conclusions.", relatedSkill: "Data-Driven Judgment" },
-      { id: "conflicting-stakeholder-scenario", title: "Conflicting Stakeholder Scenario", description: "Navigate competing priorities and support decisions with structured evidence.", relatedSkill: "Evidence Evaluation" },
+      { id: "conflicting-stakeholder-scenario", title: "Conflicting Stakeholder Scenario", description: "Navigate competing priorities and support decisions with structured evidence.", relatedSkill: "Show Your Work" },
       { id: "bias-in-data", title: "Bias in Data", description: "Identify cognitive biases in data interpretation and build judgment discipline.", relatedSkill: "Data-Driven Judgment" },
     ],
-    insightText: "Your <strong>Data-Driven Judgment</strong> is declining — prioritize dashboard interpretation sessions this week. <strong>Evidence Evaluation</strong> is improving but still below threshold.",
+    insightText: "Your <strong>Data-Driven Judgment</strong> is declining — prioritize dashboard interpretation sessions this week. <strong>Show Your Work</strong> is improving but still below threshold.",
   },
   {
     id: "p-algebra", name: "Algebra Foundations",

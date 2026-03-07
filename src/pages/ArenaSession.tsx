@@ -28,7 +28,7 @@ const scenariosByProgram: Record<string, {
   "p1": {
     title: "Distributed Team Communication",
     skillFocus: "Strategic Decision-Making",
-    focusDimension: "Evidence Use",
+    focusDimension: "Show Your Work",
     context:
       "You lead a product team of 12 people spread across 4 time zones. Your team has been missing sprint commitments for the last 3 cycles. Stakeholders are escalating concerns about predictability. Your team reports feeling both over-managed and under-informed.",
     task: "Determine a communication strategy that improves delivery predictability without reducing team autonomy.",

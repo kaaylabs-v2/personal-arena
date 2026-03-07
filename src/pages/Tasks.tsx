@@ -33,7 +33,7 @@ const tasksByProgram: Record<string, { today: PracticeTask[]; upcoming: Practice
       { id: "7", name: "Map stakeholder interests", capability: "Stakeholder Mapping", journey: "Strategic Leadership", currentLevel: 4.0, targetLevel: 4.5 },
     ],
     insights: {
-      plateau: "Your Evidence Evaluation has plateaued over the last 4 sessions. Try a challenge-focused scenario to strengthen this skill.",
+      plateau: "Your Show Your Work skill has plateaued over the last 4 sessions. Try a challenge-focused scenario to strengthen this skill.",
       imbalance: "Your reasoning clarity is strong, but alternatives generation is lagging. Suggested focus: Explore Alternatives.",
     },
   },

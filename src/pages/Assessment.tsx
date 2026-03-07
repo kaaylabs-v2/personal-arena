@@ -25,7 +25,7 @@ import { useLearner } from "@/contexts/LearnerContext";
 const DIMENSIONS = [
   { key: "Clarity", icon: Eye, description: "How clearly you frame problems and articulate your thinking" },
   { key: "Reasoning", icon: Lightbulb, description: "The logical structure and depth of your arguments" },
-  { key: "Evidence Use", icon: Search, description: "How you leverage data and evidence to support decisions" },
+  { key: "Show Your Work", icon: Search, description: "How you support your answers with steps, examples, facts, or logical justification" },
   { key: "Alternatives Exploration", icon: GitFork, description: "Your ability to consider multiple paths forward" },
   { key: "Reflection", icon: RotateCcw, description: "How well you examine your own assumptions and biases" },
 ] as const;
@@ -44,7 +44,7 @@ const FOLLOWUP_QUESTIONS = [
   {
     question: "What evidence or data would you look for to validate your approach?",
     probe: "Arena is exploring your evidence-gathering instincts",
-    dimension: "Evidence Use",
+    dimension: "Show Your Work",
   },
   {
     question: "What alternative approaches did you consider, and why did you set them aside?",
@@ -122,7 +122,7 @@ function evaluateResponses(
   const raw: Record<string, number> = {
     Clarity: 2.2 + (seed % 15) / 10,
     Reasoning: 1.8 + (seed % 12) / 10,
-    "Evidence Use": 1.5 + (seed % 10) / 10,
+    "Show Your Work": 1.5 + (seed % 10) / 10,
     "Alternatives Exploration": 2.0 + (seed % 13) / 10,
     Reflection: 1.6 + (seed % 11) / 10,
   };

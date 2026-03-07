@@ -34,7 +34,7 @@ const journeyDatabase: Record<string, JourneyData> = {
     capabilities: [
       { name: "Decision Clarity", progress: 52, type: "strength" },
       { name: "Risk Assessment", progress: 45, type: "strength" },
-      { name: "Evidence Use", progress: 28, type: "focus" },
+      { name: "Show Your Work", progress: 28, type: "focus" },
       { name: "Scenario Analysis", progress: 22, type: "focus" },
       { name: "Bias Awareness", progress: 18, type: "focus" },
     ],
@@ -44,7 +44,7 @@ const journeyDatabase: Record<string, JourneyData> = {
       { label: "Evaluate evidence under pressure", done: false },
       { label: "Conduct scenario analysis", done: false },
     ],
-    insight: { title: "Capability Imbalance", message: "Your decision clarity is strong, but", highlight: "evidence evaluation is lagging behind other skills." },
+    insight: { title: "Capability Imbalance", message: "Your decision clarity is strong, but", highlight: "showing your work is lagging behind other skills." },
     recommendations: [
       { icon: Shield, text: "Scenario: Evidence Under Pressure", sub: "Challenge Mode", action: "/arena-session" },
       { icon: Target, text: "Challenge: Cognitive Bias Detection", sub: "Strengthen awareness", action: "/arena-session" },
@@ -82,7 +82,7 @@ const journeyDatabase: Record<string, JourneyData> = {
     capabilities: [
       { name: "Clarity", progress: 55, type: "strength" },
       { name: "Reflection", progress: 48, type: "strength" },
-      { name: "Evidence Use", progress: 42, type: "focus" },
+      { name: "Show Your Work", progress: 42, type: "focus" },
       { name: "Reasoning", progress: 38, type: "focus" },
       { name: "Alternatives", progress: 30, type: "focus" },
     ],
@@ -95,14 +95,14 @@ const journeyDatabase: Record<string, JourneyData> = {
     insight: { title: "Capability Imbalance", message: "Your reasoning clarity is strong, but", highlight: "alternatives generation is lagging." },
     recommendations: [
       { icon: Shield, text: "Scenario: Conflicting Stakeholder Priorities", sub: "Challenge Mode", action: "/arena-session" },
-      { icon: Target, text: "Challenge Mode: Evidence Evaluation", sub: "Strengthen weak dimension", action: "/arena-session" },
+      { icon: Target, text: "Challenge Mode: Show Your Work", sub: "Strengthen weak dimension", action: "/arena-session" },
       { icon: BookOpen, text: "Reflect on: Feb 19 decision journal entry", sub: "Revisit flagged", action: "/journal" },
     ],
   },
   "2": {
     id: "2", objective: "Make Data-Driven Decisions Under Uncertainty", domain: "Decision Making",
     currentLevel: 2.1, targetLevel: 3.5, baselineLevel: 1.8, progress: 22,
-    focusArea: "Evidence evaluation", nextSession: "Uncertainty Quantification", estimatedWeeks: 12,
+    focusArea: "Show Your Work", nextSession: "Uncertainty Quantification", estimatedWeeks: 12,
     capabilities: [
       { name: "Data Literacy", progress: 40, type: "strength" },
       { name: "Statistical Reasoning", progress: 35, type: "strength" },

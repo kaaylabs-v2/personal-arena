@@ -10,7 +10,7 @@ import { useState } from "react";
 const rubric = [
   { name: "Clarity", score: 3.2, max: 5 },
   { name: "Reasoning", score: 2.8, max: 5 },
-  { name: "Evidence Use", score: 3.5, max: 5 },
+  { name: "Show Your Work", score: 3.5, max: 5 },
   { name: "Alternatives Considered", score: 2.4, max: 5 },
   { name: "Reflection Depth", score: 3.0, max: 5 },
 ];
