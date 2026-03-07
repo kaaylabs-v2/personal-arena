@@ -19,6 +19,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { Layout } from "@/components/Layout";
+import { useLearner } from "@/contexts/LearnerContext";
 
 /* ── capability dimensions with icons ── */
 const DIMENSIONS = [
@@ -64,6 +65,26 @@ function getScenarioData(topic: string): { title: string; context: string; task:
       title: "Cross-Functional Team Resistance",
       context: "You've just been promoted to lead a cross-functional team of 12. Two senior members openly resist your direction, citing their longer tenure. The team has a critical deliverable in 3 weeks.",
       task: "Describe how you would approach the first week — including how you'd address the resistance, align the team, and protect the deliverable timeline.",
+    },
+    "Strategic Leadership": {
+      title: "Cross-Functional Team Resistance",
+      context: "You've just been promoted to lead a cross-functional team of 12. Two senior members openly resist your direction, citing their longer tenure. The team has a critical deliverable in 3 weeks.",
+      task: "Describe how you would approach the first week — including how you'd address the resistance, align the team, and protect the deliverable timeline.",
+    },
+    "Algebra Foundations": {
+      title: "Word Problem Translation Under Pressure",
+      context: "In a timed assessment, you consistently miss points because you translate word problems into incorrect equations even when your algebra steps are accurate.",
+      task: "Explain your exact process for identifying variables, building relationships, and checking if your equation truly represents the problem.",
+    },
+    "Calculus I Mastery": {
+      title: "Optimization Setup Breakdown",
+      context: "You can differentiate correctly, but lose marks because your optimization setup is incomplete or uses the wrong constraint equation.",
+      task: "Walk through how you would structure an optimization problem before calculating derivatives so your model is valid.",
+    },
+    "Insurance Sales Mastery": {
+      title: "Price Objection on a Live Call",
+      context: "A client says your premium is too expensive and compares it to a lower-priced competitor. You need to keep trust while reframing the value.",
+      task: "Describe how you would respond from opening acknowledgment to final recommendation, including how you'd use evidence and alternatives.",
     },
     "Product Management": {
       title: "Declining Core Metric",
@@ -116,8 +137,9 @@ function evaluateResponses(
 const Assessment = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { activeProgram } = useLearner();
   const { intent, type } = (location.state as { intent?: string; type?: string }) || {};
-  const topic = intent || "Leadership";
+  const topic = intent || activeProgram.name || "Leadership";
 
   const [step, setStep] = useState<Step>({ kind: "intro" });
   const [scenarioAnswer, setScenarioAnswer] = useState("");
