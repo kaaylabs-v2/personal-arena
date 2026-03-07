@@ -15,6 +15,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { Layout } from "@/components/Layout";
+import { useLearner } from "@/contexts/LearnerContext";
 
 type DimScore = { score: number; label: string };
 type Scores = Record<string, DimScore>;
@@ -30,11 +31,13 @@ const DIMENSION_ICONS: Record<string, React.ElementType> = {
 const StartingPoint = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { activeProgram } = useLearner();
   const { scores, topic, intent } = (location.state as {
     scores?: Scores;
     topic?: string;
     intent?: string;
   }) || {};
+  const activeTopic = activeProgram.name || topic || intent || "Leadership";
 
   if (!scores) {
     return (
@@ -112,7 +115,7 @@ const StartingPoint = () => {
             </motion.div>
 
             <h1 className="text-xl font-display font-bold text-foreground mb-1">
-              Your Starting Point in {topic}
+              Your Starting Point in {activeTopic}
             </h1>
             <p className="text-sm text-muted-foreground">
               Target: <span className="text-foreground font-semibold">{targetLevel}</span> (Advanced)
@@ -238,7 +241,7 @@ const StartingPoint = () => {
             <Button
               onClick={() =>
                 navigate("/arena-session", {
-                  state: { focusDimension: weakest[0], topic, intent },
+                  state: { focusDimension: weakest[0], topic: activeTopic, intent },
                 })
               }
               className="w-full"
