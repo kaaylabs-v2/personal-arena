@@ -5,10 +5,11 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
   Upload, FileText, Sparkles, CheckCircle2, Loader2, AlertCircle,
-  ArrowRight, BookOpen, Target, Layers, X,
+  ArrowRight, BookOpen, Target, Layers, X, PartyPopper, ExternalLink,
 } from "lucide-react";
 import { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 function MasteryCriterionBadge({ label, defaultActive }: { label: string; defaultActive: boolean }) {
   const [active, setActive] = useState(defaultActive);
   return (
