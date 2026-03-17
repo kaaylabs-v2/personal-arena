@@ -216,13 +216,41 @@ export default function AdminProgramDetail() {
               ))}
             </TabsContent>
 
-            {/* ── Dimensions ── */}
             <TabsContent value="dimensions" className="space-y-3">
               <div className="flex items-center justify-between">
-                <p className="text-xs text-muted-foreground">{program.dimensions.length} skill dimensions</p>
-                <Button size="sm"><Plus className="mr-1.5 h-3.5 w-3.5" /> Add Dimension</Button>
+                <p className="text-xs text-muted-foreground">{dimensions.length} skill dimensions</p>
+                <Button size="sm" onClick={() => setShowAddDimension(true)}><Plus className="mr-1.5 h-3.5 w-3.5" /> Add Dimension</Button>
               </div>
-              {program.dimensions.map((d) => (
+
+              <AnimatePresence>
+                {showAddDimension && (
+                  <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
+                    <div className="rounded-xl border-2 border-primary/30 bg-card p-5 space-y-4">
+                      <h4 className="text-xs font-semibold text-primary uppercase tracking-wider">New Dimension</h4>
+                      <div className="grid grid-cols-1 gap-3">
+                        <div>
+                          <label className="text-xs font-medium text-card-foreground block mb-1">Name</label>
+                          <Input placeholder="e.g. Active Listening" value={newDim.name} onChange={(e) => setNewDim({ ...newDim, name: e.target.value })} />
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-card-foreground block mb-1">Description</label>
+                          <Textarea placeholder="What does this dimension measure?" rows={2} value={newDim.description} onChange={(e) => setNewDim({ ...newDim, description: e.target.value })} />
+                        </div>
+                        <div className="max-w-[200px]">
+                          <label className="text-xs font-medium text-card-foreground block mb-1">Weight (%)</label>
+                          <Input type="number" min={1} max={100} value={newDim.weight} onChange={(e) => setNewDim({ ...newDim, weight: Number(e.target.value) })} />
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 justify-end">
+                        <Button variant="ghost" size="sm" onClick={() => setShowAddDimension(false)}>Cancel</Button>
+                        <Button size="sm" onClick={handleAddDimension}>Add Dimension</Button>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {dimensions.map((d) => (
                 <div key={d.id} className="rounded-xl border border-border bg-card p-4 group">
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-3">
@@ -246,8 +274,8 @@ export default function AdminProgramDetail() {
               {/* Weight summary */}
               <div className="rounded-lg bg-muted/50 px-4 py-3 flex items-center justify-between">
                 <span className="text-xs text-muted-foreground">Total weight</span>
-                <span className={`text-sm font-medium ${program.dimensions.reduce((a, d) => a + d.weight, 0) === 100 ? "text-primary" : "text-destructive"}`}>
-                  {program.dimensions.reduce((a, d) => a + d.weight, 0)}%
+                <span className={`text-sm font-medium ${dimensions.reduce((a, d) => a + d.weight, 0) === 100 ? "text-primary" : "text-destructive"}`}>
+                  {dimensions.reduce((a, d) => a + d.weight, 0)}%
                 </span>
               </div>
             </TabsContent>
