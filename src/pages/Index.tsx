@@ -140,6 +140,11 @@ const CircularBadge = ({ progress }: { progress: number }) => {
 const HomePage = () => {
   const navigate = useNavigate();
   const { activeProgram, activeLearner, hasCompletedSession } = useLearner();
+  const [showDetails, setShowDetails] = useState(false);
+  const [objective, setObjective] = useState("");
+  const [subject, setSubject] = useState("");
+  const [specificChoice, setSpecificChoice] = useState<"general" | "specific" | null>(null);
+  const [specificText, setSpecificText] = useState("");
 
   // Show onboarding for first-time users
   if (!hasCompletedSession) {
@@ -148,12 +153,6 @@ const HomePage = () => {
 
   const data = dashboardByProgram[activeProgram.id] || dashboardByProgram["p1"];
   const hasMandated = data.mandated.length > 0;
-  const [showDetails, setShowDetails] = useState(false);
-
-  const [objective, setObjective] = useState("");
-  const [subject, setSubject] = useState("");
-  const [specificChoice, setSpecificChoice] = useState<"general" | "specific" | null>(null);
-  const [specificText, setSpecificText] = useState("");
 
   const handleObjectiveContinue = () => {
     if (objective.trim()) navigate("/intent", { state: { intent: objective, type: "objective" } });
