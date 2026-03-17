@@ -130,22 +130,59 @@ export default function AdminUploadPipeline() {
             </div>
           )}
 
-          {/* Generated course preview */}
+          {/* Generated course — editable form */}
           <AnimatePresence>
             {stage === "complete" && (
               <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-5">
-                <div className="rounded-xl border border-primary/30 bg-card p-6 space-y-4">
+
+                <div className="rounded-xl border border-primary/30 bg-card p-6 space-y-5">
                   <div className="flex items-center gap-2">
                     <Sparkles className="h-4 w-4 text-primary" />
                     <h3 className="text-xs font-semibold text-primary uppercase tracking-wider">AI-Generated Course</h3>
                   </div>
 
-                  <div>
-                    <h2 className="text-lg font-display font-semibold text-card-foreground">{mockGeneratedCourse.title}</h2>
-                    <p className="text-sm text-muted-foreground mt-1">{mockGeneratedCourse.description}</p>
+                  {/* Course Details Form */}
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-xs font-medium text-card-foreground block mb-1.5">Title</label>
+                      <input
+                        className="w-full h-10 rounded-lg border border-border bg-background px-3 text-sm text-foreground"
+                        defaultValue={mockGeneratedCourse.title}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-card-foreground block mb-1.5">Description</label>
+                      <textarea
+                        className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground min-h-[80px] resize-y"
+                        defaultValue={mockGeneratedCourse.description}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-card-foreground block mb-1.5">Course Type</label>
+                      <select className="w-full h-10 rounded-lg border border-border bg-background px-3 text-sm text-foreground appearance-none">
+                        <option>Leadership Development</option>
+                        <option>Academic</option>
+                        <option>Corporate Training</option>
+                        <option>Technical Skills</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-card-foreground block mb-1.5">Mastery Criteria</label>
+                      <div className="flex flex-wrap gap-2">
+                        {mockGeneratedCourse.dimensions.map((d, i) => (
+                          <MasteryCriterionBadge key={d} label={d} defaultActive={i < 3} />
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <Badge variant="default" className="text-[10px]">
+                        <CheckCircle2 className="h-3 w-3 mr-1" /> Active
+                      </Badge>
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-4">
+                  {/* Stats row */}
+                  <div className="grid grid-cols-3 gap-4 border-t border-border pt-4">
                     <div className="rounded-lg bg-muted/50 px-3 py-2.5 text-center">
                       <p className="text-lg font-semibold text-card-foreground">{mockGeneratedCourse.materialChunks}</p>
                       <p className="text-[10px] text-muted-foreground">Content Chunks</p>
