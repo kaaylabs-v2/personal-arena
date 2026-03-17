@@ -1,6 +1,6 @@
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { StatCard } from "@/components/admin/StatCard";
-import { Users, BookOpen, TrendingUp, Building2, ArrowRight } from "lucide-react";
+import { Users, BookOpen, TrendingUp, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 

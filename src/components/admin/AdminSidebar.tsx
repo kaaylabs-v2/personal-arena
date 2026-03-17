@@ -15,7 +15,7 @@ import {
   LayoutDashboard,
   BookOpen,
   Users,
-  Building2,
+  
   BarChart3,
   ArrowLeft,
   Settings,
