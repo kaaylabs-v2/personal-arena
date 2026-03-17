@@ -104,7 +104,7 @@ export default function AdminProgramDetail() {
     setShowAddScenario(false);
     toast.success("Scenario added");
   };
-    <AdminLayout pageTitle={program.name}>
+    return (
       <div className="max-w-5xl mx-auto px-6 py-6">
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="space-y-6">
 
