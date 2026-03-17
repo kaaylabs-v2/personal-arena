@@ -191,7 +191,7 @@ export default function AdminProgramDetail() {
                   </motion.div>
                 )}
               </AnimatePresence>
-              {program.scenarios.map((s) => (
+              {scenarios.map((s) => (
                 <div key={s.id} className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-colors cursor-pointer group">
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-3">
