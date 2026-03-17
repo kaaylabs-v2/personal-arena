@@ -269,20 +269,18 @@ const HomePage = () => {
                   <h3 className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-3 flex items-center gap-1.5">
                     <Lightbulb className="h-3 w-3" /> Your personal journeys
                   </h3>
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     {data.selfInitiated.map((j) => (
                       <div
                         key={j.id}
                         onClick={() => navigate("/dashboard")}
-                        className="rounded-xl border border-border/60 bg-card/60 p-4 cursor-pointer hover:shadow-sm transition-all"
+                        className="rounded-lg border border-border/60 bg-card/60 px-4 py-3 cursor-pointer hover:shadow-sm transition-all flex items-center justify-between gap-4"
                       >
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="text-sm font-medium text-card-foreground">{j.name}</h4>
-                            <p className="text-xs text-muted-foreground">{j.domain} · {humanLevel(j.currentLevel)}</p>
-                          </div>
-                          <CircularBadge progress={j.progress} />
+                        <div className="min-w-0">
+                          <h4 className="text-sm font-medium text-card-foreground truncate">{j.name}</h4>
+                          <p className="text-xs text-muted-foreground mt-0.5">{j.domain}</p>
                         </div>
+                        <SimpleBar progress={j.progress} />
                       </div>
                     ))}
                   </div>
