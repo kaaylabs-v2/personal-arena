@@ -1,6 +1,6 @@
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { StatCard } from "@/components/admin/StatCard";
-import { Users, BookOpen, TrendingUp, Building2, ArrowRight } from "lucide-react";
+import { Users, BookOpen, TrendingUp, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
@@ -31,7 +31,7 @@ export default function AdminDashboard() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <StatCard icon={Users} label="Total Learners" value={265} change="+12 this week" />
             <StatCard icon={BookOpen} label="Active Programs" value={4} />
-            <StatCard icon={Building2} label="Tenants" value={3} />
+            
             <StatCard icon={TrendingUp} label="Avg. Completion" value="49%" change="+4% vs last month" />
           </div>
 
