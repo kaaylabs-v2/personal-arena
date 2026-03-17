@@ -26,6 +26,12 @@ import StartingPoint from "./pages/StartingPoint";
 import SkillMap from "./pages/SkillMap";
 import CommandCenter from "./pages/CommandCenter";
 import Focus from "./pages/Focus";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminPrograms from "./pages/admin/AdminPrograms";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminTenants from "./pages/admin/AdminTenants";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
+import AdminSettings from "./pages/admin/AdminSettings";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +65,12 @@ const App = () => (
           <Route path="/skill-map" element={<SkillMap />} />
           <Route path="/command-center" element={<CommandCenter />} />
           <Route path="/focus" element={<Focus />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/programs" element={<AdminPrograms />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/tenants" element={<AdminTenants />} />
+          <Route path="/admin/analytics" element={<AdminAnalytics />} />
+          <Route path="/admin/settings" element={<AdminSettings />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
