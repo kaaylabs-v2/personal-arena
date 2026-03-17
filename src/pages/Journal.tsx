@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Layout } from "@/components/Layout";
-import { BookOpen, Flag, ChevronRight, X, RotateCcw, AlertTriangle } from "lucide-react";
+import { BookOpen, Flag, ChevronRight, X, RotateCcw, AlertTriangle, Plus, Sparkles, PenLine } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { useLearner } from "@/contexts/LearnerContext";
+import { toast } from "sonner";
 
 interface JournalEntry {
   id: string;
