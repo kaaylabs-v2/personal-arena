@@ -154,9 +154,43 @@ export default function AdminProgramDetail() {
             {/* ── Scenarios ── */}
             <TabsContent value="scenarios" className="space-y-3">
               <div className="flex items-center justify-between">
-                <p className="text-xs text-muted-foreground">{program.scenarios.length} scenarios</p>
-                <Button size="sm"><Plus className="mr-1.5 h-3.5 w-3.5" /> New Scenario</Button>
+                <p className="text-xs text-muted-foreground">{scenarios.length} scenarios</p>
+                <Button size="sm" onClick={() => setShowAddScenario(true)}><Plus className="mr-1.5 h-3.5 w-3.5" /> New Scenario</Button>
               </div>
+
+              <AnimatePresence>
+                {showAddScenario && (
+                  <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
+                    <div className="rounded-xl border-2 border-primary/30 bg-card p-5 space-y-4">
+                      <h4 className="text-xs font-semibold text-primary uppercase tracking-wider">New Scenario</h4>
+                      <div className="grid grid-cols-1 gap-3">
+                        <div>
+                          <label className="text-xs font-medium text-card-foreground block mb-1">Title</label>
+                          <Input placeholder="e.g. Crisis Communication" value={newScenario.title} onChange={(e) => setNewScenario({ ...newScenario, title: e.target.value })} />
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-card-foreground block mb-1">Description</label>
+                          <Textarea placeholder="Describe the scenario..." rows={2} value={newScenario.description} onChange={(e) => setNewScenario({ ...newScenario, description: e.target.value })} />
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="text-xs font-medium text-card-foreground block mb-1">Difficulty (1–5)</label>
+                            <Input type="number" min={1} max={5} value={newScenario.difficulty} onChange={(e) => setNewScenario({ ...newScenario, difficulty: Number(e.target.value) })} />
+                          </div>
+                          <div>
+                            <label className="text-xs font-medium text-card-foreground block mb-1">Turns</label>
+                            <Input type="number" min={1} max={20} value={newScenario.turns} onChange={(e) => setNewScenario({ ...newScenario, turns: Number(e.target.value) })} />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 justify-end">
+                        <Button variant="ghost" size="sm" onClick={() => setShowAddScenario(false)}>Cancel</Button>
+                        <Button size="sm" onClick={handleAddScenario}>Add Scenario</Button>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
               {program.scenarios.map((s) => (
                 <div key={s.id} className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-colors cursor-pointer group">
                   <div className="flex items-start justify-between">
