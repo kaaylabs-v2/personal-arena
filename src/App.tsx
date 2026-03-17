@@ -65,6 +65,12 @@ const App = () => (
           <Route path="/skill-map" element={<SkillMap />} />
           <Route path="/command-center" element={<CommandCenter />} />
           <Route path="/focus" element={<Focus />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/programs" element={<AdminPrograms />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/tenants" element={<AdminTenants />} />
+          <Route path="/admin/analytics" element={<AdminAnalytics />} />
+          <Route path="/admin/settings" element={<AdminSettings />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
