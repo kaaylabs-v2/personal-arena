@@ -45,8 +45,8 @@ export const ArenaDebrief = ({ onClose, reasoningScore, focusSkill }: ArenaDebri
       >
         <div className="text-center mb-6">
           <p className="text-[10px] uppercase tracking-wider text-primary font-medium mb-1">Session Complete</p>
-          <h2 className="text-lg font-display font-semibold text-foreground">Reflection Debrief</h2>
-          <p className="text-xs text-muted-foreground mt-1">Here's how your reasoning performed across this session.</p>
+          <h2 className="text-lg font-display font-semibold text-foreground">Nice work! Here's how you did.</h2>
+          <p className="text-xs text-muted-foreground mt-1">Your reasoning grew through this session. Here's the breakdown.</p>
         </div>
 
         {/* Focus Skill Progress */}
