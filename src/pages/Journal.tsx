@@ -56,16 +56,120 @@ const tabKey: Record<ScaffoldTab, keyof JournalEntry> = {
   Notes: "notes",
 };
 
+const reflectionPrompts = [
+  "What decision did you make today that you want to remember?",
+  "What assumption are you holding that you haven't tested yet?",
+  "What would you do differently if you could replay today?",
+  "What surprised you in your last session?",
+  "What's one thing you're avoiding thinking about?",
+];
+
 const Journal = () => {
-  const { activeProgram } = useLearner();
-  const entries = entriesByProgram[activeProgram.id] || entriesByProgram["p1"];
+  const { activeProgram, hasCompletedSession } = useLearner();
+  const [allEntries, setAllEntries] = useState<JournalEntry[]>(
+    entriesByProgram[activeProgram.id] || entriesByProgram["p1"]
+  );
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
   const [activeTab, setActiveTab] = useState<ScaffoldTab>("Assumptions");
+  const [showNewEntry, setShowNewEntry] = useState(false);
+  const [newTitle, setNewTitle] = useState("");
+  const [newSummary, setNewSummary] = useState("");
+  const [dailyPrompt] = useState(() => reflectionPrompts[Math.floor(Math.random() * reflectionPrompts.length)]);
+
+  const handleAddEntry = () => {
+    if (!newTitle.trim()) return;
+    const entry: JournalEntry = {
+      id: `new-${Date.now()}`,
+      date: new Date().toISOString().split("T")[0],
+      title: newTitle.trim(),
+      journey: activeProgram.name,
+      summary: newSummary.trim(),
+      assumptions: [],
+      evidence: [],
+      alternatives: [],
+      revisitFlag: false,
+    };
+    setAllEntries((prev) => [entry, ...prev]);
+    setNewTitle("");
+    setNewSummary("");
+    setShowNewEntry(false);
+    toast.success("Entry added to your journal");
+  };
 
   return (
     <Layout pageTitle="Decision Journal">
       <div className="max-w-5xl mx-auto px-6 py-4">
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} key={activeProgram.id}>
+
+          {/* Reflection prompt card */}
+          {!selectedEntry && !showNewEntry && (
+            <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl border border-dashed border-primary/20 bg-primary/5 p-5 mb-5">
+              <div className="flex items-start gap-3">
+                <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs font-medium text-primary mb-1">Today's reflection</p>
+                  <p className="text-sm text-foreground leading-relaxed">{dailyPrompt}</p>
+                  <Button size="sm" variant="outline" className="mt-3 text-xs" onClick={() => setShowNewEntry(true)}>
+                    <PenLine className="h-3 w-3 mr-1.5" /> Write about it
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* New entry form */}
+          <AnimatePresence>
+            {showNewEntry && !selectedEntry && (
+              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden mb-5">
+                <div className="rounded-xl border border-border bg-card p-5 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-semibold text-card-foreground flex items-center gap-2">
+                      <PenLine className="h-3.5 w-3.5 text-primary" /> New journal entry
+                    </h3>
+                    <button onClick={() => setShowNewEntry(false)} className="text-muted-foreground hover:text-foreground">
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                  <Input placeholder="What decision or realization do you want to capture?" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} className="text-sm" />
+                  <Textarea placeholder="Add more detail — what happened, what you were thinking, what you'd do differently…" value={newSummary} onChange={(e) => setNewSummary(e.target.value)} rows={3} className="text-sm resize-none" />
+                  <div className="flex gap-2 justify-end">
+                    <Button variant="ghost" size="sm" onClick={() => setShowNewEntry(false)}>Cancel</Button>
+                    <Button size="sm" onClick={handleAddEntry} disabled={!newTitle.trim()}>Save Entry</Button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Header with add button */}
+          {!selectedEntry && !showNewEntry && (
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-xs text-muted-foreground">{allEntries.length} entries</p>
+              <Button size="sm" variant="outline" onClick={() => setShowNewEntry(true)}>
+                <Plus className="h-3 w-3 mr-1.5" /> New Entry
+              </Button>
+            </div>
+          )}
+
+          {/* Empty state */}
+          {!selectedEntry && allEntries.length === 0 && !showNewEntry && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-16">
+              <BookOpen className="h-8 w-8 text-muted-foreground/40 mx-auto mb-3" />
+              <h3 className="text-sm font-semibold text-foreground mb-1">Your journal is empty</h3>
+              <p className="text-xs text-muted-foreground max-w-xs mx-auto mb-4">
+                {hasCompletedSession
+                  ? "Capture a decision, a realization, or something you'd do differently. It only takes a minute."
+                  : "After your first session, this is where you'll reflect on your decisions and track how your thinking evolves."}
+              </p>
+              {hasCompletedSession && (
+                <Button size="sm" onClick={() => setShowNewEntry(true)}>
+                  <PenLine className="h-3 w-3 mr-1.5" /> Write your first entry
+                </Button>
+              )}
+            </motion.div>
+          )}
 
           <AnimatePresence mode="wait">
             {selectedEntry ? (
