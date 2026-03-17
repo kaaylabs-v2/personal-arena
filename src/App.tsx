@@ -28,6 +28,7 @@ import CommandCenter from "./pages/CommandCenter";
 import Focus from "./pages/Focus";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminPrograms from "./pages/admin/AdminPrograms";
+import AdminProgramDetail from "./pages/admin/AdminProgramDetail";
 import AdminUsers from "./pages/admin/AdminUsers";
 
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
@@ -67,6 +68,7 @@ const App = () => (
           <Route path="/focus" element={<Focus />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/programs" element={<AdminPrograms />} />
+          <Route path="/admin/programs/:programId" element={<AdminProgramDetail />} />
           <Route path="/admin/users" element={<AdminUsers />} />
           
           <Route path="/admin/analytics" element={<AdminAnalytics />} />
