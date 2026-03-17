@@ -85,6 +85,12 @@ export default function AdminUploadPipeline() {
   const reset = () => {
     setStage("idle");
     setFileName("");
+    setCreated(false);
+  };
+
+  const handleCreateProgram = () => {
+    setCreated(true);
+    toast.success("Program created successfully!", { description: "Strategic Leadership Fundamentals is now live." });
   };
 
   return (
