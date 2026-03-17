@@ -9,6 +9,23 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
+function MasteryCriterionBadge({ label, defaultActive }: { label: string; defaultActive: boolean }) {
+  const [active, setActive] = useState(defaultActive);
+  return (
+    <button
+      onClick={() => setActive(!active)}
+      className={`text-xs px-2.5 py-1 rounded-full border transition-colors flex items-center gap-1 ${
+        active
+          ? "bg-primary/10 border-primary/30 text-primary"
+          : "bg-muted border-border text-muted-foreground"
+      }`}
+    >
+      {active ? <CheckCircle2 className="h-3 w-3" /> : <X className="h-3 w-3" />}
+      {label}
+    </button>
+  );
+}
+
 type PipelineStage = "idle" | "uploading" | "extracting" | "analyzing" | "chunking" | "generating" | "complete" | "error";
 
 const stageLabels: Record<PipelineStage, string> = {
