@@ -25,7 +25,7 @@ import { Badge } from "@/components/ui/badge";
 import { Layout } from "@/components/Layout";
 import { Onboarding } from "@/components/Onboarding";
 import { useLearner } from "@/contexts/LearnerContext";
-import { humanLevel, humanProgress, humanStatus } from "@/lib/humanize";
+import { humanLevel } from "@/lib/humanize";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const subjects = [
