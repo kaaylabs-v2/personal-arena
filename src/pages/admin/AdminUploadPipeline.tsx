@@ -5,10 +5,11 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
   Upload, FileText, Sparkles, CheckCircle2, Loader2, AlertCircle,
-  ArrowRight, BookOpen, Target, Layers, X,
+  ArrowRight, BookOpen, Target, Layers, X, PartyPopper, ExternalLink,
 } from "lucide-react";
 import { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 function MasteryCriterionBadge({ label, defaultActive }: { label: string; defaultActive: boolean }) {
   const [active, setActive] = useState(defaultActive);
   return (
@@ -57,8 +58,10 @@ const mockGeneratedCourse = {
 };
 
 export default function AdminUploadPipeline() {
+  const navigate = useNavigate();
   const [stage, setStage] = useState<PipelineStage>("idle");
   const [fileName, setFileName] = useState("");
+  const [created, setCreated] = useState(false);
 
   const simulatePipeline = (name: string) => {
     setFileName(name);
@@ -82,6 +85,12 @@ export default function AdminUploadPipeline() {
   const reset = () => {
     setStage("idle");
     setFileName("");
+    setCreated(false);
+  };
+
+  const handleCreateProgram = () => {
+    setCreated(true);
+    toast.success("Program created successfully!", { description: "Strategic Leadership Fundamentals is now live." });
   };
 
   return (
@@ -245,12 +254,38 @@ export default function AdminUploadPipeline() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 justify-end">
-                  <Button variant="outline" size="sm" onClick={reset}>Upload Another</Button>
-                  <Button size="sm">
-                    <BookOpen className="mr-1.5 h-3.5 w-3.5" /> Create Program <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
-                  </Button>
-                </div>
+                {!created ? (
+                  <div className="flex items-center gap-3 justify-end">
+                    <Button variant="outline" size="sm" onClick={reset}>Upload Another</Button>
+                    <Button size="sm" onClick={handleCreateProgram}>
+                      <BookOpen className="mr-1.5 h-3.5 w-3.5" /> Create Program <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="rounded-xl border border-primary/30 bg-primary/5 p-6 text-center space-y-4"
+                  >
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+                      <PartyPopper className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-card-foreground">Program Created!</h3>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        "{mockGeneratedCourse.title}" has been created with {mockGeneratedCourse.scenarios.length} scenarios and {mockGeneratedCourse.dimensions.length} dimensions.
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3 justify-center">
+                      <Button variant="outline" size="sm" onClick={reset}>
+                        Upload Another
+                      </Button>
+                      <Button size="sm" onClick={() => navigate("/admin/programs/p1")}>
+                        <ExternalLink className="mr-1.5 h-3.5 w-3.5" /> View Program
+                      </Button>
+                    </div>
+                  </motion.div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
