@@ -29,7 +29,7 @@ import Focus from "./pages/Focus";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminPrograms from "./pages/admin/AdminPrograms";
 import AdminUsers from "./pages/admin/AdminUsers";
-import AdminTenants from "./pages/admin/AdminTenants";
+
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminSettings from "./pages/admin/AdminSettings";
 
