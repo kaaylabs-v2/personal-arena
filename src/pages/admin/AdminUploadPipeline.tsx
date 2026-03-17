@@ -58,8 +58,10 @@ const mockGeneratedCourse = {
 };
 
 export default function AdminUploadPipeline() {
+  const navigate = useNavigate();
   const [stage, setStage] = useState<PipelineStage>("idle");
   const [fileName, setFileName] = useState("");
+  const [created, setCreated] = useState(false);
 
   const simulatePipeline = (name: string) => {
     setFileName(name);
