@@ -21,11 +21,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
+
 import { Layout } from "@/components/Layout";
 import { Onboarding } from "@/components/Onboarding";
 import { useLearner } from "@/contexts/LearnerContext";
-import { humanLevel, humanProgress, humanStatus } from "@/lib/humanize";
+import { humanLevel } from "@/lib/humanize";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const subjects = [
@@ -121,21 +121,11 @@ const dashboardByProgram: Record<string, DashboardData> = {
   },
 };
 
-const CircularBadge = ({ progress }: { progress: number }) => {
-  const r = 18;
-  const circumference = 2 * Math.PI * r;
-  return (
-    <div className="relative h-10 w-10 flex-shrink-0">
-      <svg className="h-10 w-10 -rotate-90" viewBox="0 0 44 44">
-        <circle cx="22" cy="22" r={r} fill="none" stroke="hsl(var(--muted))" strokeWidth="3" />
-        <motion.circle cx="22" cy="22" r={r} fill="none" stroke="hsl(var(--primary))" strokeWidth="3" strokeLinecap="round"
-          strokeDasharray={circumference} initial={{ strokeDashoffset: circumference }} animate={{ strokeDashoffset: circumference * (1 - progress / 100) }} transition={{ duration: 0.8 }}
-        />
-      </svg>
-      <span className="absolute inset-0 flex items-center justify-center text-[10px] font-display font-bold text-primary">{progress}%</span>
-    </div>
-  );
-};
+const SimpleBar = ({ progress }: { progress: number }) => (
+  <div className="w-16 h-1.5 rounded-full bg-muted overflow-hidden flex-shrink-0">
+    <div className="h-full rounded-full bg-primary" style={{ width: `${progress}%` }} />
+  </div>
+);
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -191,13 +181,11 @@ const HomePage = () => {
             </Button>
           </motion.div>
 
-          {/* Simple Progress Bar */}
+          {/* Simple Progress */}
           <div className="rounded-xl border border-border bg-card p-5">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-medium text-card-foreground">
-                You're {avgProgress}% through your program
-              </p>
-              <span className="text-xs text-primary font-medium">{humanProgress(avgProgress / 100 * 4 + 1, 5)}</span>
+              <p className="text-sm font-medium text-card-foreground">Your overall progress</p>
+              <span className="text-xs text-primary font-medium">{humanLevel(avgProgress / 100 * 4 + 1)}</span>
             </div>
             <div className="h-2.5 rounded-full bg-muted overflow-hidden">
               <motion.div
@@ -258,26 +246,18 @@ const HomePage = () => {
                     <h3 className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-3 flex items-center gap-1.5">
                       <Building2 className="h-3 w-3" /> Required by your organization
                     </h3>
-                    <div className="space-y-3">
+                    <div className="space-y-2">
                       {data.mandated.map((j) => (
                         <div
                           key={j.id}
                           onClick={() => navigate("/dashboard")}
-                          className="rounded-xl border border-border border-l-4 border-l-primary bg-card p-4 cursor-pointer hover:shadow-sm transition-all"
+                          className="rounded-lg border border-border border-l-4 border-l-primary bg-card px-4 py-3 cursor-pointer hover:shadow-sm transition-all flex items-center justify-between gap-4"
                         >
-                          <div className="flex items-center justify-between mb-2">
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <h4 className="text-sm font-semibold text-card-foreground">{j.name}</h4>
-                                <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] px-1.5 py-0">Required</Badge>
-                              </div>
-                              <p className="text-xs text-muted-foreground mt-0.5">{j.domain} · {humanLevel(j.currentLevel)}</p>
-                            </div>
-                            <CircularBadge progress={j.progress} />
+                          <div className="min-w-0">
+                            <h4 className="text-sm font-medium text-card-foreground truncate">{j.name}</h4>
+                            <p className="text-xs text-muted-foreground mt-0.5">{j.focusArea ? `Focus: ${j.focusArea}` : j.domain}</p>
                           </div>
-                          {j.focusArea && (
-                            <p className="text-xs text-muted-foreground">Focus: <span className="text-card-foreground">{j.focusArea}</span></p>
-                          )}
+                          <SimpleBar progress={j.progress} />
                         </div>
                       ))}
                     </div>
@@ -289,20 +269,18 @@ const HomePage = () => {
                   <h3 className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-3 flex items-center gap-1.5">
                     <Lightbulb className="h-3 w-3" /> Your personal journeys
                   </h3>
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     {data.selfInitiated.map((j) => (
                       <div
                         key={j.id}
                         onClick={() => navigate("/dashboard")}
-                        className="rounded-xl border border-border/60 bg-card/60 p-4 cursor-pointer hover:shadow-sm transition-all"
+                        className="rounded-lg border border-border/60 bg-card/60 px-4 py-3 cursor-pointer hover:shadow-sm transition-all flex items-center justify-between gap-4"
                       >
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="text-sm font-medium text-card-foreground">{j.name}</h4>
-                            <p className="text-xs text-muted-foreground">{j.domain} · {humanLevel(j.currentLevel)}</p>
-                          </div>
-                          <CircularBadge progress={j.progress} />
+                        <div className="min-w-0">
+                          <h4 className="text-sm font-medium text-card-foreground truncate">{j.name}</h4>
+                          <p className="text-xs text-muted-foreground mt-0.5">{j.domain}</p>
                         </div>
+                        <SimpleBar progress={j.progress} />
                       </div>
                     ))}
                   </div>
