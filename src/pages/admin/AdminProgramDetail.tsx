@@ -82,8 +82,28 @@ export default function AdminProgramDetail() {
   const { programId } = useParams<{ programId: string }>();
   const navigate = useNavigate();
   const program = programData[programId ?? ""] ?? fallback;
+  const [dimensions, setDimensions] = useState(program.dimensions);
+  const [showAddDimension, setShowAddDimension] = useState(false);
+  const [newDim, setNewDim] = useState({ name: "", description: "", weight: 10 });
+  const [showAddScenario, setShowAddScenario] = useState(false);
+  const [scenarios, setScenarios] = useState(program.scenarios);
+  const [newScenario, setNewScenario] = useState({ title: "", description: "", difficulty: 3, turns: 5 });
 
-  return (
+  const handleAddDimension = () => {
+    if (!newDim.name.trim()) return;
+    setDimensions([...dimensions, { id: `d${Date.now()}`, ...newDim }]);
+    setNewDim({ name: "", description: "", weight: 10 });
+    setShowAddDimension(false);
+    toast.success("Dimension added");
+  };
+
+  const handleAddScenario = () => {
+    if (!newScenario.title.trim()) return;
+    setScenarios([...scenarios, { id: `s${Date.now()}`, ...newScenario, status: "draft" as const }]);
+    setNewScenario({ title: "", description: "", difficulty: 3, turns: 5 });
+    setShowAddScenario(false);
+    toast.success("Scenario added");
+  };
     <AdminLayout pageTitle={program.name}>
       <div className="max-w-5xl mx-auto px-6 py-6">
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="space-y-6">
