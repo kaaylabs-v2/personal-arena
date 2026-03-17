@@ -246,26 +246,18 @@ const HomePage = () => {
                     <h3 className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-3 flex items-center gap-1.5">
                       <Building2 className="h-3 w-3" /> Required by your organization
                     </h3>
-                    <div className="space-y-3">
+                    <div className="space-y-2">
                       {data.mandated.map((j) => (
                         <div
                           key={j.id}
                           onClick={() => navigate("/dashboard")}
-                          className="rounded-xl border border-border border-l-4 border-l-primary bg-card p-4 cursor-pointer hover:shadow-sm transition-all"
+                          className="rounded-lg border border-border border-l-4 border-l-primary bg-card px-4 py-3 cursor-pointer hover:shadow-sm transition-all flex items-center justify-between gap-4"
                         >
-                          <div className="flex items-center justify-between mb-2">
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <h4 className="text-sm font-semibold text-card-foreground">{j.name}</h4>
-                                <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] px-1.5 py-0">Required</Badge>
-                              </div>
-                              <p className="text-xs text-muted-foreground mt-0.5">{j.domain} · {humanLevel(j.currentLevel)}</p>
-                            </div>
-                            <CircularBadge progress={j.progress} />
+                          <div className="min-w-0">
+                            <h4 className="text-sm font-medium text-card-foreground truncate">{j.name}</h4>
+                            <p className="text-xs text-muted-foreground mt-0.5">{j.focusArea ? `Focus: ${j.focusArea}` : j.domain}</p>
                           </div>
-                          {j.focusArea && (
-                            <p className="text-xs text-muted-foreground">Focus: <span className="text-card-foreground">{j.focusArea}</span></p>
-                          )}
+                          <SimpleBar progress={j.progress} />
                         </div>
                       ))}
                     </div>
