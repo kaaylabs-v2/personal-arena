@@ -1,4 +1,4 @@
-import { Home, Target, Map, Gauge, ListTodo, TrendingUp, BookOpen, User, Crosshair } from "lucide-react";
+import { Home, Target, Map, Gauge, ListTodo, TrendingUp, BookOpen, User, Crosshair, GraduationCap } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
   Sidebar,
