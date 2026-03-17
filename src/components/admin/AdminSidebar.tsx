@@ -15,7 +15,7 @@ import {
   LayoutDashboard,
   BookOpen,
   Users,
-  
+  Upload,
   BarChart3,
   ArrowLeft,
   Settings,
@@ -25,7 +25,7 @@ const navItems = [
   { label: "Overview", icon: LayoutDashboard, path: "/admin" },
   { label: "Programs", icon: BookOpen, path: "/admin/programs" },
   { label: "Users", icon: Users, path: "/admin/users" },
-  
+  { label: "Upload & Generate", icon: Upload, path: "/admin/upload" },
   { label: "Analytics", icon: BarChart3, path: "/admin/analytics" },
   { label: "Settings", icon: Settings, path: "/admin/settings" },
 ];

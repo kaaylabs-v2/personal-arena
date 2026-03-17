@@ -70,6 +70,7 @@ const App = () => (
           <Route path="/admin/programs" element={<AdminPrograms />} />
           <Route path="/admin/programs/:programId" element={<AdminProgramDetail />} />
           <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/upload" element={<AdminUploadPipeline />} />
           
           <Route path="/admin/analytics" element={<AdminAnalytics />} />
           <Route path="/admin/settings" element={<AdminSettings />} />
