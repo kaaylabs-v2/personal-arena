@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, MoreHorizontal, BookOpen, Users, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface Program {
   id: string;
