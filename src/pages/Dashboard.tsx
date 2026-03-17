@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Target, ArrowRight, Lightbulb, CheckSquare, Square } from "lucide-react";
+import { ArrowRight, Lightbulb, CheckSquare, Square, Target } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { useLearner } from "@/contexts/LearnerContext";
+import { humanLevel } from "@/lib/humanize";
 
 interface DashboardProgramData {
   targetOutcome: string;
@@ -20,20 +21,20 @@ const dashboardData: Record<string, DashboardProgramData> = {
   "p1": {
     targetOutcome: "Lead distributed teams effectively",
     current: 3.1, targetLevel: 4.0,
-    insightText: "Your thinking clarity is strong, but alternatives generation is lagging. Try a challenge scenario to break through.",
+    insightText: "Your thinking clarity is strong, but exploring alternatives could use more practice. Try a challenge scenario to break through.",
     focusAreas: [{ name: "Show Your Work", progress: 42 }, { name: "Think It Through", progress: 38 }, { name: "Alternatives", progress: 30 }],
     milestones: [{ label: "Clarifying complex problems", done: true }, { label: "Structuring decisions", done: true }, { label: "Evaluating evidence", done: false }, { label: "Handling stakeholder conflict", done: false }],
-    nextSession: { title: "Scenario: Resolving Cross-Team Conflict", subtitle: "Practice · ~20 min", link: "/arena-session" },
+    nextSession: { title: "Resolving Cross-Team Conflict", subtitle: "Practice · ~20 min", link: "/arena-session" },
     recommendations: [
       { text: "Conflicting Stakeholder Priorities — Challenge Mode", link: "/arena-session" },
-      { text: "Show Your Work — Strengthen weak dimension", link: "/arena-session" },
-      { text: "Reflect on Feb 19 decision journal entry", link: "/journal" },
+      { text: "Show Your Work — Strengthen this skill", link: "/arena-session" },
+      { text: "Reflect on your last session", link: "/journal" },
     ],
   },
   "p-algebra": {
     targetOutcome: "Master Algebra Foundations",
     current: 2.1, targetLevel: 4.0,
-    insightText: "Your pattern recognition is strong, but word problem translation needs attention. Focus on converting scenarios to equations.",
+    insightText: "Your pattern recognition is going well, but word problem translation needs more practice. Focus on converting scenarios to equations.",
     focusAreas: [{ name: "Word Problems", progress: 32 }, { name: "Equation Setup", progress: 35 }, { name: "Multi-Step Equations", progress: 28 }],
     milestones: [{ label: "Solving one-step equations", done: true }, { label: "Recognizing patterns", done: true }, { label: "Translating word problems", done: false }, { label: "Multi-step equations", done: false }],
     nextSession: { title: "Word Problem Reasoning Scenario", subtitle: "Practice · ~15 min", link: "/arena/session/word-problem-scenario" },
@@ -46,7 +47,7 @@ const dashboardData: Record<string, DashboardProgramData> = {
   "p-calculus": {
     targetOutcome: "Master Calculus I Fundamentals",
     current: 1.8, targetLevel: 3.5,
-    insightText: "Your limit reasoning is solid, but chain rule and optimization are critical gaps. Focus on derivative application.",
+    insightText: "Your limit reasoning is solid, but chain rule and optimization need more practice. Focus on derivative application.",
     focusAreas: [{ name: "Chain Rule", progress: 30 }, { name: "Optimization", progress: 25 }, { name: "Related Rates", progress: 28 }],
     milestones: [{ label: "Understanding limits", done: true }, { label: "Basic derivatives", done: true }, { label: "Chain rule application", done: false }, { label: "Optimization problems", done: false }],
     nextSession: { title: "Chain Rule Scenario", subtitle: "Practice · ~20 min", link: "/arena/session/chain-rule-scenario" },
@@ -59,7 +60,7 @@ const dashboardData: Record<string, DashboardProgramData> = {
   "p-insurance": {
     targetOutcome: "Master Insurance Sales Skills",
     current: 2.2, targetLevel: 4.0,
-    insightText: "Your ethical communication is strong, but price objection handling is a critical gap. Practice reframing cost concerns.",
+    insightText: "Your ethical communication is going well, but handling price objections needs work. Practice reframing cost concerns.",
     focusAreas: [{ name: "Price Objections", progress: 28 }, { name: "Risk Communication", progress: 35 }, { name: "Coverage Gaps", progress: 38 }],
     milestones: [{ label: "Building client rapport", done: true }, { label: "Needs assessment", done: true }, { label: "Handling objections", done: false }, { label: "Compliance integration", done: false }],
     nextSession: { title: "Customer Objection Simulation", subtitle: "Practice · ~20 min", link: "/arena/session/customer-objection-sim" },
@@ -87,9 +88,9 @@ const Dashboard = () => {
           <div className="rounded-xl border border-border bg-card p-5">
             <div className="flex items-center justify-between mb-3">
               <p className="text-sm font-medium text-card-foreground">{data.targetOutcome}</p>
-              <span className="text-xs text-muted-foreground">Level {data.current} → {data.targetLevel}</span>
+              <span className="text-xs text-muted-foreground">{humanLevel(data.current)} → {humanLevel(data.targetLevel)}</span>
             </div>
-            <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+            <div className="h-2 rounded-full bg-muted overflow-hidden">
               <motion.div className="h-full rounded-full bg-primary" initial={{ width: 0 }} animate={{ width: `${progressPct}%` }} transition={{ duration: 0.8 }} />
             </div>
           </div>
@@ -100,7 +101,7 @@ const Dashboard = () => {
             <p className="text-xs text-muted-foreground leading-relaxed">{data.insightText}</p>
           </div>
 
-          {/* Next Step — prominent */}
+          {/* Next Step */}
           <div className="rounded-xl border border-border bg-card p-5">
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2">Continue where you left off</p>
             <p className="text-sm font-medium text-card-foreground">{data.nextSession.title}</p>
@@ -110,16 +111,16 @@ const Dashboard = () => {
             </Button>
           </div>
 
-          {/* Focus Areas */}
+          {/* What to Work On */}
           <div className="rounded-xl border border-border bg-card p-5">
             <h3 className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-3 flex items-center gap-1.5">
-              <Target className="h-3 w-3 text-primary" /> Focus Areas
+              <Target className="h-3 w-3 text-primary" /> What to work on
             </h3>
             <div className="space-y-2.5">
               {data.focusAreas.map((area) => (
                 <div key={area.name} className="flex items-center gap-3">
                   <span className="text-xs text-card-foreground w-32 truncate">{area.name}</span>
-                  <div className="flex-1 h-1 rounded-full bg-muted overflow-hidden">
+                  <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
                     <motion.div className="h-full rounded-full bg-primary/70" initial={{ width: 0 }} animate={{ width: `${area.progress}%` }} transition={{ duration: 0.6 }} />
                   </div>
                   <span className="text-[10px] text-muted-foreground w-8 text-right">{area.progress}%</span>
@@ -128,7 +129,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Milestones — compact */}
+          {/* Milestones */}
           <div className="rounded-xl border border-border bg-card p-5">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Milestones</h3>
@@ -144,9 +145,9 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Suggestions */}
+          {/* Suggested Next */}
           <div>
-            <h3 className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2">Suggested Next</h3>
+            <h3 className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2">Recommended practice</h3>
             <div className="space-y-1.5">
               {data.recommendations.map((rec, i) => (
                 <button key={i} onClick={() => navigate(rec.link)} className="w-full text-left rounded-lg bg-muted/40 px-3 py-2 hover:bg-muted transition-colors">

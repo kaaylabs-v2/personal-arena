@@ -1,20 +1,17 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
-import { Send, Pause, Lightbulb, Mic, MicOff } from "lucide-react";
+import { Send, Mic, MicOff, PanelRight, X, Sparkles, HelpCircle } from "lucide-react";
 import { Layout } from "@/components/Layout";
-import { SessionProgressIndicator } from "@/components/SessionProgressIndicator";
-import { SessionPath } from "@/components/SessionPath";
-import { ThinkingScaffold } from "@/components/ThinkingScaffold";
-import { ScrollHints } from "@/components/ScrollHints";
 import { ArenaDebrief } from "@/components/ArenaDebrief";
-import { FocusSkillBadge } from "@/components/arena/FocusSkillBadge";
 import { ChatMessageItem, type ChatMessageData } from "@/components/arena/ChatMessage";
 import type { ScoreDimensions, ReasoningScoreData } from "@/components/ReasoningScore";
 import { useLearner } from "@/contexts/LearnerContext";
+import { humanStagePill, humanStage } from "@/lib/humanize";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { ThinkingScaffold } from "@/components/ThinkingScaffold";
 
 const scenariosByProgram: Record<string, {
   title: string;
@@ -23,127 +20,83 @@ const scenariosByProgram: Record<string, {
   context: string;
   task: string;
   openingPrompt: string;
-  sessionPath: { number: number; title: string; status: "completed" | "current" | "upcoming" }[];
 }> = {
   "p1": {
     title: "Distributed Team Communication",
     skillFocus: "Strategic Decision-Making",
     focusDimension: "Show Your Work",
-    context:
-      "You lead a product team of 12 people spread across 4 time zones. Your team has been missing sprint commitments for the last 3 cycles. Stakeholders are escalating concerns about predictability. Your team reports feeling both over-managed and under-informed.",
+    context: "You lead a product team of 12 people spread across 4 time zones. Your team has been missing sprint commitments for the last 3 cycles.",
     task: "Determine a communication strategy that improves delivery predictability without reducing team autonomy.",
     openingPrompt: "You've stated that distributed teams need more structured communication. Can you clarify what 'structured' means to you in practice?",
-    sessionPath: [
-      { number: 1, title: "Communication Cadence", status: "completed" },
-      { number: 2, title: "Async Decision Protocols", status: "completed" },
-      { number: 3, title: "Distributed Team Comm.", status: "current" },
-      { number: 4, title: "Stakeholder Escalation", status: "upcoming" },
-      { number: 5, title: "Evidence Mapping", status: "upcoming" },
-      { number: 6, title: "Conflicting Priorities", status: "upcoming" },
-      { number: 7, title: "Resource Trade-offs", status: "upcoming" },
-      { number: 8, title: "Risk Communication", status: "upcoming" },
-      { number: 9, title: "Cross-team Alignment", status: "upcoming" },
-      { number: 10, title: "Exec Summary Framing", status: "upcoming" },
-      { number: 11, title: "Adaptive Messaging", status: "upcoming" },
-      { number: 12, title: "Integrated Scenario", status: "upcoming" },
-    ],
   },
   "p-algebra": {
     title: "Word Problem Translation Breakdown",
     skillFocus: "Algebraic Reasoning",
     focusDimension: "Equation Setup",
-    context:
-      "You're solving a word problem test and keep making setup errors before calculations even begin. You can solve equations, but translating scenarios into the right equation is causing lost points.",
-    task: "Create a repeatable setup strategy for translating word problems into equations accurately under time pressure.",
+    context: "You're solving a word problem test and keep making setup errors before calculations even begin.",
+    task: "Create a repeatable setup strategy for translating word problems into equations accurately.",
     openingPrompt: "Before solving anything, what exact steps will you use to identify knowns, unknowns, and relationships in a word problem?",
-    sessionPath: [
-      { number: 1, title: "Identifying Unknowns", status: "completed" },
-      { number: 2, title: "Setting Up Equations", status: "completed" },
-      { number: 3, title: "Word Problem Reasoning", status: "current" },
-      { number: 4, title: "Multi-Step Word Problems", status: "upcoming" },
-      { number: 5, title: "Real-World Applications", status: "upcoming" },
-      { number: 6, title: "Pattern Translation", status: "upcoming" },
-      { number: 7, title: "Mixed Problem Sprint", status: "upcoming" },
-      { number: 8, title: "Timed Setup Drill", status: "upcoming" },
-    ],
   },
   "p-calculus": {
     title: "Optimization Constraint Failure",
     skillFocus: "Derivative Application",
     focusDimension: "Optimization Problems",
-    context:
-      "In your last quiz, you spent most of your time differentiating correctly but lost marks because your optimization model and constraint equation were incomplete.",
+    context: "In your last quiz, you lost marks because your optimization model and constraint equation were incomplete.",
     task: "Design a problem setup workflow that ensures constraints, objective function, and variable definitions are correct before differentiation.",
     openingPrompt: "When approaching an optimization problem, how do you decide what variable to optimize and what constraints to write first?",
-    sessionPath: [
-      { number: 1, title: "Critical Points Review", status: "completed" },
-      { number: 2, title: "First Derivative Test", status: "completed" },
-      { number: 3, title: "Optimization Setup", status: "current" },
-      { number: 4, title: "Applied Max/Min", status: "upcoming" },
-      { number: 5, title: "Constrained Optimization", status: "upcoming" },
-      { number: 6, title: "Related Rates Intro", status: "upcoming" },
-      { number: 7, title: "Multi-Variable Setup", status: "upcoming" },
-      { number: 8, title: "Integrated Problem Set", status: "upcoming" },
-    ],
   },
   "p-insurance": {
     title: "Price Objection Live Call",
     skillFocus: "Value Framing",
     focusDimension: "Handling Price Objections",
-    context:
-      "A client says your premium is too expensive and is considering a cheaper competitor. You previously lost similar deals by leading with features instead of relevance.",
-    task: "Respond with a value-focused structure that reframes price concerns and builds trust without sounding pushy.",
+    context: "A client says your premium is too expensive and is considering a cheaper competitor.",
+    task: "Respond with a value-focused structure that reframes price concerns and builds trust.",
     openingPrompt: "How would you open this objection response so the client feels heard before you present value?",
-    sessionPath: [
-      { number: 1, title: "Understanding Objections", status: "completed" },
-      { number: 2, title: "Empathy Techniques", status: "completed" },
-      { number: 3, title: "Price Objection Reframe", status: "current" },
-      { number: 4, title: "Value Positioning", status: "upcoming" },
-      { number: 5, title: "Trust Recovery", status: "upcoming" },
-      { number: 6, title: "Complex Scenarios", status: "upcoming" },
-      { number: 7, title: "Client Story Practice", status: "upcoming" },
-      { number: 8, title: "Integrated Sales Sim", status: "upcoming" },
-    ],
   },
 };
 
 const stageSequence = ["clarify", "challenge", "evidence", "alternative", "reflect"];
 
-// Context-aware follow-ups that reference prior responses
 const arenaResponses: Record<string, {
   text: string;
   contextAwarePrefix?: string;
   insight?: string;
+  coachingPrompts?: string[];
   scoreDelta?: { total: number; dimensions: Partial<ScoreDimensions> };
 }> = {
   clarify: {
     text: "But couldn't too much structure stifle creative problem-solving in your team? How would you balance this?",
     contextAwarePrefix: "You've outlined your view on structured communication.",
-    insight: "You defined the problem with precision. Good use of scope narrowing.",
+    insight: "Good — you defined the problem with precision. That's a strong start.",
+    coachingPrompts: ["What assumptions might you be making?", "What information could be missing?"],
     scoreDelta: { total: 5, dimensions: { clarity: 4, strategicFraming: 1 } },
   },
   challenge: {
     text: "You've defended your position well. Now, what concrete evidence from past sprints supports your communication approach?",
     contextAwarePrefix: "Earlier you suggested a specific communication cadence.",
-    insight: "Your reasoning is becoming more nuanced. You're starting to acknowledge trade-offs, which strengthens your argument.",
+    insight: "Nice — your reasoning is getting more nuanced. You're starting to see the trade-offs.",
+    coachingPrompts: ["What would a critic say?", "What trade-offs haven't you considered?"],
     scoreDelta: { total: 6, dimensions: { tradeoffThinking: 3, clarity: 2, strategicFraming: 1 } },
   },
   evidence: {
     text: "Good data points. But is there an entirely different approach you haven't considered? What if the problem isn't communication at all?",
     contextAwarePrefix: "You referenced concrete sprint data to back your claim.",
-    insight: "Strong evidence cited. Now strengthen your reasoning by considering whether the data supports alternative explanations.",
+    insight: "Strong evidence. Now consider whether the data supports alternative explanations too.",
+    coachingPrompts: ["What data supports this?", "Are you relying on intuition or evidence?"],
     scoreDelta: { total: 4, dimensions: { evidenceUse: 3, clarity: 1 } },
   },
   alternative: {
-    text: "You've explored multiple angles. Now step back — how has your thinking evolved since the start of this session? What would you change?",
+    text: "You've explored multiple angles. Now step back — how has your thinking evolved since the start of this session?",
     contextAwarePrefix: "You identified a structural root cause that most people overlook.",
-    insight: "Strong alternative thinking. Consider how this reframes the original problem and what second-order effects might emerge.",
+    insight: "Great alternative thinking. You're seeing the problem from new angles.",
+    coachingPrompts: ["What completely different approach could work?", "What would someone with the opposite view suggest?"],
     scoreDelta: { total: 7, dimensions: { tradeoffThinking: 3, strategicFraming: 3, evidenceUse: 1 } },
   },
   reflect: {
     text: "Excellent reflection. You've demonstrated meaningful growth in your reasoning across this session.",
-    contextAwarePrefix: "Looking back at how your thinking has evolved through this dialogue,",
-    insight: "You connected your final reflection back to the original problem framing — a sign of mature strategic thinking.",
+    contextAwarePrefix: "Looking back at how your thinking has evolved,",
+    insight: "You connected your reflection back to the original problem — that's mature strategic thinking.",
+    coachingPrompts: ["What's the strongest part of your argument?", "What would you change if starting over?"],
     scoreDelta: { total: 6, dimensions: { strategicFraming: 3, clarity: 1, tradeoffThinking: 2 } },
   },
 };
@@ -159,7 +112,7 @@ const ArenaSession = () => {
   const navigate = useNavigate();
   const { sessionId } = useParams<{ sessionId: string }>();
   const [searchParams] = useSearchParams();
-  const { activeProgram } = useLearner();
+  const { activeProgram, setHasCompletedSession, completedSessionCount, setCompletedSessionCount } = useLearner();
   const scenario = scenariosByProgram[activeProgram.id] || scenariosByProgram["p1"];
   const focusSkill = searchParams.get("focus") || scenario.focusDimension;
   const [response, setResponse] = useState("");
@@ -171,11 +124,7 @@ const ArenaSession = () => {
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   const [messages, setMessages] = useState<ChatMessageData[]>([
-    {
-      role: "arena",
-      category: "clarify",
-      text: scenario.openingPrompt,
-    },
+    { role: "arena", category: "clarify", text: scenario.openingPrompt },
   ]);
 
   useEffect(() => {
@@ -185,13 +134,7 @@ const ArenaSession = () => {
     setStageIndex(0);
     setSessionComplete(false);
     setReasoningScore(initialScore);
-    setMessages([
-      {
-        role: "arena",
-        category: "clarify",
-        text: scenario.openingPrompt,
-      },
-    ]);
+    setMessages([{ role: "arena", category: "clarify", text: scenario.openingPrompt }]);
   }, [activeProgram.id, scenario.openingPrompt]);
 
   useEffect(() => {
@@ -222,7 +165,7 @@ const ArenaSession = () => {
       { role: "learner", category: "", text: response },
     ];
 
-    // Inline insight with score
+    // Inline coaching insight card
     if (arenaReply.insight && arenaReply.scoreDelta) {
       applyScoreDelta(arenaReply.scoreDelta);
       newMessages.push({
@@ -234,20 +177,17 @@ const ArenaSession = () => {
     }
 
     if (activeCategory === "reflect") {
-      // Final arena message
       const prefix = arenaReply.contextAwarePrefix ? `${arenaReply.contextAwarePrefix} ` : "";
-      newMessages.push({
-        role: "arena",
-        category: "reflect",
-        text: `${prefix}${arenaReply.text}`,
-      });
+      newMessages.push({ role: "arena", category: "reflect", text: `${prefix}${arenaReply.text}` });
       setMessages((prev) => [...prev, ...newMessages]);
       setResponse("");
+      setHasCompletedSession(true);
+      setCompletedSessionCount(completedSessionCount + 1);
       setTimeout(() => setSessionComplete(true), 1500);
       return;
     }
 
-    // Stage transition banner
+    // Stage transition (subtle — just the coaching card inline)
     newMessages.push({
       role: "stage-transition",
       category: "",
@@ -256,13 +196,8 @@ const ArenaSession = () => {
       nextStage,
     });
 
-    // Context-aware arena follow-up
     const prefix = arenaReply.contextAwarePrefix ? `${arenaReply.contextAwarePrefix} ${arenaReply.text}` : arenaReply.text;
-    newMessages.push({
-      role: "arena",
-      category: nextStage,
-      text: prefix,
-    });
+    newMessages.push({ role: "arena", category: nextStage, text: prefix });
 
     setMessages((prev) => [...prev, ...newMessages]);
     setResponse("");
@@ -271,120 +206,102 @@ const ArenaSession = () => {
   };
 
   return (
-    <Layout pageTitle="Arena Session">
+    <Layout pageTitle="Practice Session">
       <div className="flex flex-1 h-[calc(100vh-2.75rem)] overflow-hidden">
-        {/* LEFT PANEL — Scenario */}
-        <div className="w-72 flex-shrink-0 border-r border-border bg-surface flex flex-col">
-          <div className="px-5 py-4 border-b border-border">
-            <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-medium">Scenario</h3>
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Minimal top bar with stage pill */}
+          <div className="border-b border-border bg-surface/50 px-5 py-3 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <h2 className="text-sm font-semibold text-foreground">{scenario.title}</h2>
+              <span className="text-[10px] font-medium uppercase tracking-wider text-primary-foreground bg-primary px-2.5 py-1 rounded-full">
+                {humanStagePill(activeCategory)}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-muted-foreground">
+                Step {stageIndex + 1} of {stageSequence.length}
+              </span>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <PanelRight className="h-4 w-4 mr-1.5" /> Notes
+                  </Button>
+                </SheetTrigger>
+                <SheetContent className="w-[380px] p-0">
+                  <SheetHeader className="sr-only">
+                    <SheetTitle>Your Notes</SheetTitle>
+                  </SheetHeader>
+                  <ThinkingScaffold activeStage={activeCategory} />
+                </SheetContent>
+              </Sheet>
+            </div>
           </div>
-          <ScrollHints className="px-5 py-4 space-y-5">
-            <div>
-              <h4 className="text-sm font-semibold text-surface-foreground font-display">{scenario.title}</h4>
-              <div className="flex flex-wrap gap-1.5 mt-2">
-                <span className="text-[10px] font-medium uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                  {scenario.skillFocus}
-                </span>
-                <FocusSkillBadge skill={focusSkill} />
+
+          {/* Progress bar — thin and subtle */}
+          <div className="h-0.5 bg-border">
+            <motion.div
+              className="h-full bg-primary"
+              animate={{ width: `${((stageIndex + 1) / stageSequence.length) * 100}%` }}
+              transition={{ duration: 0.5 }}
+            />
+          </div>
+
+          {sessionComplete ? (
+            <ArenaDebrief onClose={() => navigate("/dashboard")} reasoningScore={reasoningScore} focusSkill={focusSkill} />
+          ) : (
+            <>
+              {/* Chat area — full screen */}
+              <div className="flex-1 overflow-auto px-5 py-4 space-y-4">
+                {/* Scenario context as a subtle card at the top */}
+                <div className="rounded-lg bg-muted/40 px-4 py-3 border border-border/50">
+                  <p className="text-xs text-muted-foreground leading-relaxed">{scenario.context}</p>
+                  <p className="text-xs text-foreground font-medium mt-1.5">{scenario.task}</p>
+                </div>
+
+                <AnimatePresence initial={false}>
+                  {messages.map((msg, i) => (
+                    <ChatMessageItem key={i} msg={msg} />
+                  ))}
+                </AnimatePresence>
+                <div ref={chatEndRef} />
               </div>
-            </div>
-            <div>
-              <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1.5">Context</p>
-              <p className="text-sm leading-relaxed text-surface-foreground/80">{scenario.context}</p>
-            </div>
-            <div>
-              <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1.5">Your Task</p>
-              <p className="text-sm leading-relaxed text-surface-foreground/80">{scenario.task}</p>
-            </div>
-            <div className="pt-2 border-t border-border">
-              <SessionPath sessions={scenario.sessionPath} />
-            </div>
-          </ScrollHints>
+
+              {/* Input area */}
+              <div className="p-4 border-t border-border">
+                <p className="text-[11px] text-muted-foreground mb-2">
+                  {humanStage(activeCategory)}. Share your thinking below.
+                </p>
+                <div className="flex gap-2">
+                  <Textarea
+                    value={response}
+                    onChange={(e) => setResponse(e.target.value)}
+                    placeholder="Type your response..."
+                    className="min-h-[60px] resize-none bg-card flex-1"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSubmit();
+                      }
+                    }}
+                  />
+                </div>
+                <div className="flex gap-2 mt-3">
+                  <Button onClick={handleSubmit} disabled={!response.trim()} className="flex-1">
+                    <Send className="mr-2 h-4 w-4" /> Send
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsRecording(!isRecording)}
+                    className={isRecording ? "text-destructive border-destructive" : ""}
+                  >
+                    {isRecording ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
-
-        {/* Resizable center + right panels */}
-        <ResizablePanelGroup direction="horizontal" className="flex-1 min-w-0">
-          <ResizablePanel defaultSize={70} minSize={40}>
-            <div className="flex flex-col h-full min-w-0">
-              <SessionProgressIndicator
-                activeStage={activeCategory}
-                onStageClick={(stageId) => {
-                  const idx = stageSequence.indexOf(stageId);
-                  if (idx <= stageIndex) setActiveCategory(stageId);
-                }}
-                capabilityName={scenario.skillFocus}
-                focusDimension={focusSkill}
-                sessionNumber={3}
-                totalSessions={12}
-                reasoningScore={reasoningScore}
-              />
-
-              {sessionComplete ? (
-                <ArenaDebrief onClose={() => navigate("/dashboard")} reasoningScore={reasoningScore} focusSkill={focusSkill} />
-              ) : (
-                <>
-                  <div className="px-5 py-3 border-b border-border flex items-center justify-between">
-                    <h2 className="text-sm font-semibold text-foreground">Arena Dialogue</h2>
-                  </div>
-
-                  <div className="flex-1 overflow-auto px-5 py-4 space-y-4">
-                    <AnimatePresence initial={false}>
-                      {messages.map((msg, i) => (
-                        <ChatMessageItem key={i} msg={msg} />
-                      ))}
-                    </AnimatePresence>
-                    <div ref={chatEndRef} />
-                  </div>
-
-                  <div className="p-4 border-t border-border">
-                    <p className="text-[11px] text-muted-foreground mb-2 italic">
-                      Explain your reasoning. Arena will challenge and refine your thinking.
-                    </p>
-                    <div className="flex gap-2">
-                      <Textarea
-                        value={response}
-                        onChange={(e) => setResponse(e.target.value)}
-                        placeholder="Share your response..."
-                        className="min-h-[60px] resize-none bg-card flex-1"
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" && !e.shiftKey) {
-                            e.preventDefault();
-                            handleSubmit();
-                          }
-                        }}
-                      />
-                    </div>
-                    <div className="flex gap-2 mt-3">
-                      <Button onClick={handleSubmit} disabled={!response.trim()} className="flex-1">
-                        <Send className="mr-2 h-4 w-4" /> Submit Response
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setIsRecording(!isRecording)}
-                        className={isRecording ? "text-destructive border-destructive" : ""}
-                      >
-                        {isRecording ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-                      </Button>
-                      <Button variant="outline" size="sm">
-                        <Lightbulb className="h-4 w-4" />
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={() => navigate("/session-insight")}>
-                        <Pause className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-          </ResizablePanel>
-
-          <ResizableHandle withHandle />
-
-          <ResizablePanel defaultSize={30} minSize={20} maxSize={50}>
-            <ThinkingScaffold activeStage={activeCategory} />
-          </ResizablePanel>
-        </ResizablePanelGroup>
       </div>
     </Layout>
   );
