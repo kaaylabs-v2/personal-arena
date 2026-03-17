@@ -39,7 +39,7 @@ export default function AdminPrograms() {
 
           <div className="space-y-3">
             {programs.map((program) => (
-              <div key={program.id} className="rounded-xl border border-border bg-card p-5 hover:border-primary/30 transition-colors cursor-pointer group">
+              <div key={program.id} onClick={() => navigate(`/admin/programs/${program.id}`)} className="rounded-xl border border-border bg-card p-5 hover:border-primary/30 transition-colors cursor-pointer group">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-3">
                     <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
