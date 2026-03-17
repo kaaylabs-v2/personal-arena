@@ -24,6 +24,7 @@ const mockPrograms: Program[] = [
 
 export default function AdminPrograms() {
   const [programs] = useState<Program[]>(mockPrograms);
+  const navigate = useNavigate();
 
   return (
     <AdminLayout pageTitle="Programs & Scenarios">
