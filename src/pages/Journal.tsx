@@ -252,7 +252,7 @@ const Journal = () => {
                 <div className="relative">
                   <div className="absolute left-3 top-2 bottom-2 w-px bg-border" />
                   <div className="space-y-3">
-                    {entries.map((entry, i) => (
+                    {allEntries.map((entry, i) => (
                       <motion.button
                         key={entry.id}
                         initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}

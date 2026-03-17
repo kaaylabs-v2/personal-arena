@@ -13,6 +13,7 @@ import {
 
 const navItems = [
   { title: "Home", url: "/", icon: Home },
+  { title: "My Programs", url: "/dashboard", icon: GraduationCap },
   { title: "Focus", url: "/focus", icon: Crosshair },
   { title: "Arena Sessions", url: "/sessions", icon: Target },
   { title: "Skill Map", url: "/skill-map", icon: Map },
