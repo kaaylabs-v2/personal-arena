@@ -121,21 +121,11 @@ const dashboardByProgram: Record<string, DashboardData> = {
   },
 };
 
-const CircularBadge = ({ progress }: { progress: number }) => {
-  const r = 18;
-  const circumference = 2 * Math.PI * r;
-  return (
-    <div className="relative h-10 w-10 flex-shrink-0">
-      <svg className="h-10 w-10 -rotate-90" viewBox="0 0 44 44">
-        <circle cx="22" cy="22" r={r} fill="none" stroke="hsl(var(--muted))" strokeWidth="3" />
-        <motion.circle cx="22" cy="22" r={r} fill="none" stroke="hsl(var(--primary))" strokeWidth="3" strokeLinecap="round"
-          strokeDasharray={circumference} initial={{ strokeDashoffset: circumference }} animate={{ strokeDashoffset: circumference * (1 - progress / 100) }} transition={{ duration: 0.8 }}
-        />
-      </svg>
-      <span className="absolute inset-0 flex items-center justify-center text-[10px] font-display font-bold text-primary">{progress}%</span>
-    </div>
-  );
-};
+const SimpleBar = ({ progress }: { progress: number }) => (
+  <div className="w-16 h-1.5 rounded-full bg-muted overflow-hidden flex-shrink-0">
+    <div className="h-full rounded-full bg-primary" style={{ width: `${progress}%` }} />
+  </div>
+);
 
 const HomePage = () => {
   const navigate = useNavigate();
