@@ -181,13 +181,11 @@ const HomePage = () => {
             </Button>
           </motion.div>
 
-          {/* Simple Progress Bar */}
+          {/* Simple Progress */}
           <div className="rounded-xl border border-border bg-card p-5">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-medium text-card-foreground">
-                You're {avgProgress}% through your program
-              </p>
-              <span className="text-xs text-primary font-medium">{humanProgress(avgProgress / 100 * 4 + 1, 5)}</span>
+              <p className="text-sm font-medium text-card-foreground">Your overall progress</p>
+              <span className="text-xs text-primary font-medium">{humanLevel(avgProgress / 100 * 4 + 1)}</span>
             </div>
             <div className="h-2.5 rounded-full bg-muted overflow-hidden">
               <motion.div
