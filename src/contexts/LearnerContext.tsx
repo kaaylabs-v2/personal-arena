@@ -6,6 +6,10 @@ interface LearnerContextValue {
   setActiveLearner: (learner: LearnerProfile) => void;
   activeProgram: MasteryProgram;
   setActiveProgramId: (id: string) => void;
+  hasCompletedSession: boolean;
+  setHasCompletedSession: (v: boolean) => void;
+  completedSessionCount: number;
+  setCompletedSessionCount: (n: number) => void;
 }
 
 const LearnerContext = createContext<LearnerContextValue | null>(null);
@@ -15,6 +19,12 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
   const [activeProgramId, setActiveProgramIdState] = useState<string>(
     defaultLearner.enrolledProgramIds[0] || programs[0].id
   );
+  const [hasCompletedSession, setHasCompletedSession] = useState<boolean>(() => {
+    try { return localStorage.getItem("arena-has-completed-session") === "true"; } catch { return false; }
+  });
+  const [completedSessionCount, setCompletedSessionCountState] = useState<number>(() => {
+    try { return parseInt(localStorage.getItem("arena-session-count") || "0", 10); } catch { return 0; }
+  });
 
   const activeProgram = programs.find((p) => p.id === activeProgramId) || programs[0];
 
@@ -27,8 +37,22 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
     setActiveProgramIdState(id);
   }, []);
 
+  const handleSetHasCompleted = useCallback((v: boolean) => {
+    setHasCompletedSession(v);
+    localStorage.setItem("arena-has-completed-session", String(v));
+  }, []);
+
+  const handleSetCount = useCallback((n: number) => {
+    setCompletedSessionCountState(n);
+    localStorage.setItem("arena-session-count", String(n));
+  }, []);
+
   return (
-    <LearnerContext.Provider value={{ activeLearner, setActiveLearner, activeProgram, setActiveProgramId }}>
+    <LearnerContext.Provider value={{
+      activeLearner, setActiveLearner, activeProgram, setActiveProgramId,
+      hasCompletedSession, setHasCompletedSession: handleSetHasCompleted,
+      completedSessionCount, setCompletedSessionCount: handleSetCount,
+    }}>
       {children}
     </LearnerContext.Provider>
   );

@@ -45,8 +45,8 @@ export const ArenaDebrief = ({ onClose, reasoningScore, focusSkill }: ArenaDebri
       >
         <div className="text-center mb-6">
           <p className="text-[10px] uppercase tracking-wider text-primary font-medium mb-1">Session Complete</p>
-          <h2 className="text-lg font-display font-semibold text-foreground">Reflection Debrief</h2>
-          <p className="text-xs text-muted-foreground mt-1">Here's how your reasoning performed across this session.</p>
+          <h2 className="text-lg font-display font-semibold text-foreground">Nice work! Here's how you did.</h2>
+          <p className="text-xs text-muted-foreground mt-1">Your reasoning grew through this session. Here's the breakdown.</p>
         </div>
 
         {/* Focus Skill Progress */}
@@ -59,9 +59,9 @@ export const ArenaDebrief = ({ onClose, reasoningScore, focusSkill }: ArenaDebri
           >
             <Target className="h-4 w-4 text-primary shrink-0" />
             <div className="flex-1">
-              <p className="text-[10px] uppercase tracking-wider text-primary font-medium mb-0.5">Focus Skill Progress</p>
+              <p className="text-[10px] uppercase tracking-wider text-primary font-medium mb-0.5">Your Focus Skill</p>
               <p className="text-sm font-semibold text-foreground">{focusSkill}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">+3% improvement this session — on track for mastery</p>
+              <p className="text-xs text-muted-foreground mt-0.5">+3% improvement this session — you're making progress!</p>
             </div>
           </motion.div>
         )}

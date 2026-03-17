@@ -1,10 +1,11 @@
 import { motion } from "framer-motion";
 import { CheckCircle2, ArrowRight } from "lucide-react";
+import { humanStagePill } from "@/lib/humanize";
 
 const stageLabels: Record<string, string> = {
-  clarify: "Clarify",
+  clarify: "Explore",
   challenge: "Challenge",
-  evidence: "Show Your Work",
+  evidence: "Reasoning",
   alternative: "Alternatives",
   reflect: "Reflect",
 };

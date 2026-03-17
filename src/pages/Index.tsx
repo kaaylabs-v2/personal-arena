@@ -4,14 +4,12 @@ import { motion } from "framer-motion";
 import {
   ArrowRight,
   Lightbulb,
-  TrendingUp,
-  Target,
   Zap,
-  AlertTriangle,
-  Shield,
   Building2,
   Plus,
   Sparkles,
+  ChevronDown,
+  TrendingUp,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -25,7 +23,10 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Layout } from "@/components/Layout";
+import { Onboarding } from "@/components/Onboarding";
 import { useLearner } from "@/contexts/LearnerContext";
+import { humanLevel, humanProgress, humanStatus } from "@/lib/humanize";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const subjects = [
   "Leadership", "Product Management", "AI Strategy", "Data Analysis",
@@ -37,20 +38,20 @@ const exampleObjectives = [
   "Resolve stakeholder conflicts", "Present strategy effectively",
 ];
 
-// Per-program dashboard data
 interface DashboardData {
   insight: { label: string; text: string };
   secondaryInsight: string;
-  recommended: { title: string; subtitle: string; link: string };
+  recommended: { title: string; subtitle: string; link: string; description: string };
   mandated: { id: string; name: string; domain: string; currentLevel: number; targetLevel: number; progress: number; focusArea: string; program: string }[];
   selfInitiated: { id: string; name: string; domain: string; currentLevel: number; targetLevel: number; progress: number }[];
+  focusAreas: { name: string; tip: string; link: string }[];
 }
 
 const dashboardByProgram: Record<string, DashboardData> = {
   "p1": {
     insight: { label: "Show Your Work", text: "Your Show Your Work capability has plateaued for the last three sessions. Try a challenge scenario to break through." },
-    secondaryInsight: "Clarity improved 12% over the last 2 weeks. You're approaching Level 3 mastery in Strategic Leadership.",
-    recommended: { title: "Scenario: Conflicting Stakeholder Priorities", subtitle: "Challenge Mode · ~20 min · Targets Show Your Work", link: "/arena-session" },
+    secondaryInsight: "Your clarity has been improving steadily. Keep it up!",
+    recommended: { title: "Resolving Conflicting Stakeholder Priorities", subtitle: "~20 min practice session", description: "Practice navigating competing demands and making a clear recommendation.", link: "/arena-session" },
     mandated: [
       { id: "a1", name: "Strategic Decision Making for Senior Leaders", domain: "Leadership", currentLevel: 1.6, targetLevel: 4.0, progress: 18, focusArea: "Evidence-based reasoning", program: "Leadership Development" },
       { id: "a2", name: "Cross-Functional Stakeholder Alignment", domain: "Communication", currentLevel: 2.0, targetLevel: 3.5, progress: 35, focusArea: "Influence without authority", program: "Leadership Development" },
@@ -60,11 +61,16 @@ const dashboardByProgram: Record<string, DashboardData> = {
       { id: "2", name: "Evidence-Based Decision Making", domain: "Decision Making", currentLevel: 2.4, targetLevel: 3.5, progress: 38 },
       { id: "3", name: "Stakeholder Communication", domain: "Communication", currentLevel: 1.8, targetLevel: 3.0, progress: 22 },
     ],
+    focusAreas: [
+      { name: "Show Your Work", tip: "Needs practice — try a scenario focused on this", link: "/arena-session" },
+      { name: "Think It Through", tip: "Building up — a few more rounds will help", link: "/arena-session" },
+      { name: "Alternatives", tip: "Needs work — try exploring different approaches", link: "/arena-session" },
+    ],
   },
   "p-algebra": {
     insight: { label: "Word Problem Translation", text: "Your Word Problem Translation is declining. Practice converting real-world scenarios into algebraic equations." },
-    secondaryInsight: "Pattern Recognition improved 8% this week. You're building strong algebraic reasoning foundations.",
-    recommended: { title: "Word Problem Reasoning Scenario", subtitle: "Practice Mode · ~15 min · Targets Translation Skills", link: "/arena/session/word-problem-scenario" },
+    secondaryInsight: "Pattern Recognition is going well — nice work building that foundation.",
+    recommended: { title: "Word Problem Reasoning Scenario", subtitle: "~15 min practice", description: "Practice translating real-world scenarios into the right equations.", link: "/arena/session/word-problem-scenario" },
     mandated: [
       { id: "alg-m1", name: "Build Equation Solving Foundations", domain: "Algebra", currentLevel: 2.0, targetLevel: 4.0, progress: 30, focusArea: "Linear equations", program: "Math Department" },
     ],
@@ -72,11 +78,16 @@ const dashboardByProgram: Record<string, DashboardData> = {
       { id: "alg-1", name: "Master Word Problem Translation", domain: "Communication", currentLevel: 1.5, targetLevel: 4.0, progress: 25 },
       { id: "alg-2", name: "Recognize and Extend Patterns", domain: "Pattern Recognition", currentLevel: 2.5, targetLevel: 4.0, progress: 50 },
     ],
+    focusAreas: [
+      { name: "Word Problems", tip: "Needs work — try breaking down the scenario first", link: "/arena/session/word-problem-scenario" },
+      { name: "Equation Setup", tip: "Needs practice — focus on identifying unknowns", link: "/arena/session/setup-lab" },
+      { name: "Multi-Step Equations", tip: "Just starting — take it one step at a time", link: "/arena/session/multi-step-practice" },
+    ],
   },
   "p-calculus": {
     insight: { label: "Chain Rule", text: "Your Chain Rule Application is a critical gap. Focus on composite function differentiation this week." },
-    secondaryInsight: "Limit Reasoning is solid at Level 2.8. Build on that foundation to strengthen derivative techniques.",
-    recommended: { title: "Chain Rule Scenario", subtitle: "Practice Mode · ~20 min · Targets Chain Rule Application", link: "/arena/session/chain-rule-scenario" },
+    secondaryInsight: "Limit Reasoning is going well. Build on that foundation.",
+    recommended: { title: "Chain Rule Scenario", subtitle: "~20 min practice", description: "Work through composite function problems with coaching support.", link: "/arena/session/chain-rule-scenario" },
     mandated: [
       { id: "calc-m1", name: "Master Derivative Techniques", domain: "Calculus", currentLevel: 1.5, targetLevel: 4.0, progress: 20, focusArea: "Chain rule and implicit differentiation", program: "Professor Chen" },
     ],
@@ -84,11 +95,16 @@ const dashboardByProgram: Record<string, DashboardData> = {
       { id: "calc-1", name: "Solve Optimization Problems", domain: "Applications", currentLevel: 1.2, targetLevel: 4.0, progress: 15 },
       { id: "calc-2", name: "Interpret Graphs Using Calculus", domain: "Analysis", currentLevel: 2.0, targetLevel: 3.5, progress: 45 },
     ],
+    focusAreas: [
+      { name: "Chain Rule", tip: "Needs work — practice with nested functions", link: "/arena/session/chain-rule-scenario" },
+      { name: "Optimization", tip: "Just starting — focus on setting up constraints first", link: "/arena/session/optimization-challenge" },
+      { name: "Related Rates", tip: "Needs practice — try the simulation", link: "/arena/session/related-rates-sim" },
+    ],
   },
   "p-insurance": {
     insight: { label: "Price Objection Handling", text: "Your Handling Price Objections is a critical gap. Practice reframing cost concerns with empathy and evidence." },
-    secondaryInsight: "Ethical Sales Communication is your strongest skill at Level 3.2. Use that trust-building strength in objection scenarios.",
-    recommended: { title: "Customer Objection Simulation", subtitle: "Practice Mode · ~20 min · Targets Objection Handling", link: "/arena/session/customer-objection-sim" },
+    secondaryInsight: "Ethical communication is your strongest area. Use that trust-building strength in objection scenarios.",
+    recommended: { title: "Customer Objection Simulation", subtitle: "~20 min practice", description: "Practice responding to price objections with empathy-first framing.", link: "/arena/session/customer-objection-sim" },
     mandated: [
       { id: "ins-m1", name: "Handle Customer Objections Effectively", domain: "Sales", currentLevel: 1.4, targetLevel: 4.0, progress: 18, focusArea: "Price objection reframing", program: "Sales Director" },
       { id: "ins-m2", name: "Regulatory Compliance in Sales", domain: "Compliance", currentLevel: 2.6, targetLevel: 4.0, progress: 42, focusArea: "Disclosure requirements", program: "Compliance Team" },
@@ -96,6 +112,11 @@ const dashboardByProgram: Record<string, DashboardData> = {
     selfInitiated: [
       { id: "ins-1", name: "Communicate Risk Effectively", domain: "Communication", currentLevel: 1.6, targetLevel: 3.5, progress: 30 },
       { id: "ins-2", name: "Structure Policies for Client Needs", domain: "Product Knowledge", currentLevel: 2.2, targetLevel: 4.0, progress: 38 },
+    ],
+    focusAreas: [
+      { name: "Price Objections", tip: "Needs work — practice reframing cost as value", link: "/arena/session/customer-objection-sim" },
+      { name: "Risk Communication", tip: "Building up — try a client scenario", link: "/arena/session/compliance-risk-scenario" },
+      { name: "Coverage Gaps", tip: "Needs practice — spot the gaps before the client does", link: "/arena/session/gap-analysis-scenario" },
     ],
   },
 };
@@ -116,74 +137,25 @@ const CircularBadge = ({ progress }: { progress: number }) => {
   );
 };
 
-const MandatedJourneyCard = ({ journey, onClick }: { journey: DashboardData["mandated"][0]; onClick: () => void }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.3 }}
-    onClick={onClick}
-    className="rounded-xl border border-border border-l-4 border-l-primary bg-card shadow-sm p-5 cursor-pointer transition-all hover:border-primary/50 hover:shadow-md"
-  >
-    <div className="flex items-start justify-between mb-3">
-      <div className="min-w-0 mr-3">
-        <div className="flex items-center gap-2 mb-1">
-          <h3 className="text-sm font-semibold text-card-foreground font-display leading-snug truncate">{journey.name}</h3>
-          <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] px-1.5 py-0 shrink-0">Required</Badge>
-        </div>
-        <span className="text-xs text-muted-foreground">{journey.domain}</span>
-      </div>
-      <CircularBadge progress={journey.progress} />
-    </div>
-    <div className="flex items-center gap-4 text-xs text-muted-foreground mb-2">
-      <span>Lvl <strong className="text-card-foreground">{journey.currentLevel}</strong></span>
-      <span>→</span>
-      <span>Target <strong className="text-primary">{journey.targetLevel}</strong></span>
-    </div>
-    {journey.focusArea && (
-      <p className="text-xs text-muted-foreground mb-1.5">Focus: <span className="text-card-foreground">{journey.focusArea}</span></p>
-    )}
-    {journey.program && (
-      <p className="text-[10px] text-muted-foreground">Program: <span className="text-foreground font-medium">{journey.program}</span></p>
-    )}
-  </motion.div>
-);
-
-const SelfInitiatedJourneyCard = ({ journey, onClick }: { journey: DashboardData["selfInitiated"][0]; onClick: () => void }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.3 }}
-    onClick={onClick}
-    className="rounded-xl border border-border/60 bg-card/60 p-5 cursor-pointer transition-colors hover:border-muted-foreground/30 hover:shadow-sm"
-  >
-    <div className="flex items-start justify-between mb-3">
-      <div className="min-w-0 mr-3">
-        <h3 className="text-sm font-semibold text-card-foreground font-display leading-snug truncate">{journey.name}</h3>
-        <span className="text-xs text-muted-foreground">{journey.domain}</span>
-      </div>
-      <CircularBadge progress={journey.progress} />
-    </div>
-    <div className="flex items-center gap-4 text-xs text-muted-foreground">
-      <span>Lvl <strong className="text-card-foreground">{journey.currentLevel}</strong></span>
-      <span>→</span>
-      <span>Target <strong className="text-primary">{journey.targetLevel}</strong></span>
-    </div>
-  </motion.div>
-);
-
 const HomePage = () => {
   const navigate = useNavigate();
-  const { activeProgram, activeLearner } = useLearner();
-  const data = dashboardByProgram[activeProgram.id] || dashboardByProgram["p1"];
-  const hasMandated = data.mandated.length > 0;
-
+  const { activeProgram, activeLearner, hasCompletedSession } = useLearner();
+  const [showDetails, setShowDetails] = useState(false);
   const [objective, setObjective] = useState("");
   const [subject, setSubject] = useState("");
   const [specificChoice, setSpecificChoice] = useState<"general" | "specific" | null>(null);
   const [specificText, setSpecificText] = useState("");
 
+  // Show onboarding for first-time users
+  if (!hasCompletedSession) {
+    return <Onboarding />;
+  }
+
+  const data = dashboardByProgram[activeProgram.id] || dashboardByProgram["p1"];
+  const hasMandated = data.mandated.length > 0;
+
   const handleObjectiveContinue = () => {
-    if (objective.trim()) {
-      navigate("/intent", { state: { intent: objective, type: "objective" } });
-    }
+    if (objective.trim()) navigate("/intent", { state: { intent: objective, type: "objective" } });
   };
 
   const handleSubjectContinue = () => {
@@ -193,119 +165,169 @@ const HomePage = () => {
     navigate("/intent", { state: { intent, type: "subject" } });
   };
 
+  // Calculate overall progress
+  const allJourneys = [...data.mandated, ...data.selfInitiated];
+  const avgProgress = allJourneys.length > 0
+    ? Math.round(allJourneys.reduce((s, j) => s + j.progress, 0) / allJourneys.length)
+    : 0;
+
   return (
     <Layout pageTitle="Dashboard">
-      <div className="max-w-5xl mx-auto px-6 py-4">
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} key={activeProgram.id}>
+      <div className="max-w-3xl mx-auto px-6 py-6">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} key={activeProgram.id} className="space-y-5">
 
-          {/* Primary Arena Insight */}
+          {/* Hero CTA — Continue Your Journey */}
           <motion.div
-            initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}
-            className="rounded-lg border border-primary/20 bg-primary/5 px-5 py-4 mb-4"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="rounded-xl border border-border bg-card p-6"
           >
-            <div className="flex items-start gap-3">
-              <Sparkles className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-              <div className="flex-1 min-w-0">
-                <p className="text-[10px] uppercase tracking-wider text-primary font-semibold mb-1">Arena Insight</p>
-                <p className="text-sm text-foreground leading-relaxed">
-                  Your <span className="font-semibold">{data.insight.label}</span> {data.insight.text.split(data.insight.label).pop()}
-                </p>
-              </div>
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2">Continue Your Journey</p>
+            <h2 className="text-lg font-display font-bold text-card-foreground mb-1">{data.recommended.title}</h2>
+            <p className="text-sm text-muted-foreground mb-1">{data.recommended.description}</p>
+            <p className="text-xs text-muted-foreground mb-4">{data.recommended.subtitle}</p>
+            <Button onClick={() => navigate(data.recommended.link)} size="lg">
+              <Zap className="mr-2 h-4 w-4" /> Start Session
+            </Button>
+          </motion.div>
+
+          {/* Simple Progress Bar */}
+          <div className="rounded-xl border border-border bg-card p-5">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-medium text-card-foreground">
+                You're {avgProgress}% through your program
+              </p>
+              <span className="text-xs text-primary font-medium">{humanProgress(avgProgress / 100 * 4 + 1, 5)}</span>
             </div>
-          </motion.div>
-
-          {/* Secondary Insight */}
-          <motion.div
-            initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.05 }}
-            className="rounded-lg border border-dashed border-border bg-card px-4 py-3 flex items-start gap-3 mb-6"
-          >
-            <TrendingUp className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              {data.secondaryInsight}
-            </p>
-          </motion.div>
-
-          {/* Recommended Next Action */}
-          <div className="rounded-xl border border-border bg-card p-5 mb-6">
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-2">
-              <Zap className="h-3.5 w-3.5 text-primary" /> Recommended Next Action
-            </h3>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-card-foreground mb-0.5">
-                  {data.recommended.title}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {data.recommended.subtitle}
-                </p>
-              </div>
-              <Button size="sm" onClick={() => navigate(data.recommended.link)}>
-                <Shield className="mr-1.5 h-3.5 w-3.5" /> Start
-              </Button>
+            <div className="h-2.5 rounded-full bg-muted overflow-hidden">
+              <motion.div
+                className="h-full rounded-full bg-primary"
+                initial={{ width: 0 }}
+                animate={{ width: `${avgProgress}%` }}
+                transition={{ duration: 0.8 }}
+              />
             </div>
           </div>
 
-          {/* Mandated Mastery */}
-          {hasMandated && (
-            <div className="mb-6">
-              <div className="mb-3">
-                <h2 className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium flex items-center gap-1.5">
-                  <Building2 className="h-3 w-3" /> Mandated Mastery
-                </h2>
-                <p className="text-xs text-muted-foreground mt-0.5">Capabilities required by your organization</p>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {data.mandated.map((j) => (
-                  <MandatedJourneyCard key={j.id} journey={j} onClick={() => navigate("/dashboard")} />
-                ))}
+          {/* Coaching Insight */}
+          <motion.div
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="rounded-lg border border-primary/20 bg-primary/5 px-5 py-4"
+          >
+            <div className="flex items-start gap-3">
+              <Sparkles className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm text-foreground leading-relaxed">{data.insight.text}</p>
+                <p className="text-xs text-muted-foreground mt-2">{data.secondaryInsight}</p>
               </div>
             </div>
-          )}
+          </motion.div>
 
-          {/* Self-Initiated Mastery */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-1">
-              <h2 className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium flex items-center gap-1.5">
-                <Lightbulb className="h-3 w-3" /> Self-Initiated Mastery
-              </h2>
-              <button
-                onClick={() => navigate("/sessions")}
-                className="text-xs text-primary hover:underline flex items-center gap-1"
-              >
-                View All <ArrowRight className="h-3 w-3" />
-              </button>
-            </div>
-            <p className="text-xs text-muted-foreground mb-3">Capabilities you choose to develop on your own</p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {data.selfInitiated.map((j) => (
-                <SelfInitiatedJourneyCard key={j.id} journey={j} onClick={() => navigate("/dashboard")} />
+          {/* What to Work On — 3 small cards */}
+          <div>
+            <h3 className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-3 flex items-center gap-1.5">
+              What to work on
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {data.focusAreas.map((area) => (
+                <button
+                  key={area.name}
+                  onClick={() => navigate(area.link)}
+                  className="rounded-xl border border-border bg-card p-4 text-left hover:border-primary/40 hover:shadow-sm transition-all"
+                >
+                  <p className="text-sm font-medium text-card-foreground mb-1">{area.name}</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{area.tip}</p>
+                </button>
               ))}
             </div>
           </div>
 
-          {/* Start New Mastery — only if no mandated journeys */}
-          {!hasMandated && (
+          {/* See More Details — collapsible */}
+          <Collapsible open={showDetails} onOpenChange={setShowDetails}>
+            <CollapsibleTrigger className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors py-2">
+              <ChevronDown className={`h-4 w-4 transition-transform ${showDetails ? "rotate-180" : ""}`} />
+              {showDetails ? "Hide details" : "See more details"}
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <div className="space-y-5 pt-2">
+                {/* Mandated Mastery */}
+                {hasMandated && (
+                  <div>
+                    <h3 className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-3 flex items-center gap-1.5">
+                      <Building2 className="h-3 w-3" /> Required by your organization
+                    </h3>
+                    <div className="space-y-3">
+                      {data.mandated.map((j) => (
+                        <div
+                          key={j.id}
+                          onClick={() => navigate("/dashboard")}
+                          className="rounded-xl border border-border border-l-4 border-l-primary bg-card p-4 cursor-pointer hover:shadow-sm transition-all"
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <h4 className="text-sm font-semibold text-card-foreground">{j.name}</h4>
+                                <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] px-1.5 py-0">Required</Badge>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-0.5">{j.domain} · {humanLevel(j.currentLevel)}</p>
+                            </div>
+                            <CircularBadge progress={j.progress} />
+                          </div>
+                          {j.focusArea && (
+                            <p className="text-xs text-muted-foreground">Focus: <span className="text-card-foreground">{j.focusArea}</span></p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Self-Initiated */}
+                <div>
+                  <h3 className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-3 flex items-center gap-1.5">
+                    <Lightbulb className="h-3 w-3" /> Your personal journeys
+                  </h3>
+                  <div className="space-y-3">
+                    {data.selfInitiated.map((j) => (
+                      <div
+                        key={j.id}
+                        onClick={() => navigate("/dashboard")}
+                        className="rounded-xl border border-border/60 bg-card/60 p-4 cursor-pointer hover:shadow-sm transition-all"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="text-sm font-medium text-card-foreground">{j.name}</h4>
+                            <p className="text-xs text-muted-foreground">{j.domain} · {humanLevel(j.currentLevel)}</p>
+                          </div>
+                          <CircularBadge progress={j.progress} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+
+          {/* Start New Mastery */}
+          {!hasMandated ? (
             <div className="rounded-xl border border-dashed border-border bg-card/50 p-6">
               <h2 className="text-sm font-semibold text-foreground mb-1 flex items-center gap-2">
                 <Lightbulb className="h-4 w-4 text-primary" /> What Would You Like to Master?
               </h2>
-              <p className="text-xs text-muted-foreground mb-5">
-                Set an objective or explore a subject area.
-              </p>
-
+              <p className="text-xs text-muted-foreground mb-5">Set an objective or explore a subject area.</p>
               <Tabs defaultValue="objective" className="w-full">
                 <TabsList className="mb-6 bg-surface">
                   <TabsTrigger value="objective" className="data-[state=active]:bg-card">Objective</TabsTrigger>
                   <TabsTrigger value="subject" className="data-[state=active]:bg-card">Subject</TabsTrigger>
                 </TabsList>
-
                 <TabsContent value="objective">
                   <div className="space-y-4">
-                    <Textarea
-                      value={objective} onChange={(e) => setObjective(e.target.value)}
+                    <Textarea value={objective} onChange={(e) => setObjective(e.target.value)}
                       placeholder="e.g., Lead distributed teams effectively..."
-                      className="min-h-[80px] resize-none bg-card border-border text-foreground placeholder:text-muted-foreground"
-                    />
+                      className="min-h-[80px] resize-none bg-card border-border text-foreground placeholder:text-muted-foreground" />
                     <div className="flex flex-wrap gap-2">
                       {exampleObjectives.map((ex) => (
                         <button key={ex} onClick={() => setObjective(ex)}
@@ -318,7 +340,6 @@ const HomePage = () => {
                     </Button>
                   </div>
                 </TabsContent>
-
                 <TabsContent value="subject">
                   <div className="space-y-4">
                     <Select value={subject} onValueChange={setSubject}>
@@ -352,10 +373,7 @@ const HomePage = () => {
                 </TabsContent>
               </Tabs>
             </div>
-          )}
-
-          {/* Compact "Start New" link when mandated journeys exist */}
-          {hasMandated && (
+          ) : (
             <div
               onClick={() => navigate("/sessions")}
               className="rounded-xl border border-dashed border-border bg-card/50 p-4 cursor-pointer transition-colors hover:border-primary/40 hover:bg-card flex items-center justify-center gap-2"
