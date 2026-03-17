@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
+
 import { Layout } from "@/components/Layout";
 import { Onboarding } from "@/components/Onboarding";
 import { useLearner } from "@/contexts/LearnerContext";
