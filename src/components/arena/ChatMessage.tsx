@@ -104,7 +104,7 @@ const ScenarioMessage = ({ msg }: ChatMessageItemProps) => (
           Your Scenario
         </span>
       </div>
-      <p className="text-sm leading-relaxed text-foreground/90 whitespace-pre-line">{msg.text}</p>
+      <p className="text-sm leading-relaxed text-foreground/90 whitespace-pre-line"><RichText text={msg.text} /></p>
     </div>
   </motion.div>
 );
