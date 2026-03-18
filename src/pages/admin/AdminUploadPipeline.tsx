@@ -2,172 +2,219 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import {
-  Upload, FileText, Sparkles, CheckCircle2, Loader2, AlertCircle,
-  ArrowRight, BookOpen, Target, Layers, X, PartyPopper, ExternalLink,
+  Upload, FileText, Sparkles, CheckCircle2, Loader2,
+  ArrowRight, BookOpen, X, PartyPopper, ExternalLink, Plus,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-function MasteryCriterionBadge({ label, defaultActive }: { label: string; defaultActive: boolean }) {
-  const [active, setActive] = useState(defaultActive);
-  return (
-    <button
-      onClick={() => setActive(!active)}
-      className={`text-xs px-2.5 py-1 rounded-full border transition-colors flex items-center gap-1 ${
-        active
-          ? "bg-primary/10 border-primary/30 text-primary"
-          : "bg-muted border-border text-muted-foreground"
-      }`}
-    >
-      {active ? <CheckCircle2 className="h-3 w-3" /> : <X className="h-3 w-3" />}
-      {label}
-    </button>
-  );
-}
 
-type PipelineStage = "idle" | "uploading" | "extracting" | "analyzing" | "chunking" | "generating" | "complete" | "error";
-
-const stageLabels: Record<PipelineStage, string> = {
-  idle: "Ready to upload",
-  uploading: "Uploading file…",
-  extracting: "Extracting text content…",
-  analyzing: "AI analyzing structure…",
-  chunking: "Chunking & embedding…",
-  generating: "Generating course outline…",
-  complete: "Course generated!",
-  error: "Processing failed",
-};
-
-const stageProgress: Record<PipelineStage, number> = {
-  idle: 0, uploading: 12, extracting: 28, analyzing: 48, chunking: 68, generating: 85, complete: 100, error: 0,
-};
+type PipelineStage = "idle" | "processing" | "complete";
 
 const mockGeneratedCourse = {
   title: "Strategic Leadership Fundamentals",
   description: "Build core leadership competencies through scenario-based practice covering crisis communication, stakeholder management, and strategic decision-making.",
   dimensions: ["Clarity of Communication", "Strategic Framing", "Stakeholder Awareness", "Decision Rigor"],
   scenarios: [
-    { title: "Crisis Communication", difficulty: 3, description: "Navigate a PR crisis as VP of Communications" },
-    { title: "Board Strategy Pivot", difficulty: 4, description: "Present a controversial strategy change to the board" },
-    { title: "Team Restructuring", difficulty: 3, description: "Lead a sensitive organizational restructure" },
+    { title: "Crisis Communication", description: "Navigate a PR crisis as VP of Communications" },
+    { title: "Board Strategy Pivot", description: "Present a controversial strategy change to the board" },
+    { title: "Team Restructuring", description: "Lead a sensitive organizational restructure" },
   ],
-  materialChunks: 34,
-  estimatedHours: 18,
+  sources: 1,
 };
+
+function SourceChip({ name, onRemove }: { name: string; onRemove: () => void }) {
+  return (
+    <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm group">
+      <FileText className="h-4 w-4 text-primary/60 shrink-0" />
+      <span className="text-card-foreground truncate">{name}</span>
+      <button
+        onClick={onRemove}
+        className="ml-auto p-0.5 rounded text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity"
+      >
+        <X className="h-3 w-3" />
+      </button>
+    </div>
+  );
+}
+
+function ProcessingOverlay() {
+  const steps = ["Reading your document…", "Understanding the structure…", "Generating scenarios…"];
+  const [stepIndex, setStepIndex] = useState(0);
+
+  useState(() => {
+    const interval = setInterval(() => {
+      setStepIndex((prev) => (prev < steps.length - 1 ? prev + 1 : prev));
+    }, 2000);
+    return () => clearInterval(interval);
+  });
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="rounded-xl border border-border bg-card p-10 text-center space-y-5"
+    >
+      <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+        <Loader2 className="h-6 w-6 text-primary animate-spin" />
+      </div>
+      <div className="space-y-1">
+        <AnimatePresence mode="wait">
+          <motion.p
+            key={stepIndex}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            className="text-sm font-medium text-card-foreground"
+          >
+            {steps[stepIndex]}
+          </motion.p>
+        </AnimatePresence>
+        <p className="text-xs text-muted-foreground">This usually takes a few seconds</p>
+      </div>
+    </motion.div>
+  );
+}
 
 export default function AdminUploadPipeline() {
   const navigate = useNavigate();
   const [stage, setStage] = useState<PipelineStage>("idle");
-  const [fileName, setFileName] = useState("");
+  const [sources, setSources] = useState<string[]>([]);
   const [created, setCreated] = useState(false);
 
-  const simulatePipeline = (name: string) => {
-    setFileName(name);
-    const stages: PipelineStage[] = ["uploading", "extracting", "analyzing", "chunking", "generating", "complete"];
-    stages.forEach((s, i) => {
-      setTimeout(() => setStage(s), (i + 1) * 1200);
-    });
+  const addSource = useCallback((name: string) => {
+    setSources((prev) => [...prev, name]);
+  }, []);
+
+  const removeSource = (index: number) => {
+    setSources((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
-    if (file) simulatePipeline(file.name);
+    if (file) addSource(file.name);
   };
 
-  const handleFileSelect = () => {
-    // Simulate a file selection
-    simulatePipeline("Leadership_Frameworks_2025.pdf");
+  const handleFileClick = () => {
+    addSource(`Document_${sources.length + 1}.pdf`);
+  };
+
+  const handleGenerate = () => {
+    if (sources.length === 0) return;
+    setStage("processing");
+    setTimeout(() => setStage("complete"), 5400);
   };
 
   const reset = () => {
     setStage("idle");
-    setFileName("");
+    setSources([]);
     setCreated(false);
   };
 
   const handleCreateProgram = () => {
     setCreated(true);
-    toast.success("Program created successfully!", { description: "Strategic Leadership Fundamentals is now live." });
+    toast.success("Program created!", { description: `"${mockGeneratedCourse.title}" is now live.` });
   };
 
   return (
     <AdminLayout pageTitle="Upload & Generate">
-      <div className="max-w-4xl mx-auto px-6 py-6">
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="space-y-6">
-
-          <div>
-            <h2 className="text-sm font-display font-semibold text-foreground">AI Course Generator</h2>
-            <p className="text-xs text-muted-foreground mt-1">Upload course materials and let AI auto-generate programs, scenarios, and skill dimensions.</p>
+      <div className="max-w-3xl mx-auto px-6 py-8">
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35 }}
+          className="space-y-6"
+        >
+          {/* Header */}
+          <div className="text-center space-y-1">
+            <h2 className="text-lg font-display font-semibold text-foreground">Add your sources</h2>
+            <p className="text-xs text-muted-foreground">
+              Upload materials and AI will create a complete mastery program from them.
+            </p>
           </div>
 
-          {/* Upload zone */}
-          {stage === "idle" && (
-            <div
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={handleDrop}
-              className="rounded-xl border-2 border-dashed border-border bg-card hover:border-primary/40 transition-colors p-12 text-center cursor-pointer"
-              onClick={handleFileSelect}
-            >
-              <Upload className="h-10 w-10 text-muted-foreground/40 mx-auto mb-3" />
-              <p className="text-sm font-medium text-card-foreground">Drop files here or click to upload</p>
-              <p className="text-xs text-muted-foreground mt-1">PDF, DOCX, PPTX, or TXT — max 50 MB</p>
-            </div>
-          )}
-
-          {/* Processing pipeline */}
-          {stage !== "idle" && stage !== "complete" && (
-            <div className="rounded-xl border border-border bg-card p-6 space-y-5">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <FileText className="h-5 w-5 text-primary" />
-                  <div>
-                    <p className="text-sm font-medium text-card-foreground">{fileName}</p>
-                    <p className="text-xs text-muted-foreground">{stageLabels[stage]}</p>
+          <AnimatePresence mode="wait">
+            {/* IDLE — upload sources */}
+            {stage === "idle" && (
+              <motion.div
+                key="idle"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="space-y-4"
+              >
+                {/* Source list */}
+                {sources.length > 0 && (
+                  <div className="space-y-2">
+                    {sources.map((name, i) => (
+                      <motion.div
+                        key={`${name}-${i}`}
+                        initial={{ opacity: 0, x: -8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                      >
+                        <SourceChip name={name} onRemove={() => removeSource(i)} />
+                      </motion.div>
+                    ))}
                   </div>
+                )}
+
+                {/* Drop zone */}
+                <div
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={handleDrop}
+                  onClick={handleFileClick}
+                  className="rounded-xl border-2 border-dashed border-border bg-card/50 hover:border-primary/40 hover:bg-card transition-all p-8 text-center cursor-pointer"
+                >
+                  <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center mx-auto mb-3">
+                    <Plus className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {sources.length === 0 ? "Drop files here or click to upload" : "Add another source"}
+                  </p>
+                  <p className="text-[11px] text-muted-foreground/60 mt-1">PDF, DOCX, PPTX, or TXT</p>
                 </div>
-                <button onClick={reset} className="p-1.5 rounded-md text-muted-foreground hover:bg-muted transition-colors">
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
 
-              <Progress value={stageProgress[stage]} className="h-2" />
+                {/* Generate button */}
+                {sources.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex justify-center pt-2"
+                  >
+                    <Button onClick={handleGenerate} size="sm" className="px-6">
+                      <Sparkles className="mr-1.5 h-3.5 w-3.5" />
+                      Generate Program
+                      <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                    </Button>
+                  </motion.div>
+                )}
+              </motion.div>
+            )}
 
-              <div className="grid grid-cols-5 gap-2">
-                {(["uploading", "extracting", "analyzing", "chunking", "generating"] as PipelineStage[]).map((s) => {
-                  const isDone = stageProgress[stage] > stageProgress[s];
-                  const isCurrent = stage === s;
-                  return (
-                    <div key={s} className="flex flex-col items-center gap-1.5">
-                      <div className={`h-8 w-8 rounded-full flex items-center justify-center transition-colors ${
-                        isDone ? "bg-primary/10 text-primary" : isCurrent ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                      }`}>
-                        {isDone ? <CheckCircle2 className="h-4 w-4" /> : isCurrent ? <Loader2 className="h-4 w-4 animate-spin" /> : <div className="h-2 w-2 rounded-full bg-current opacity-30" />}
-                      </div>
-                      <span className={`text-[9px] text-center leading-tight ${isCurrent ? "text-primary font-medium" : "text-muted-foreground"}`}>
-                        {s === "uploading" ? "Upload" : s === "extracting" ? "Extract" : s === "analyzing" ? "Analyze" : s === "chunking" ? "Chunk" : "Generate"}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+            {/* PROCESSING */}
+            {stage === "processing" && (
+              <ProcessingOverlay key="processing" />
+            )}
 
-          {/* Generated course — editable form */}
-          <AnimatePresence>
-            {stage === "complete" && (
-              <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-5">
-
-                <div className="rounded-xl border border-primary/30 bg-card p-6 space-y-5">
+            {/* COMPLETE */}
+            {stage === "complete" && !created && (
+              <motion.div
+                key="complete"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="space-y-5"
+              >
+                <div className="rounded-xl border border-primary/20 bg-card p-6 space-y-5">
                   <div className="flex items-center gap-2">
                     <Sparkles className="h-4 w-4 text-primary" />
-                    <h3 className="text-xs font-semibold text-primary uppercase tracking-wider">AI-Generated Course</h3>
+                    <span className="text-xs font-semibold text-primary uppercase tracking-wider">Generated from {sources.length} source{sources.length > 1 ? "s" : ""}</span>
                   </div>
 
-                  {/* Course Details Form */}
+                  {/* Editable fields */}
                   <div className="space-y-4">
                     <div>
                       <label className="text-xs font-medium text-card-foreground block mb-1.5">Title</label>
@@ -179,117 +226,71 @@ export default function AdminUploadPipeline() {
                     <div>
                       <label className="text-xs font-medium text-card-foreground block mb-1.5">Description</label>
                       <textarea
-                        className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground min-h-[80px] resize-y"
+                        className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground min-h-[72px] resize-y"
                         defaultValue={mockGeneratedCourse.description}
                       />
                     </div>
-                    <div>
-                      <label className="text-xs font-medium text-card-foreground block mb-1.5">Course Type</label>
-                      <select className="w-full h-10 rounded-lg border border-border bg-background px-3 text-sm text-foreground appearance-none">
-                        <option>Leadership Development</option>
-                        <option>Academic</option>
-                        <option>Corporate Training</option>
-                        <option>Technical Skills</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium text-card-foreground block mb-1.5">Mastery Criteria</label>
-                      <div className="flex flex-wrap gap-2">
-                        {mockGeneratedCourse.dimensions.map((d, i) => (
-                          <MasteryCriterionBadge key={d} label={d} defaultActive={i < 3} />
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <Badge variant="default" className="text-[10px]">
-                        <CheckCircle2 className="h-3 w-3 mr-1" /> Active
-                      </Badge>
+                  </div>
+
+                  {/* Dimensions as simple tags */}
+                  <div>
+                    <p className="text-xs font-medium text-card-foreground mb-2">Skill Dimensions</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {mockGeneratedCourse.dimensions.map((d) => (
+                        <Badge key={d} variant="secondary" className="text-xs">{d}</Badge>
+                      ))}
                     </div>
                   </div>
 
-                  {/* Stats row */}
-                  <div className="grid grid-cols-3 gap-4 border-t border-border pt-4">
-                    <div className="rounded-lg bg-muted/50 px-3 py-2.5 text-center">
-                      <p className="text-lg font-semibold text-card-foreground">{mockGeneratedCourse.materialChunks}</p>
-                      <p className="text-[10px] text-muted-foreground">Content Chunks</p>
-                    </div>
-                    <div className="rounded-lg bg-muted/50 px-3 py-2.5 text-center">
-                      <p className="text-lg font-semibold text-card-foreground">{mockGeneratedCourse.scenarios.length}</p>
-                      <p className="text-[10px] text-muted-foreground">Scenarios</p>
-                    </div>
-                    <div className="rounded-lg bg-muted/50 px-3 py-2.5 text-center">
-                      <p className="text-lg font-semibold text-card-foreground">{mockGeneratedCourse.estimatedHours}h</p>
-                      <p className="text-[10px] text-muted-foreground">Estimated</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Dimensions */}
-                <div className="rounded-xl border border-border bg-card p-5">
-                  <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                    <Target className="h-3.5 w-3.5" /> Suggested Dimensions
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {mockGeneratedCourse.dimensions.map((d) => (
-                      <Badge key={d} variant="secondary" className="text-xs">{d}</Badge>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Scenarios */}
-                <div className="rounded-xl border border-border bg-card p-5">
-                  <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                    <Layers className="h-3.5 w-3.5" /> Suggested Scenarios
-                  </h3>
-                  <div className="space-y-2">
-                    {mockGeneratedCourse.scenarios.map((s, i) => (
-                      <div key={i} className="flex items-center justify-between rounded-lg bg-muted/30 px-4 py-3">
-                        <div>
+                  {/* Scenarios */}
+                  <div>
+                    <p className="text-xs font-medium text-card-foreground mb-2">Scenarios</p>
+                    <div className="space-y-2">
+                      {mockGeneratedCourse.scenarios.map((s, i) => (
+                        <div key={i} className="rounded-lg bg-muted/40 px-4 py-3">
                           <p className="text-sm font-medium text-card-foreground">{s.title}</p>
-                          <p className="text-xs text-muted-foreground">{s.description}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">{s.description}</p>
                         </div>
-                        <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-medium">Lvl {s.difficulty}</span>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
 
-                {!created ? (
-                  <div className="flex items-center gap-3 justify-end">
-                    <Button variant="outline" size="sm" onClick={reset}>Upload Another</Button>
-                    <Button size="sm" onClick={handleCreateProgram}>
-                      <BookOpen className="mr-1.5 h-3.5 w-3.5" /> Create Program <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
-                    </Button>
-                  </div>
-                ) : (
-                  <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="rounded-xl border border-primary/30 bg-primary/5 p-6 text-center space-y-4"
-                  >
-                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-                      <PartyPopper className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-semibold text-card-foreground">Program Created!</h3>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        "{mockGeneratedCourse.title}" has been created with {mockGeneratedCourse.scenarios.length} scenarios and {mockGeneratedCourse.dimensions.length} dimensions.
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-3 justify-center">
-                      <Button variant="outline" size="sm" onClick={reset}>
-                        Upload Another
-                      </Button>
-                      <Button size="sm" onClick={() => navigate("/admin/programs/p1")}>
-                        <ExternalLink className="mr-1.5 h-3.5 w-3.5" /> View Program
-                      </Button>
-                    </div>
-                  </motion.div>
-                )}
+                <div className="flex items-center gap-3 justify-end">
+                  <Button variant="outline" size="sm" onClick={reset}>Start Over</Button>
+                  <Button size="sm" onClick={handleCreateProgram}>
+                    <BookOpen className="mr-1.5 h-3.5 w-3.5" /> Create Program
+                  </Button>
+                </div>
+              </motion.div>
+            )}
+
+            {/* CREATED */}
+            {created && (
+              <motion.div
+                key="created"
+                initial={{ opacity: 0, scale: 0.97 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="rounded-xl border border-primary/20 bg-primary/5 p-8 text-center space-y-4"
+              >
+                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+                  <PartyPopper className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-card-foreground">Program Created!</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    "{mockGeneratedCourse.title}" is ready with {mockGeneratedCourse.scenarios.length} scenarios.
+                  </p>
+                </div>
+                <div className="flex items-center gap-3 justify-center">
+                  <Button variant="outline" size="sm" onClick={reset}>Upload More</Button>
+                  <Button size="sm" onClick={() => navigate("/admin/programs/p1")}>
+                    <ExternalLink className="mr-1.5 h-3.5 w-3.5" /> Open Program
+                  </Button>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
-
         </motion.div>
       </div>
     </AdminLayout>
