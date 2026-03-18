@@ -21,7 +21,9 @@ import {
   Trash2,
   GripVertical,
   Upload,
+  Play,
 } from "lucide-react";
+import { CoursePreviewPlayer } from "@/components/admin/CoursePreviewPlayer";
 
 /* ── mock data keyed by program id ── */
 const programData: Record<string, {
@@ -88,6 +90,7 @@ export default function AdminProgramDetail() {
   const [showAddScenario, setShowAddScenario] = useState(false);
   const [scenarios, setScenarios] = useState(program.scenarios);
   const [newScenario, setNewScenario] = useState({ title: "", description: "", difficulty: 3, turns: 5 });
+  const [showPreview, setShowPreview] = useState(false);
 
   const handleAddDimension = () => {
     if (!newDim.name.trim()) return;
@@ -126,7 +129,12 @@ export default function AdminProgramDetail() {
                 </div>
                 <p className="text-sm text-muted-foreground max-w-2xl">{program.description}</p>
               </div>
-              <Button size="sm" variant="outline"><Pencil className="mr-1.5 h-3.5 w-3.5" /> Edit</Button>
+              <div className="flex items-center gap-2">
+                <Button size="sm" variant="outline" onClick={() => setShowPreview(true)}>
+                  <Play className="mr-1.5 h-3.5 w-3.5" /> Preview
+                </Button>
+                <Button size="sm" variant="outline"><Pencil className="mr-1.5 h-3.5 w-3.5" /> Edit</Button>
+              </div>
             </div>
 
             {/* Quick stats */}
@@ -331,6 +339,19 @@ export default function AdminProgramDetail() {
 
         </motion.div>
       </div>
+
+      <CoursePreviewPlayer
+        open={showPreview}
+        onClose={() => setShowPreview(false)}
+        course={{
+          name: program.name,
+          description: program.description,
+          dimensions: dimensions.map((d) => ({ name: d.name, weight: d.weight })),
+          scenarios: scenarios.map((s) => ({ title: s.title, description: s.description })),
+          targetLevel: program.targetLevel,
+          estimatedHours: program.estimatedHours,
+        }}
+      />
     </AdminLayout>
   );
 }
