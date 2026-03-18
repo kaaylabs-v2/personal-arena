@@ -57,7 +57,7 @@ const LessonMessage = ({ msg }: ChatMessageItemProps) => (
         </div>
         <span className="text-[10px] uppercase tracking-wider text-primary font-semibold">Nexi is teaching</span>
       </div>
-      <p className="text-sm leading-relaxed text-foreground/90 whitespace-pre-line">{msg.text}</p>
+      <p className="text-sm leading-relaxed text-foreground/90 whitespace-pre-line"><RichText text={msg.text} /></p>
       {msg.followUpPrompt && (
         <p className="text-xs text-muted-foreground mt-3 pt-3 border-t border-primary/10 italic">
           {msg.followUpPrompt}
