@@ -82,7 +82,7 @@ const CorrectionMessage = ({ msg }: ChatMessageItemProps) => (
           Coaching Note
         </span>
       </div>
-      <p className="text-sm leading-relaxed text-foreground/85">{msg.text}</p>
+      <p className="text-sm leading-relaxed text-foreground/85"><RichText text={msg.text} /></p>
     </div>
   </motion.div>
 );
