@@ -90,6 +90,7 @@ export default function AdminProgramDetail() {
   const [showAddScenario, setShowAddScenario] = useState(false);
   const [scenarios, setScenarios] = useState(program.scenarios);
   const [newScenario, setNewScenario] = useState({ title: "", description: "", difficulty: 3, turns: 5 });
+  const [showPreview, setShowPreview] = useState(false);
 
   const handleAddDimension = () => {
     if (!newDim.name.trim()) return;
