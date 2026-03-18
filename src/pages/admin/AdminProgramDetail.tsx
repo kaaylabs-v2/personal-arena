@@ -21,7 +21,9 @@ import {
   Trash2,
   GripVertical,
   Upload,
+  Play,
 } from "lucide-react";
+import { CoursePreviewPlayer } from "@/components/admin/CoursePreviewPlayer";
 
 /* ── mock data keyed by program id ── */
 const programData: Record<string, {
