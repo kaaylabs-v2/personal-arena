@@ -5,6 +5,25 @@ import { ArenaGuidanceHint } from "@/components/ArenaGuidanceHint";
 import { StageTransitionBanner } from "./StageTransitionBanner";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import React from "react";
+
+/** Render simple markdown: **bold**, *italic*, and newlines */
+const RichText = ({ text }: { text: string }) => {
+  const parts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g);
+  return (
+    <>
+      {parts.map((part, i) => {
+        if (part.startsWith("**") && part.endsWith("**")) {
+          return <strong key={i} className="font-semibold">{part.slice(2, -2)}</strong>;
+        }
+        if (part.startsWith("*") && part.endsWith("*")) {
+          return <em key={i}>{part.slice(1, -1)}</em>;
+        }
+        return <React.Fragment key={i}>{part}</React.Fragment>;
+      })}
+    </>
+  );
+};
 
 export type MessageRole = "arena" | "learner" | "insight" | "stage-transition" | "lesson" | "correction" | "scenario" | "summary";
 
@@ -38,7 +57,7 @@ const LessonMessage = ({ msg }: ChatMessageItemProps) => (
         </div>
         <span className="text-[10px] uppercase tracking-wider text-primary font-semibold">Nexi is teaching</span>
       </div>
-      <p className="text-sm leading-relaxed text-foreground/90 whitespace-pre-line">{msg.text}</p>
+      <p className="text-sm leading-relaxed text-foreground/90 whitespace-pre-line"><RichText text={msg.text} /></p>
       {msg.followUpPrompt && (
         <p className="text-xs text-muted-foreground mt-3 pt-3 border-t border-primary/10 italic">
           {msg.followUpPrompt}
@@ -63,7 +82,7 @@ const CorrectionMessage = ({ msg }: ChatMessageItemProps) => (
           Coaching Note
         </span>
       </div>
-      <p className="text-sm leading-relaxed text-foreground/85">{msg.text}</p>
+      <p className="text-sm leading-relaxed text-foreground/85"><RichText text={msg.text} /></p>
     </div>
   </motion.div>
 );
@@ -85,7 +104,7 @@ const ScenarioMessage = ({ msg }: ChatMessageItemProps) => (
           Your Scenario
         </span>
       </div>
-      <p className="text-sm leading-relaxed text-foreground/90 whitespace-pre-line">{msg.text}</p>
+      <p className="text-sm leading-relaxed text-foreground/90 whitespace-pre-line"><RichText text={msg.text} /></p>
     </div>
   </motion.div>
 );
