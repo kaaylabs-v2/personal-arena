@@ -129,7 +129,12 @@ export default function AdminProgramDetail() {
                 </div>
                 <p className="text-sm text-muted-foreground max-w-2xl">{program.description}</p>
               </div>
-              <Button size="sm" variant="outline"><Pencil className="mr-1.5 h-3.5 w-3.5" /> Edit</Button>
+              <div className="flex items-center gap-2">
+                <Button size="sm" variant="outline" onClick={() => setShowPreview(true)}>
+                  <Play className="mr-1.5 h-3.5 w-3.5" /> Preview
+                </Button>
+                <Button size="sm" variant="outline"><Pencil className="mr-1.5 h-3.5 w-3.5" /> Edit</Button>
+              </div>
             </div>
 
             {/* Quick stats */}
