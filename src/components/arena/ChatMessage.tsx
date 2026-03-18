@@ -5,6 +5,25 @@ import { ArenaGuidanceHint } from "@/components/ArenaGuidanceHint";
 import { StageTransitionBanner } from "./StageTransitionBanner";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import React from "react";
+
+/** Render simple markdown: **bold**, *italic*, and newlines */
+const RichText = ({ text }: { text: string }) => {
+  const parts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g);
+  return (
+    <>
+      {parts.map((part, i) => {
+        if (part.startsWith("**") && part.endsWith("**")) {
+          return <strong key={i} className="font-semibold">{part.slice(2, -2)}</strong>;
+        }
+        if (part.startsWith("*") && part.endsWith("*")) {
+          return <em key={i}>{part.slice(1, -1)}</em>;
+        }
+        return <React.Fragment key={i}>{part}</React.Fragment>;
+      })}
+    </>
+  );
+};
 
 export type MessageRole = "arena" | "learner" | "insight" | "stage-transition" | "lesson" | "correction" | "scenario" | "summary";
 
