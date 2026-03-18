@@ -1,22 +1,13 @@
 import { AdminLayout } from "@/components/admin/AdminLayout";
-import { StatCard } from "@/components/admin/StatCard";
-import { Users, BookOpen, TrendingUp, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { Plus, Upload, BookOpen, Clock, ArrowRight } from "lucide-react";
 
-const recentActivity = [
-  { text: "Emma Watson completed 'Algebra Foundations' Session 5", time: "12 min ago" },
-  { text: "New user Ravi Patel joined 'Calculus I Mastery'", time: "1 hr ago" },
-  { text: "Coach Sarah left feedback on Maria's Session 3", time: "2 hrs ago" },
-  { text: "Insurance Sales Mastery program updated by Admin", time: "5 hrs ago" },
-  { text: "3 new learners enrolled in Strategic Leadership", time: "1 day ago" },
-];
-
-const topPrograms = [
-  { name: "Strategic Leadership", learners: 48, completion: 62 },
-  { name: "Algebra Foundations", learners: 124, completion: 45 },
-  { name: "Calculus I Mastery", learners: 37, completion: 38 },
-  { name: "Insurance Sales Mastery", learners: 56, completion: 51 },
+const recentPrograms = [
+  { id: "p1", name: "Strategic Leadership", domain: "Professional", updated: "2 hours ago", sources: 3 },
+  { id: "p2", name: "Algebra Foundations", domain: "Academic", updated: "Yesterday", sources: 5 },
+  { id: "p3", name: "Calculus I Mastery", domain: "Academic", updated: "3 days ago", sources: 4 },
+  { id: "p4", name: "Insurance Sales Mastery", domain: "Corporate", updated: "1 week ago", sources: 2 },
 ];
 
 export default function AdminDashboard() {
@@ -24,61 +15,92 @@ export default function AdminDashboard() {
 
   return (
     <AdminLayout pageTitle="Overview">
-      <div className="max-w-6xl mx-auto px-6 py-6">
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="space-y-6">
-
-          {/* Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard icon={Users} label="Total Learners" value={265} change="+12 this week" />
-            <StatCard icon={BookOpen} label="Active Programs" value={4} />
-            
-            <StatCard icon={TrendingUp} label="Avg. Completion" value="49%" change="+4% vs last month" />
+      <div className="max-w-5xl mx-auto px-6 py-10">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="space-y-10"
+        >
+          {/* Hero — create new */}
+          <div className="text-center space-y-3">
+            <h1 className="text-2xl font-display font-bold text-foreground tracking-tight">
+              Welcome to Arena Studio
+            </h1>
+            <p className="text-sm text-muted-foreground max-w-md mx-auto">
+              Upload your materials and let AI create mastery programs. Or pick up where you left off.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            {/* Top Programs */}
-            <div className="rounded-xl border border-border bg-card p-5">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Top Programs</h3>
-                <button onClick={() => navigate("/admin/programs")} className="text-xs text-primary hover:underline flex items-center gap-1">
-                  View All <ArrowRight className="h-3 w-3" />
-                </button>
+          {/* Create actions */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto">
+            <button
+              onClick={() => navigate("/admin/upload")}
+              className="group rounded-xl border-2 border-dashed border-border hover:border-primary/40 bg-card p-6 text-center transition-all hover:shadow-sm"
+            >
+              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/15 transition-colors">
+                <Upload className="h-5 w-5 text-primary" />
               </div>
-              <div className="space-y-3">
-                {topPrograms.map((p) => (
-                  <div key={p.name} className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-card-foreground">{p.name}</p>
-                      <p className="text-[10px] text-muted-foreground">{p.learners} learners</p>
+              <p className="text-sm font-medium text-card-foreground">Upload & Generate</p>
+              <p className="text-[11px] text-muted-foreground mt-1">Drop a PDF, DOCX, or slides</p>
+            </button>
+
+            <button
+              onClick={() => navigate("/admin/programs")}
+              className="group rounded-xl border-2 border-dashed border-border hover:border-primary/40 bg-card p-6 text-center transition-all hover:shadow-sm"
+            >
+              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/15 transition-colors">
+                <Plus className="h-5 w-5 text-primary" />
+              </div>
+              <p className="text-sm font-medium text-card-foreground">Create from Scratch</p>
+              <p className="text-[11px] text-muted-foreground mt-1">Build scenarios manually</p>
+            </button>
+          </div>
+
+          {/* Recent programs */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Recent Programs</h2>
+              <button
+                onClick={() => navigate("/admin/programs")}
+                className="text-xs text-primary hover:underline flex items-center gap-1"
+              >
+                View all <ArrowRight className="h-3 w-3" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {recentPrograms.map((p, i) => (
+                <motion.button
+                  key={p.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.06, duration: 0.3 }}
+                  onClick={() => navigate(`/admin/programs/${p.id}`)}
+                  className="group rounded-xl border border-border bg-card p-4 text-left hover:border-primary/30 transition-all hover:shadow-sm"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="h-9 w-9 rounded-lg bg-primary/8 flex items-center justify-center shrink-0">
+                      <BookOpen className="h-4 w-4 text-primary/70" />
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-20 h-1 rounded-full bg-muted overflow-hidden">
-                        <div className="h-full rounded-full bg-primary" style={{ width: `${p.completion}%` }} />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium text-card-foreground truncate group-hover:text-primary transition-colors">
+                        {p.name}
+                      </p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-[10px] text-muted-foreground">{p.domain}</span>
+                        <span className="text-muted-foreground/30">·</span>
+                        <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+                          <Clock className="h-2.5 w-2.5" /> {p.updated}
+                        </span>
                       </div>
-                      <span className="text-[10px] text-muted-foreground w-8 text-right">{p.completion}%</span>
+                      <p className="text-[10px] text-muted-foreground mt-1.5">{p.sources} sources</p>
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Recent Activity */}
-            <div className="rounded-xl border border-border bg-card p-5">
-              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">Recent Activity</h3>
-              <div className="space-y-3">
-                {recentActivity.map((item, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <div className="h-1.5 w-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs text-card-foreground leading-relaxed">{item.text}</p>
-                      <p className="text-[10px] text-muted-foreground">{item.time}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                </motion.button>
+              ))}
             </div>
           </div>
-
         </motion.div>
       </div>
     </AdminLayout>
