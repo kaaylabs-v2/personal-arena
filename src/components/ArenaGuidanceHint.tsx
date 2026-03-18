@@ -2,11 +2,11 @@ import { Lightbulb } from "lucide-react";
 import { motion } from "framer-motion";
 
 const stageGuidance: Record<string, string> = {
-  clarify: "Focus on defining the problem precisely. What assumptions are you making? What's unclear?",
-  challenge: "Stress-test your reasoning. What would a critic say? What could go wrong?",
-  evidence: "Ground your claims in data or observable patterns. What supports your position?",
-  alternative: "Explore different approaches. What else could work? What are you not seeing?",
-  reflect: "Step back and evaluate your overall thinking. How has your perspective evolved?",
+  learn: "Take in the key concepts — ask questions if anything is unclear.",
+  understand: "Try to explain what you've learned. It's okay to get it wrong — that's how you learn.",
+  "think-deeper": "These questions are meant to stretch you. Take your time and think carefully.",
+  apply: "Put your knowledge to work in a realistic scenario. There's no single right answer.",
+  reflect: "Look back at what you've learned and how your thinking has grown.",
 };
 
 interface ArenaGuidanceHintProps {

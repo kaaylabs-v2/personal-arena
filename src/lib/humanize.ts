@@ -33,11 +33,11 @@ export function humanStatus(status: string): string {
 // Convert session stage names to friendly language
 export function humanStage(stage: string): string {
   const map: Record<string, string> = {
-    clarify: "Let's explore the topic",
-    challenge: "Let's test your thinking",
-    evidence: "Walk me through your reasoning",
-    alternative: "What else could work?",
-    reflect: "Let's look back at your growth",
+    learn: "Nexi is teaching — pay attention to the key ideas",
+    understand: "Explain what you've learned in your own words",
+    "think-deeper": "Let's push your thinking further",
+    apply: "Work through a real scenario",
+    reflect: "Let's look back at what you covered",
   };
   return map[stage.toLowerCase()] || stage;
 }
@@ -45,10 +45,10 @@ export function humanStage(stage: string): string {
 // Friendly stage short names for pills
 export function humanStagePill(stage: string): string {
   const map: Record<string, string> = {
-    clarify: "Explore",
-    challenge: "Challenge",
-    evidence: "Reasoning",
-    alternative: "Alternatives",
+    learn: "Learn",
+    understand: "Understand",
+    "think-deeper": "Think Deeper",
+    apply: "Apply",
     reflect: "Reflect",
   };
   return map[stage.toLowerCase()] || stage;
