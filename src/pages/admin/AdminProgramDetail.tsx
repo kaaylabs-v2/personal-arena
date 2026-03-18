@@ -339,6 +339,19 @@ export default function AdminProgramDetail() {
 
         </motion.div>
       </div>
+
+      <CoursePreviewPlayer
+        open={showPreview}
+        onClose={() => setShowPreview(false)}
+        course={{
+          name: program.name,
+          description: program.description,
+          dimensions: dimensions.map((d) => ({ name: d.name, weight: d.weight })),
+          scenarios: scenarios.map((s) => ({ title: s.title, description: s.description })),
+          targetLevel: program.targetLevel,
+          estimatedHours: program.estimatedHours,
+        }}
+      />
     </AdminLayout>
   );
 }
